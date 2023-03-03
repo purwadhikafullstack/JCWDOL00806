@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   property_category.init({
-    city: DataTypes.STRING
+    type: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'property_category',
