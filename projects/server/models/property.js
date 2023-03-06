@@ -28,7 +28,6 @@ module.exports = (sequelize, DataTypes) => {
   property.init({
     name: DataTypes.STRING,
     address: DataTypes.STRING,
-    city: DataTypes.STRING,
     description: DataTypes.TEXT,
     picture: DataTypes.STRING
   }, {

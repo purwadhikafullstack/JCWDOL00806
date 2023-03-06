@@ -15,10 +15,15 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'category_id',
         as: 'property'
       })
+      this.belongsTo(models.tenant, {
+        foreignKey: 'tenant_id',
+        as: 'tenant'
+      })
     }
   }
   property_category.init({
-    type: DataTypes.STRING
+    type: DataTypes.STRING,
+    city: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'property_category',
