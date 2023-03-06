@@ -22,7 +22,6 @@ module.exports = (sequelize, DataTypes) => {
     profile_pic: DataTypes.STRING,
     full_name: DataTypes.STRING,
     birthdate: DataTypes.DATEONLY,
-    ktp: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'user_details',
