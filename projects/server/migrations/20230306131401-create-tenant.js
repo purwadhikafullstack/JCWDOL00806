@@ -5,7 +5,7 @@ module.exports = {
     await queryInterface.createTable('tenants', {
       id: {
         allowNull: false,
-        autoIncrement: true,
+        autoIncrement: false,
         primaryKey: true,
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4
