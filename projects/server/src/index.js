@@ -18,6 +18,19 @@ app.use(express.json());
 
 //#region API ROUTES
 
+//Sequelize DB Sync
+// const Sequelize = require('sequelize')
+// const Models = require('./models')
+// Models.sequelize.sync({
+//     force: false,
+//     alter: true,
+//     logging: console.log
+// }).then(function () {
+//     console.log('Database is Synchronized!')
+// }).catch(function (err) {
+//     console.log(err, "Something went wrong with database sync!")
+// })
+
 // ===========================
 // NOTE : Add your routes here
 
