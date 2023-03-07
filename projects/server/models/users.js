@@ -29,7 +29,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull:false,
       primaryKey:true,
       type: DataTypes.UUID,
-      defaultValue: UUIDV4
+      defaultValue: DataTypes.UUIDV4
     },
     username: DataTypes.STRING,
     email: DataTypes.STRING,
