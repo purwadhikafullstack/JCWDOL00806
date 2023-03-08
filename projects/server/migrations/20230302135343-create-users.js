@@ -25,6 +25,9 @@ module.exports = {
       provider: {
         type: Sequelize.STRING
       },
+      provider_id: {
+        type: Sequelize.STRING
+      },
       is_verified: {
         type: Sequelize.BOOLEAN
       },
