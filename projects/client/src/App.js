@@ -1,26 +1,17 @@
-import axios from "axios";
-import logo from "./logo.svg";
-import "./App.css";
-import { useEffect, useState } from "react";
+import TenantRegister from "./pages/tenantRegister";
+import TenantLogin from "./pages/tenantLogin";
+import { Routes, Route } from "react-router-dom";
+import TenantVerify from "./pages/tenantVerify";
 
 function App() {
-  const [message, setMessage] = useState("");
-
-  useEffect(() => {
-    (async () => {
-      const { data } = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/greetings`
-      );
-      setMessage(data?.message || "");
-    })();
-  }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        {message}
-      </header>
-    </div>
+    <>
+      <Routes>
+        <Route path="/tenantRegister" element={<TenantRegister />} />
+        <Route path="/tenantLogin" element={<TenantLogin />} />
+        <Route path="/tenantVerify/:username" element={<TenantVerify />} />
+      </Routes>
+    </>
   );
 }
 
