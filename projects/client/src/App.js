@@ -1,27 +1,17 @@
-import axios from "axios";
-import logo from "./logo.svg";
-import "./App.css";
-import { useEffect, useState } from "react";
+import React from 'react'
+import { Routes, Route } from 'react-router-dom'
 
-function App() {
-  const [message, setMessage] = useState("");
+import Login from './pages/Login'
 
-  useEffect(() => {
-    (async () => {
-      const { data } = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/greetings`
-      );
-      setMessage(data?.message || "");
-    })();
-  }, []);
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        {message}
-      </header>
+    <div>
+      <Routes>
+        <Route path='/' element={<h1>Landing pages</h1>} />
+        <Route path='/users/login' element={<Login />} />
+      </Routes>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App

@@ -1,26 +1,48 @@
 require("dotenv/config");
+
 const express = require("express");
+const session = require("express-session")
 const cors = require("cors");
 const { join } = require("path");
+const passport = require('passport')
+const passportGoogle = require("./auth/passportGoogle")
 
 const PORT = process.env.PORT || 8000;
 const app = express();
-app.use(
-  cors({
-    origin: [
-      process.env.WHITELISTED_DOMAIN &&
-        process.env.WHITELISTED_DOMAIN.split(","),
-    ],
-  })
-);
+// app.use(
+//   cors({
+//     origin: [
+//       process.env.WHITELISTED_DOMAIN &&
+//         process.env.WHITELISTED_DOMAIN.split(","),
+//     ],
+//   })
+// );
+
+app.use(cors())
 
 app.use(express.json());
 
+app.use(session({
+  secret: process.env.SESSION_SECRET_KEY,
+  resave: false,
+  saveUninitialized: false
+}))
+
+app.use(passport.initialize())
+app.use(passport.session())
+
+passport.serializeUser(function (user, cb) {
+  cb(null, user)
+})
+passport.deserializeUser(function (user, cb) {
+  cb(null, user)
+})
+
 //#region API ROUTES
 
-//Sequelize DB Sync
+// Sequelize DB Sync
 // const Sequelize = require('sequelize')
-// const Models = require('./models')
+// const Models = require('../models')
 // Models.sequelize.sync({
 //     force: false,
 //     alter: true,
@@ -43,6 +65,11 @@ app.get("/api/greetings", (req, res, next) => {
     message: "Hello, Student !",
   });
 });
+
+// routers
+const { usersRouters, authGoogleRouters } = require('./routes');
+app.use('/users', usersRouters)
+app.use('/auth', authGoogleRouters)
 
 // ===========================
 
