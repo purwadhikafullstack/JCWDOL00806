@@ -1,13 +1,16 @@
-const jwt = require("jsonwebtoken");
+const jwt = require('jsonwebtoken')
+
+const createToken = (payload) => {
+    return jwt.sign(payload, `${process.env.JWT_TOKEN}`, {
+        expiresIn: '1h'
+    })
+}
+
+const validateToken = (token) => {
+    return jwt.verify(token, `${process.env.JWT_TOKEN}`)
+}
 
 module.exports = {
-  createToken: (payload) => {
-    return jwt.sign(payload, "123abc", {
-      expiresIn: "1h",
-    });
-  },
-
-  validateToken: (token) => {
-    return jwt.verify(token, "123abc");
-  },
-};
+    createToken,
+    validateToken,
+}

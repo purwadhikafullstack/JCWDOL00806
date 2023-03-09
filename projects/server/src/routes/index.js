@@ -1,4 +1,11 @@
+const usersRouters = require('./usersRouters')
+const authFacebookRouter = require('./authFacebookRouter')
 const tenantRouter = require("./tenantRouter");
+const authGoogleRouters = require('./authGoogleRouters')
+
 module.exports = {
-  tenantRouter,
+    usersRouters,
+    authFacebookRouter,
+    tenantRouter,
+    authGoogleRouters
 };
