@@ -24,7 +24,6 @@ app.use(
 );
 
 app.use(express.json());
-app.use(express.json());
 
 app.use(session({
   secret: process.env.SESSION_SECRET_KEY,
