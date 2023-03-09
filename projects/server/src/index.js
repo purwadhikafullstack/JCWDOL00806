@@ -1,11 +1,11 @@
-require("dotenv/config");
-
+require('dotenv').config()
 const express = require("express");
 const session = require("express-session")
 const cors = require("cors");
 const { join } = require("path");
 const passport = require('passport')
 const passportGoogle = require("./auth/passportGoogle")
+const passportFacebook = require('./auth/passportFacebook')
 
 const PORT = process.env.PORT || 8000;
 const app = express();
@@ -17,9 +17,13 @@ const app = express();
 //     ],
 //   })
 // );
+app.use(
+  cors({
+    origin: `http://localhost:3000`,
+  })
+);
 
-app.use(cors())
-
+app.use(express.json());
 app.use(express.json());
 
 app.use(session({
@@ -38,24 +42,24 @@ passport.deserializeUser(function (user, cb) {
   cb(null, user)
 })
 
-//#region API ROUTES
-
 // Sequelize DB Sync
-// const Sequelize = require('sequelize')
-// const Models = require('../models')
-// Models.sequelize.sync({
+
+// const Sequelize = require("sequelize");
+// const Models = require("../models");
+// Models.sequelize
+//   .sync({
 //     force: false,
 //     alter: true,
-//     logging: console.log
-// }).then(function () {
-//     console.log('Database is Synchronized!')
-// }).catch(function (err) {
-//     console.log(err, "Something went wrong with database sync!")
-// })
+//     logging: console.log,
+//   })
+//   .then(function () {
+//     console.log("Database is Synchronized!");
+//   })
+//   .catch(function (err) {
+//     console.log(err, "Something went wrong with database sync!");
+//   });
 
-// ===========================
-// NOTE : Add your routes here
-
+//#region API ROUTES
 app.get("/api", (req, res) => {
   res.send(`Hello, this is my API`);
 });
@@ -67,9 +71,11 @@ app.get("/api/greetings", (req, res, next) => {
 });
 
 // routers
-const { usersRouters, authGoogleRouters } = require('./routes');
+const { usersRouters, authGoogleRouters, authFacebookRouter, tenantRouter } = require('./routes');
+app.use("/tenant", tenantRouter);
 app.use('/users', usersRouters)
-app.use('/auth', authGoogleRouters)
+app.use('/auth/google', authGoogleRouters)
+app.use('/auth/facebook', authFacebookRouter)
 
 // ===========================
 
