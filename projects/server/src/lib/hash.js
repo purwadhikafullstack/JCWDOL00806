@@ -1,23 +1,29 @@
-const bcrypt = require('bcrypt')
-const saltRounds = 10
+const bcrypt = require("bcrypt");
+const saltRounds = 10;
 
+// hashPassword function : Function untuk melakukan hashing pada password yang diterima
 const hashPassword = async (password) => {
-    try {
-        return await bcrypt.hash(password, saltRounds)
-    } catch (error) {
-        return null
-    }
-}
+  try {
+    return await bcrypt.hash(password, saltRounds);
+  } catch (error) {
+    return null;
+  }
+};
 
-const hashMatch = async (passwordLogin, hashedPasswordDatabase) => {
-    try {
-        let match = await bcrypt.compare(passwordLogin, hashedPasswordDatabase)
-        return match
-    } catch (error) {
-        return false
-    }
-}
+// hashMatch function : Function untuk melakukan pengecekan dari password yang diinput dengan password yang ada di database
+const hashMatch = async (passwordFromLogin, hashedPasswordFromDatabase) => {
+  try {
+    let match = await bcrypt.compare(
+      passwordFromLogin,
+      hashedPasswordFromDatabase
+    );
+    return match;
+  } catch (error) {
+    return false;
+  }
+};
 
 module.exports = {
-    hashPassword, hashMatch
-}
+  hashPassword,
+  hashMatch,
+};

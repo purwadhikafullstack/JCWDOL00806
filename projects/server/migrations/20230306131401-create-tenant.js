@@ -22,20 +22,11 @@ module.exports = {
       password: {
         type: Sequelize.STRING
       },
-      provider: {
-        type: Sequelize.STRING
-      },
       is_verified: {
         type: Sequelize.BOOLEAN
       },
       ktp: {
         type: Sequelize.STRING
-      },
-      otp: {
-        type: Sequelize.STRING
-      },
-      otp_count: {
-        type: Sequelize.INTEGER
       },
       createdAt: {
         allowNull: false,

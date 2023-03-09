@@ -1,3 +1,4 @@
+
 import axios from "axios";
 import logo from "./logo.svg";
 import "./App.css";
@@ -5,6 +6,10 @@ import { useEffect, useState } from "react";
 import {Routes, Route, Navigate} from 'react-router-dom'
 import RegisterPage from "./pages/RegisterPage";
 import HomePage from "./pages/HomePage";
+import TenantRegister from "./pages/tenantRegister";
+import TenantLogin from "./pages/tenantLogin";
+import TenantVerify from "./pages/tenantVerify";
+
 function App() {
   const [message, setMessage] = useState("");
 
@@ -22,10 +27,12 @@ function App() {
     <>
       <Routes>
         <Route path="/" element={<HomePage/>} />
-        <Route path="/users/register" element={<RegisterPage/>} />
+        <Route path="/users/register" element={<RegisterPage />} />
+        <Route path="/tenantRegister" element={<TenantRegister />} />
+        <Route path="/tenantLogin" element={<TenantLogin />} />
+        <Route path="/tenantVerify/:username" element={<TenantVerify />} />
     </Routes>
     </>
-    
   );
 }
 

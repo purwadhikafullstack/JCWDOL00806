@@ -7,23 +7,38 @@ const session = require('express-session')
 
 const PORT = process.env.PORT || 8000;
 const app = express();
-app.use(cors())
+// app.use(
+//   cors({
+//     origin: [
+//       process.env.WHITELISTED_DOMAIN &&
+//         process.env.WHITELISTED_DOMAIN.split(","),
+//     ],
+//   })
+// );
+app.use(
+  cors({
+    origin: `http://localhost:3000`,
+  })
+);
 
 app.use(express.json());
 
-//Sequelize DB Sync
+// Sequelize DB Sync
 
-// const Sequelize = require('sequelize')
-// const Models = require('../models')
-// Models.sequelize.sync({
+// const Sequelize = require("sequelize");
+// const Models = require("../models");
+// Models.sequelize
+//   .sync({
 //     force: false,
 //     alter: true,
-//     logging: console.log
-// }).then(function () {
-//     console.log('Database is Synchronized!')
-// }).catch(function (err) {
-//     console.log(err, "Something went wrong with database sync!")
-// })
+//     logging: console.log,
+//   })
+//   .then(function () {
+//     console.log("Database is Synchronized!");
+//   })
+//   .catch(function (err) {
+//     console.log(err, "Something went wrong with database sync!");
+//   });
 
 
 //#region API ROUTES
@@ -50,6 +65,9 @@ app.use('/users', usersRouters)
 
 // ===========================
 // NOTE : Add your routes here
+
+const { tenantRouter } = require("./routes");
+app.use("/tenant", tenantRouter);
 
 app.get("/api", (req, res) => {
   res.send(`Hello, this is my API`);

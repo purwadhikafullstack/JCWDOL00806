@@ -28,11 +28,8 @@ module.exports = (sequelize, DataTypes) => {
     email: DataTypes.STRING,
     phone_number: DataTypes.STRING,
     password: DataTypes.STRING,
-    provider: DataTypes.STRING,
     is_verified: DataTypes.BOOLEAN,
     ktp: DataTypes.STRING,
-    otp: DataTypes.STRING,
-    otp_count: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'tenant',
