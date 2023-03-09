@@ -2,7 +2,8 @@ require('dotenv').config()
 const express = require("express");
 const cors = require("cors");
 const { join } = require("path");
-const passport = require('./auth/passportFacebook')
+const passport = require('passport')
+const passportFacebook = require('./auth/passportFacebook')
 const session = require('express-session')
 
 const PORT = process.env.PORT || 8000;
@@ -60,7 +61,7 @@ passport.deserializeUser(function (user, cb) {
   cb(null, user)
 })
 
-app.use('/auth', authFacebookRouter)
+app.use('/auth/facebook', authFacebookRouter)
 app.use('/users', usersRouters)
 
 // ===========================

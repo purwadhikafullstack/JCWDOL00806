@@ -9,10 +9,12 @@ import HomePage from "./pages/HomePage";
 import TenantRegister from "./pages/tenantRegister";
 import TenantLogin from "./pages/tenantLogin";
 import TenantVerify from "./pages/tenantVerify";
+import ResetPassword from "./pages/ResetPassword";
+import NewPassword from './pages/NewPassword'
 
 function App() {
   const [message, setMessage] = useState("");
-
+  
   useEffect(() => {
     (async () => {
       const { data } = await axios.get(
@@ -28,6 +30,8 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage/>} />
         <Route path="/users/register" element={<RegisterPage />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/new-password/:id" element={<NewPassword/>} />
         <Route path="/tenantRegister" element={<TenantRegister />} />
         <Route path="/tenantLogin" element={<TenantLogin />} />
         <Route path="/tenantVerify/:username" element={<TenantVerify />} />
