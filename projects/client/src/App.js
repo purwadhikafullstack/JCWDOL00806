@@ -2,7 +2,9 @@ import axios from "axios";
 import logo from "./logo.svg";
 import "./App.css";
 import { useEffect, useState } from "react";
-
+import {Routes, Route, Navigate} from 'react-router-dom'
+import RegisterPage from "./pages/RegisterPage";
+import HomePage from "./pages/HomePage";
 function App() {
   const [message, setMessage] = useState("");
 
@@ -14,13 +16,16 @@ function App() {
       setMessage(data?.message || "");
     })();
   }, []);
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        {message}
-      </header>
-    </div>
+    <>
+      <Routes>
+        <Route path="/" element={<HomePage/>} />
+        <Route path="/users/register" element={<RegisterPage/>} />
+    </Routes>
+    </>
+    
   );
 }
 

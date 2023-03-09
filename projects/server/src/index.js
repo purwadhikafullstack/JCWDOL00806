@@ -1,26 +1,20 @@
-require("dotenv/config");
+require('dotenv').config()
 const express = require("express");
 const cors = require("cors");
 const { join } = require("path");
+const passport = require('./auth/passportFacebook')
+const session = require('express-session')
 
 const PORT = process.env.PORT || 8000;
 const app = express();
-app.use(
-  cors({
-    origin: [
-      process.env.WHITELISTED_DOMAIN &&
-        process.env.WHITELISTED_DOMAIN.split(","),
-    ],
-  })
-);
+app.use(cors())
 
 app.use(express.json());
 
-//#region API ROUTES
-
 //Sequelize DB Sync
+
 // const Sequelize = require('sequelize')
-// const Models = require('./models')
+// const Models = require('../models')
 // Models.sequelize.sync({
 //     force: false,
 //     alter: true,
@@ -30,6 +24,29 @@ app.use(express.json());
 // }).catch(function (err) {
 //     console.log(err, "Something went wrong with database sync!")
 // })
+
+
+//#region API ROUTES
+const {usersRouters, authFacebookRouter} = require('./routes')
+app.use(passport.initialize())
+
+app.use(session({
+  secret: process.env.SESSION_SECRET_KEY,
+  resave: false,
+  saveUninitialized:false
+}))
+
+app.use(passport.session())
+
+passport.serializeUser(function (user, cb) {
+  cb(null, user)
+})
+passport.deserializeUser(function (user, cb) {
+  cb(null, user)
+})
+
+app.use('/auth', authFacebookRouter)
+app.use('/users', usersRouters)
 
 // ===========================
 // NOTE : Add your routes here
@@ -72,9 +89,13 @@ const clientPath = "../../client/build";
 app.use(express.static(join(__dirname, clientPath)));
 
 // Serve the HTML page
-app.get("*", (req, res) => {
-  res.sendFile(join(__dirname, clientPath, "index.html"));
-});
+// app.get("*", (req, res) => {
+//   res.sendFile(join(__dirname, clientPath, "index.html"));
+// });
+
+//passport middleware and express-session
+
+
 
 //#endregion
 
