@@ -1,4 +1,3 @@
-
 import axios from "axios";
 import logo from "./logo.svg";
 import "./App.css";
@@ -9,12 +8,13 @@ import HomePage from "./pages/HomePage";
 import TenantRegister from "./pages/tenantRegister";
 import TenantLogin from "./pages/tenantLogin";
 import TenantVerify from "./pages/tenantVerify";
+import Login from './pages/Login'
 import ResetPassword from "./pages/ResetPassword";
 import NewPassword from './pages/NewPassword'
 
 function App() {
   const [message, setMessage] = useState("");
-  
+
   useEffect(() => {
     (async () => {
       const { data } = await axios.get(
@@ -23,8 +23,6 @@ function App() {
       setMessage(data?.message || "");
     })();
   }, []);
-
-
   return (
     <>
       <Routes>
@@ -35,9 +33,10 @@ function App() {
         <Route path="/tenantRegister" element={<TenantRegister />} />
         <Route path="/tenantLogin" element={<TenantLogin />} />
         <Route path="/tenantVerify/:username" element={<TenantVerify />} />
+        <Route path='/users/login' element={<Login />} />
     </Routes>
     </>
   );
 }
 
-export default App;
+export default App

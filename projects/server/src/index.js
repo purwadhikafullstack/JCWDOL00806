@@ -1,10 +1,11 @@
 require('dotenv').config()
 const express = require("express");
+const session = require("express-session")
 const cors = require("cors");
 const { join } = require("path");
 const passport = require('passport')
+const passportGoogle = require("./auth/passportGoogle")
 const passportFacebook = require('./auth/passportFacebook')
-const session = require('express-session')
 
 const PORT = process.env.PORT || 8000;
 const app = express();
@@ -24,6 +25,22 @@ app.use(
 
 app.use(express.json());
 
+app.use(session({
+  secret: process.env.SESSION_SECRET_KEY,
+  resave: false,
+  saveUninitialized: false
+}))
+
+app.use(passport.initialize())
+app.use(passport.session())
+
+passport.serializeUser(function (user, cb) {
+  cb(null, user)
+})
+passport.deserializeUser(function (user, cb) {
+  cb(null, user)
+})
+
 // Sequelize DB Sync
 
 // const Sequelize = require("sequelize");
@@ -41,35 +58,7 @@ app.use(express.json());
 //     console.log(err, "Something went wrong with database sync!");
 //   });
 
-
 //#region API ROUTES
-const {usersRouters, authFacebookRouter} = require('./routes')
-app.use(passport.initialize())
-
-app.use(session({
-  secret: process.env.SESSION_SECRET_KEY,
-  resave: false,
-  saveUninitialized:false
-}))
-
-app.use(passport.session())
-
-passport.serializeUser(function (user, cb) {
-  cb(null, user)
-})
-passport.deserializeUser(function (user, cb) {
-  cb(null, user)
-})
-
-app.use('/auth/facebook', authFacebookRouter)
-app.use('/users', usersRouters)
-
-// ===========================
-// NOTE : Add your routes here
-
-const { tenantRouter } = require("./routes");
-app.use("/tenant", tenantRouter);
-
 app.get("/api", (req, res) => {
   res.send(`Hello, this is my API`);
 });
@@ -79,6 +68,13 @@ app.get("/api/greetings", (req, res, next) => {
     message: "Hello, Student !",
   });
 });
+
+// routers
+const { usersRouters, authGoogleRouters, authFacebookRouter, tenantRouter } = require('./routes');
+app.use("/tenant", tenantRouter);
+app.use('/users', usersRouters)
+app.use('/auth/google', authGoogleRouters)
+app.use('/auth/facebook', authFacebookRouter)
 
 // ===========================
 
@@ -108,13 +104,9 @@ const clientPath = "../../client/build";
 app.use(express.static(join(__dirname, clientPath)));
 
 // Serve the HTML page
-// app.get("*", (req, res) => {
-//   res.sendFile(join(__dirname, clientPath, "index.html"));
-// });
-
-//passport middleware and express-session
-
-
+app.get("*", (req, res) => {
+  res.sendFile(join(__dirname, clientPath, "index.html"));
+});
 
 //#endregion
 
