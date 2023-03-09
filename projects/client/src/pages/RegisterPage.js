@@ -62,7 +62,7 @@ const RegisterPage = () => {
         .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, "Password must have at least 8 characters and must contain at least one uppercase letter, one lowercase letter, one number, and one special character"),
       confirmPassword: Yup.string()
         .required("Please re-enter your password")
-      .oneOf([Yup.ref('password'), null], "Passwords must match")
+        .oneOf([Yup.ref('password'), null], "Passwords must match")
     }),
     onSubmit: (values) => {
       onSubmit(values)
