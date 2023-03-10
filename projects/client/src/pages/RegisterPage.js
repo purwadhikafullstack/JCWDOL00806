@@ -17,13 +17,13 @@ const RegisterPage = () => {
     try {
       //check database if username/email is already used
 
-      let checkUsername = await axios.get(`http://localhost:8000/users/checkusername?username=${values.username}`)
-      let checkEmail = await axios.get(`http://localhost:8000/users/checkemail?email=${values.email}`)
+      let checkUsername = await axios.get(`${process.env.REACT_APP_SERVER_URL}users/checkusername?username=${values.username}`)
+      let checkEmail = await axios.get(`${process.env.REACT_APP_SERVER_URL}users/checkemail?email=${values.email}`)
       
       if(checkUsername.data) throw toast.error('Username is taken')
       else if(checkEmail.data) throw toast.error('Email is already registered')
       else {
-        await axios.post(`http://localhost:8000/users/register`, {
+        await axios.post(`${process.env.REACT_APP_SERVER_URL}users/register`, {
           username: values.username,
           email: values.email,
           phone_number: values.phone_number,
