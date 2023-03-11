@@ -2,11 +2,12 @@ import axios from "axios";
 import { useRef } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { FormControl, FormLabel, Input, Button } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
 
 export default function TenantLogin() {
   let usernameOrEmail = useRef();
   let password = useRef();
-
+  const navigate = useNavigate();
   let loginHandler = async () => {
     try {
       let result = await axios.get(
@@ -14,6 +15,8 @@ export default function TenantLogin() {
       );
       console.log(result);
       toast(result.data.message);
+      localStorage.setItem("myToken", result.data.data.token);
+      navigate(`/tenant/dashboard/${result.data.data.id}`);
     } catch (error) {
       console.log(error);
       toast(error.response.data.message);

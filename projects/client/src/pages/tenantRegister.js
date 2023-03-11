@@ -1,15 +1,16 @@
 import axios from "axios";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { FormControl, FormLabel, Input, Button } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 
 export default function TenantRegister() {
-  const navigate = useNavigate();
   let username = useRef();
   let email = useRef();
   let phoneNumber = useRef();
   let password = useRef();
+  const [images, setImages] = useState(null);
+  const navigate = useNavigate();
 
   let registerHandler = async () => {
     try {
@@ -24,9 +25,20 @@ export default function TenantRegister() {
         "http://localhost:8000/tenant/register",
         input
       );
+      let bodyFormData = new FormData();
+      bodyFormData.append("images", images);
+      await axios.post(
+        `http://localhost:8000/tenant/verify?username=${username.current.value}`,
+        bodyFormData,
+        {
+          headers: {
+            "Content-Type": "form-data",
+          },
+        }
+      );
       console.log(result);
       toast(result.data.message);
-      navigate(`/tenantVerify/${username.current.value}`);
+      navigate("/tenant/login");
     } catch (error) {
       console.log(error);
       toast(error.message);
@@ -46,6 +58,12 @@ export default function TenantRegister() {
           <Input type="number" ref={phoneNumber} />
           <FormLabel>Password</FormLabel>
           <Input type="password" ref={password} />
+          <FormLabel>KTP</FormLabel>
+          <Input
+            type="file"
+            onChange={(e) => setImages(e.target.files[0])}
+            accept="image/png, image/jpeg"
+          />
           <Button
             mt={4}
             colorScheme="teal"

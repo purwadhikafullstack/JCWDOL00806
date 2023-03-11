@@ -105,21 +105,38 @@ module.exports = {
         message: "Login Success",
         data: {
           token: createToken({ id: findUsernameOrEmail.dataValues.id }),
+          id: findUsernameOrEmail.dataValues.id,
         },
       });
     } catch (error) {}
   },
-
+  checkTenant: async (req, res) => {
+    try {
+      const userId = req.params.id;
+      const authorizedUserId = req.dataToken.id;
+      console.log(userId);
+      console.log(authorizedUserId);
+      if (userId !== authorizedUserId) {
+        return res.status(403).json({
+          message:
+            "Forbidden. You do not have permission to access this resource.",
+        });
+      }
+      res.status(200).send({
+        isError: false,
+        message: "Verify success",
+        data: null,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  },
   getCategory: async (req, res) => {
     try {
-      let { username } = req.query;
-      let getTenantId = await tenant.findOne({
-        attributes: ["id"],
-        where: { username: username },
-      });
+      let { id } = req.query;
       let getData = await propertyCategory.findAll({
         where: {
-          tenant_id: getTenantId.dataValues.id,
+          tenant_id: id,
         },
       });
       let data = [];
@@ -138,17 +155,14 @@ module.exports = {
     const t = await sequelize.transaction();
     try {
       let { type, city } = req.body;
-      let { username } = req.query;
-      let getTenantId = await tenant.findOne({
-        attributes: ["id"],
-        where: { username: username },
-      });
+      let { id } = req.query;
+
       let findExisting = await propertyCategory.findOne({
         where: {
           [Op.and]: {
             type,
             city,
-            tenant_id: getTenantId.dataValues.id,
+            tenant_id: id,
           },
         },
       });
@@ -162,7 +176,7 @@ module.exports = {
         await propertyCategory.create({
           type,
           city,
-          tenant_id: getTenantId.dataValues.id,
+          tenant_id: id,
         });
         res.status(200).send({
           isError: false,
@@ -180,11 +194,8 @@ module.exports = {
     const t = await sequelize.transaction();
     try {
       let { newType, newCity } = req.body;
-      let { type, city, username } = req.query;
-      let getTenantId = await tenant.findOne({
-        attributes: ["id"],
-        where: { username: username },
-      });
+      let { type, city, id } = req.query;
+
       let findExisting = await propertyCategory.update(
         {
           type: newType,
@@ -195,7 +206,7 @@ module.exports = {
             [Op.and]: {
               type,
               city,
-              tenant_id: getTenantId.dataValues.id,
+              tenant_id: id,
             },
           },
         }
