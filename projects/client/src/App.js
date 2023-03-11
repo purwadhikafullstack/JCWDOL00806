@@ -7,7 +7,6 @@ import RegisterPage from "./pages/RegisterPage";
 import HomePage from "./pages/HomePage";
 import TenantRegister from "./pages/tenantRegister";
 import TenantLogin from "./pages/tenantLogin";
-import TenantVerify from "./pages/tenantVerify";
 import Login from "./pages/Login";
 import ResetPassword from "./pages/ResetPassword";
 import NewPassword from "./pages/NewPassword";
@@ -33,9 +32,8 @@ function App() {
         <Route path="/new-password/:id" element={<NewPassword />} />
         <Route path="/tenant/register" element={<TenantRegister />} />
         <Route path="/tenant/login" element={<TenantLogin />} />
-        <Route path="/tenant/verify/:username" element={<TenantVerify />} />
         <Route path="/users/login" element={<Login />} />
-        <Route path="/tenant/dashboard" element={<TenantDashboard />} />
+        <Route path="/tenant/dashboard/:id" element={<TenantDashboard />} />
       </Routes>
     </>
   );
