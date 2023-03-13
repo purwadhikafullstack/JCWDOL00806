@@ -13,9 +13,10 @@ import {
   Button,
   Progress,
 } from "@chakra-ui/react";
+import { useParams } from "react-router-dom";
 
 export default function TenantDashboard() {
-  const [loggedInUser, setLoggedInUser] = useState();
+  const [verified, setVerified] = useState(false);
   const [userProperty, setUserProperty] = useState([]);
   const [isAdding, setIsAdding] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -23,6 +24,7 @@ export default function TenantDashboard() {
   const [city, setCity] = useState("");
   const [newType, setNewType] = useState("");
   const [newCity, setNewCity] = useState("");
+  const { id } = useParams();
 
   const refresh = () => {
     setTimeout(() => {
@@ -30,10 +32,30 @@ export default function TenantDashboard() {
     }, 700);
   };
 
+  let onOpen = async () => {
+    try {
+      let token = localStorage.getItem("myToken".replace(/"/g, ""));
+      console.log(token);
+      let response = await axios.post(
+        `http://localhost:8000/tenant/checkLogin/${id}`,
+        null,
+        {
+          headers: {
+            authorization: token,
+          },
+        }
+      );
+      if (response.data.message == "Verify success") {
+        setVerified(true);
+      }
+    } catch (error) {
+      toast(error.response.data.message);
+    }
+  };
   let onGetData = async () => {
     try {
       let data = await axios.get(
-        `http://localhost:8000/tenant/category?username=tenanttest`
+        `http://localhost:8000/tenant/category?id=${id}`
       );
       setUserProperty(data.data.data);
     } catch (error) {
@@ -59,10 +81,11 @@ export default function TenantDashboard() {
     try {
       let input = { newType, newCity };
       let response = await axios.patch(
-        `http://localhost:8000/tenant/category?username=tenanttest&type=${type}&city=${city}`,
+        `http://localhost:8000/tenant/category?id=${id}&type=${type}&city=${city}`,
         input
       );
       toast(response.data.message);
+      refresh();
     } catch (error) {
       toast(error.response.data.message);
     }
@@ -71,11 +94,12 @@ export default function TenantDashboard() {
     try {
       let input = { type, city };
       let response = await axios.post(
-        `http://localhost:8000/tenant/category?username=tenanttest`,
+        `http://localhost:8000/tenant/category?id=${id}`,
         input
       );
       console.log(response);
       toast(response.data.message);
+      refresh();
     } catch (error) {
       toast(error.response.data.message);
     }
@@ -91,8 +115,13 @@ export default function TenantDashboard() {
     setIsEditing(false);
   };
   useEffect(() => {
-    onGetData();
+    onOpen();
   }, []);
+  useEffect(() => {
+    if (verified) {
+      onGetData();
+    }
+  }, [verified]);
   return (
     <>
       <Toaster />

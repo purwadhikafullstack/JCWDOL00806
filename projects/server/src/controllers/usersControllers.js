@@ -195,7 +195,7 @@ module.exports = {
     onSendOTP: async (req, res) => {
         try {
             // get data from client
-            let { id } = req.dataDecode
+            let { id } = req.dataToken
 
             // get users data
             let checkUsers = await users.findOne({ where: { id } })
@@ -268,7 +268,7 @@ module.exports = {
     onVerifyAccount: async (req, res) => {
         try {
             // get data from client
-            let { id } = req.dataDecode
+            let { id } = req.dataToken
             let { otp_number } = req.body
 
             // get users data
@@ -319,7 +319,7 @@ module.exports = {
     onGetUserData: async (req, res) => {
         try {
             // get data from client
-            let { id } = req.dataDecode
+            let { id } = req.dataToken
 
             // get users data
             let checkUsers = await users.findOne({ where: { id } })

@@ -1,31 +1,29 @@
-const jwt = require('jsonwebtoken')
+const { validateToken } = require("../lib/jwt");
 
-const jwtVerify = (req, res, next) => {
-    // Get token from headers
-    const token = req.headers.authorization
+module.exports = {
+  verifyToken: (req, res, next) => {
+    let token = req.headers.authorization;
 
-    if (!token)
-        return res.status(406).send({
-            error: true,
-            message: 'Token Not Found!',
-            data: null
-        })
+    if (!token) {
+      return res.status(401).send({
+        isError: true,
+        message: "Token not found",
+        isData: false,
+        data: null,
+      });
+    }
 
-    jwt.verify(token, `${process.env.JWT_TOKEN}`, (err, data) => {
-        try {
-            if (err) throw err
-
-            req.dataDecode = data
-
-            next()
-        } catch (error) {
-            res.status(500).send({
-                isError: true,
-                message: error.message,
-                data: null
-            })
-        }
-    })
-}
-
-module.exports = jwtVerify
+    try {
+      const validateTokenResult = validateToken(token);
+      req.dataToken = validateTokenResult;
+      next();
+    } catch (error) {
+      console.log(error.message);
+      res.status(401).send({
+        isError: true,
+        message: error.message,
+        data: null,
+      });
+    }
+  },
+};
