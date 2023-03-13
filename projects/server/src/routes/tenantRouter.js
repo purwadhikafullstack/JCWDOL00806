@@ -7,6 +7,9 @@ const uploadImages = require("../middleware/upload");
 const { verifyToken } = require("../middleware/decodeToken");
 
 Router.post("/register", tenantController.register);
+Router.get("/checkUsername", tenantController.checkUsername);
+Router.get("/checkEmail", tenantController.checkEmail);
+Router.get("/checkPhone", tenantController.checkPhone);
 Router.post("/verify", uploadImages, tenantController.verifyTenant);
 Router.get("/login", tenantController.login);
 Router.get("/category", tenantController.getCategory);
