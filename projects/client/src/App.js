@@ -12,6 +12,7 @@ import Login from "./pages/Login";
 import ResetPassword from "./pages/ResetPassword";
 import NewPassword from "./pages/NewPassword";
 import TenantDashboard from "./pages/tenantDashboard";
+import UserVerify from "./pages/UserVerify";
 
 function App() {
   const [message, setMessage] = useState("");
@@ -36,6 +37,7 @@ function App() {
         <Route path="/tenant/verify/:username" element={<TenantVerify />} />
         <Route path="/users/login" element={<Login />} />
         <Route path="/tenant/dashboard" element={<TenantDashboard />} />
+        <Route path="/users/verify" element={<UserVerify />} />
       </Routes>
     </>
   );

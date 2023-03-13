@@ -37,6 +37,9 @@ module.exports = {
       otp_count: {
         type: Sequelize.INTEGER
       },
+      otp_generate: {
+        type: Sequelize.DATE
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

@@ -39,7 +39,8 @@ module.exports = (sequelize, DataTypes) => {
     provider_id: DataTypes.STRING,
     is_verified: DataTypes.BOOLEAN,
     otp: DataTypes.STRING,
-    otp_count: DataTypes.INTEGER
+    otp_count: DataTypes.INTEGER,
+    otp_generate: DataTypes.DATE
   }, {
     sequelize,
     modelName: 'users',
