@@ -1,7 +1,13 @@
 import axios from "axios";
 import { useRef, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import { FormControl, FormLabel, Input, Button } from "@chakra-ui/react";
+import {
+  FormControl,
+  FormLabel,
+  Input,
+  Button,
+  FormErrorMessage,
+} from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 
 export default function TenantRegister() {
@@ -20,25 +26,40 @@ export default function TenantRegister() {
         phone_number: phoneNumber.current.value,
         password: password.current.value,
       };
-      console.log(input);
-      let result = await axios.post(
-        "http://localhost:8000/tenant/register",
-        input
+      let checkUsername = await axios.get(
+        `${process.env.REACT_APP_SERVER_URL}tenant/checkUsername?username=${username.current.value}`
       );
-      let bodyFormData = new FormData();
-      bodyFormData.append("images", images);
-      await axios.post(
-        `http://localhost:8000/tenant/verify?username=${username.current.value}`,
-        bodyFormData,
-        {
-          headers: {
-            "Content-Type": "form-data",
-          },
-        }
+      let checkEmail = await axios.get(
+        `${process.env.REACT_APP_SERVER_URL}tenant/checkEmail?email=${email.current.value}`
       );
-      console.log(result);
-      toast(result.data.message);
-      navigate("/tenant/login");
+      let checkPhone = await axios.get(
+        `${process.env.REACT_APP_SERVER_URL}tenant/checkPhone?phone_number=${phoneNumber.current.value}`
+      );
+      if (checkUsername.data) throw toast.error("Username is taken");
+      else if (checkEmail.data)
+        throw toast.error("Email is already registered");
+      else if (checkPhone.data)
+        throw toast.error("Phone number is already registered");
+      else {
+        let result = await axios.post(
+          "http://localhost:8000/tenant/register",
+          input
+        );
+        let bodyFormData = new FormData();
+        bodyFormData.append("images", images);
+        await axios.post(
+          `http://localhost:8000/tenant/verify?username=${username.current.value}`,
+          bodyFormData,
+          {
+            headers: {
+              "Content-Type": "form-data",
+            },
+          }
+        );
+        console.log(result);
+        toast(result.data.message);
+        navigate("/tenant/login");
+      }
     } catch (error) {
       console.log(error);
       toast(error.message);
@@ -49,7 +70,7 @@ export default function TenantRegister() {
     <>
       <div className="text-center">
         <h1 className="text-lg">Register Tenant</h1>
-        <FormControl>
+        <FormControl isRequired>
           <FormLabel>Username</FormLabel>
           <Input type="text" ref={username} />
           <FormLabel>Email address</FormLabel>

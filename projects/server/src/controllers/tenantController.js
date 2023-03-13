@@ -19,6 +19,43 @@ module.exports = {
     const t = await sequelize.transaction();
     try {
       let { username, email, phone_number, password } = req.body;
+      let checkUsername = await tenant.findAll({
+        where: {
+          username,
+        },
+      });
+      let checkEmail = await tenant.findAll({
+        where: {
+          email,
+        },
+      });
+      let checkPhone = await tenant.findAll({
+        where: {
+          phone_number,
+        },
+      });
+
+      if (checkUsername.length != 0) {
+        res.status(201).send({
+          isError: false,
+          message: "Username already exists",
+          data: null,
+        });
+      }
+      if (checkEmail.length != 0) {
+        res.status(201).send({
+          isError: false,
+          message: "Email already used",
+          data: null,
+        });
+      }
+      if (checkPhone.length != 0) {
+        res.status(201).send({
+          isError: false,
+          message: "Phone number already used",
+          data: null,
+        });
+      }
       await tenant.create({
         username,
         email,
@@ -41,7 +78,27 @@ module.exports = {
       });
     }
   },
-
+  checkUsername: async (req, res) => {
+    let { username } = req.query;
+    let getData = await tenant.findAll({
+      where: { username },
+    });
+    res.status(201).send(Boolean(getData.length));
+  },
+  checkEmail: async (req, res) => {
+    let { email } = req.query;
+    let getData = await tenant.findAll({
+      where: { email },
+    });
+    res.status(201).send(Boolean(getData.length));
+  },
+  checkPhone: async (req, res) => {
+    let { phone_number } = req.query;
+    let getData = await tenant.findAll({
+      where: { phone_number },
+    });
+    res.status(201).send(Boolean(getData.length));
+  },
   verifyTenant: async (req, res) => {
     const t = await sequelize.transaction();
     try {
