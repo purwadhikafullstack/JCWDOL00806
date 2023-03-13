@@ -11,11 +11,13 @@ const Login = () => {
 
     const onLogin = async (value) => {
         try {
-            let response = await axios.get(`http://localhost:5000/users/login?email=${value.email}&password=${value.password}`)
+            let response = await axios.get(`http://localhost:8000/users/login?email=${value.email}&password=${value.password}`)
 
             toast("login success")
             localStorage.setItem('myToken', response.data.data.token)
-            navigate('/')
+            setTimeout(() => {
+                navigate('/')
+            }, 1000)
         } catch (error) {
             toast(error.response.data.message)
         }

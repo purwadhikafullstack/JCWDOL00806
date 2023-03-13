@@ -23,25 +23,25 @@ const RegisterPage = () => {
       if(checkUsername.data) throw toast.error('Username is taken')
       else if(checkEmail.data) throw toast.error('Email is already registered')
       else {
-        await axios.post(`${process.env.REACT_APP_SERVER_URL}users/register`, {
+        let response = await axios.post(`${process.env.REACT_APP_SERVER_URL}users/register`, {
           username: values.username,
           email: values.email,
           phone_number: values.phone_number,
           password: values.password,
           provider: 'website'
         })
+
+        localStorage.setItem('myToken', response.data.data.token)
+
         toast.success('Register Successfull')
         setTimeout(() => {
-          navigate('/')
+          navigate('/users/verify')
         }, 1000)
       }
     } catch (error) {
       console.log(error)
     }
   }
-
-
-
 
   const formik = useFormik({
     initialValues: {
