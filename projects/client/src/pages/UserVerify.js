@@ -76,8 +76,10 @@ const UserVerify = () => {
             // get user token in local storage
             let token = localStorage.getItem('myToken')
 
+            if (!token) throw { message: 'Token is missing' }
+
             // get users data
-            let response = await axios.get(`http://localhost:8000/users/verify-data`, {
+            let response = await axios.get(`http://localhost:8000/users/user-data`, {
                 headers: {
                     'Authorization': token
                 }
@@ -107,7 +109,6 @@ const UserVerify = () => {
                 }, 2000)
             }
 
-            
             navigate('/users/login')
 
             console.log(error.response.data.message)

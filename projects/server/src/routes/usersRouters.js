@@ -14,7 +14,8 @@ Router.get('/reset-confirm', usersControllers.resetConfirm)
 Router.patch('/change-password/:id', usersControllers.newPassword)
 Router.post('/verify-otp', verifyToken, usersControllers.onVerifyAccount)
 Router.get('/send-otp', verifyToken, usersControllers.onSendOTP)
-Router.get('/verify-data', verifyToken, usersControllers.onGetUserData)
+Router.get('/user-data', verifyToken, usersControllers.onGetUserData)
 Router.post('/user-profile', verifyToken, usersControllers.userProfile)
+Router.patch('/change-new-password', verifyToken, usersControllers.changeNewPassword)
 
 module.exports = Router
