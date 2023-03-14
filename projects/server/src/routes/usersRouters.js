@@ -15,5 +15,6 @@ Router.patch('/change-password/:id', usersControllers.newPassword)
 Router.post('/verify-otp', verifyToken, usersControllers.onVerifyAccount)
 Router.get('/send-otp', verifyToken, usersControllers.onSendOTP)
 Router.get('/verify-data', verifyToken, usersControllers.onGetUserData)
+Router.post('/user-profile', verifyToken, usersControllers.userProfile)
 
 module.exports = Router

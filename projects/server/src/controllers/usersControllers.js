@@ -4,6 +4,7 @@ const {hashPassword,hashMatch} = require('../lib/hash')
 const { createToken } = require('../lib/jwt')
 const db = require('../../models/index')
 const users = db.users
+const user_details = db.user_details
 const fs = require('fs').promises
 const handlebars = require('handlebars')
 const transporter = require('../helpers/transporter')
@@ -348,5 +349,24 @@ module.exports = {
                 data: null
             })
         }
+    },
+    userProfile: async (req, res) => {
+        try {
+            const users_id = req.dataToken.id
+        let getData = await user_details.findAll({
+            where: {users_id : users_id}
+        })
+        res.status(201).send({
+            isError: false,
+            message: 'Data Acquired',
+            data: getData
+        })
+        } catch (error) {
+            res.status(404).send({
+                isError: true,
+                message: error
+            })
+        }
+        
     }
 }
