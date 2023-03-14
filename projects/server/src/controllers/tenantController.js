@@ -12,7 +12,6 @@ const propertyCategory = db.property_category;
 //Import hash & jwt
 const { hashPassword, hashMatch } = require("../lib/hash");
 const { createToken } = require("../lib/jwt");
-const { get } = require("http");
 
 module.exports = {
   register: async (req, res) => {
