@@ -42,7 +42,7 @@ const RegisterPage = () => {
       console.log(error)
     }
   }
-
+  
   const formik = useFormik({
     initialValues: {
       username: "",

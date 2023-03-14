@@ -17,5 +17,9 @@ Router.get('/send-otp', verifyToken, usersControllers.onSendOTP)
 Router.get('/user-data', verifyToken, usersControllers.onGetUserData)
 Router.post('/user-profile', verifyToken, usersControllers.userProfile)
 Router.patch('/change-new-password', verifyToken, usersControllers.changeNewPassword)
+Router.post('/new-profile/:id', usersControllers.newProfile)
+Router.patch('/edit-profile/:id', usersControllers.editProfile)
+Router.post('/getuser', verifyToken, usersControllers.getUser)
+Router.patch('/change-email/:id', usersControllers.changeEmail)
 
 module.exports = Router
