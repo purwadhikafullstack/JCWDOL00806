@@ -340,11 +340,7 @@ module.exports = {
             return res.status(200).send({
                 isError: false,
                 message: "Get Users Data Successful",
-                data: {
-                    email: checkUsers.dataValues.email,
-                    is_verified: checkUsers.dataValues.is_verified,
-                    otp_count: checkUsers.dataValues.otp_count
-                }
+                data: checkUsers
             })
         } catch (error) {
             return res.status(400).send({
@@ -373,6 +369,60 @@ module.exports = {
             })
         }
         
+    },
+    changeNewPassword: async (req, res) => {
+        try {
+            // get data from client
+            let { id } = req.dataToken
+            let { old_password, new_password, confirm_password } = req.body
+
+            // check new password and confirm password is same or not
+            if (new_password !== confirm_password)
+                return res.status(400).send({
+                    isError: true,
+                    message: "New Password Not Match",
+                    data: null
+                })
+
+            // get users data
+            let checkUsers = await users.findOne({ where: { id } })
+
+            // check if users exist or not
+            if (checkUsers === null)
+                return res.status(400).send({
+                    isError: true,
+                    message: "Users Not Exist",
+                    data: null
+                })
+
+            // validate hash password
+            let checkPassword = await hashMatch(old_password, checkUsers.dataValues.password)
+            if (!checkPassword)
+                return res.status(400).send({
+                    isError: true,
+                    message: "Old Password Not Match",
+                    data: null
+                })
+
+            // change new password
+            await users.update({
+                password: await hashPassword(new_password)
+            }, { 
+                where: { id } 
+            })
+
+            return res.status(200).send({
+                isError: false,
+                message: "Change New Password Successful",
+                data: null
+            })
+        } catch (error) {
+            return res.status(400).send({
+                isError: true,
+                message: error.message,
+                data: null
+            })
+        }
     },
     newProfile: async (req, res) => {
         const t = await sequelize.transaction()
