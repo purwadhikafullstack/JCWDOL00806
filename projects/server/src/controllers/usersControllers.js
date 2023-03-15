@@ -12,6 +12,7 @@ const { genereateOTP, checkOtpExpired } = require('../helpers/otp')
 
 module.exports = {
     register: async (req, res) => {
+        const t = await sequelize.transaction()
         try {
             let {username, email, phone_number, password, provider} = req.body
             await users.create({
@@ -22,18 +23,20 @@ module.exports = {
                 provider,
                 is_verified: false,
                 otp_count: 0,
-            })
+            }, {transaction : t})
+            
+            t.commit()
 
             // get users data
             let checkUsers = await users.findOne({ where: { 
                 email: email,
                 provider: "website"
-            } })
+            } })     
 
             // create token
             let token = createToken({ id: checkUsers.dataValues.id })
 
-            res.status(201).send({
+            return res.status(201).send({
                 isError: false,
                 message: "Register Success",
                 data: {
@@ -42,12 +45,13 @@ module.exports = {
             })
 
         } catch (error) {
-            res.status(404).send({
+            t.rollback()
+            console.log(error)
+            return res.status(404).send({
                 isError: true,
                 message: error,
                 data: null
             })
-            console.log(error)
         }
     },
     checkUsername: async (req, res) => {
@@ -336,11 +340,7 @@ module.exports = {
             return res.status(200).send({
                 isError: false,
                 message: "Get Users Data Successful",
-                data: {
-                    email: checkUsers.dataValues.email,
-                    is_verified: checkUsers.dataValues.is_verified,
-                    otp_count: checkUsers.dataValues.otp_count
-                }
+                data: checkUsers
             })
         } catch (error) {
             return res.status(400).send({
@@ -356,17 +356,168 @@ module.exports = {
         let getData = await user_details.findAll({
             where: {users_id : users_id}
         })
-        res.status(201).send({
+        return res.status(201).send({
             isError: false,
             message: 'Data Acquired',
-            data: getData
+            data: getData,
+            users_id
         })
         } catch (error) {
-            res.status(404).send({
+        return res.status(404).send({
                 isError: true,
                 message: error
             })
         }
         
+    },
+    changeNewPassword: async (req, res) => {
+        try {
+            // get data from client
+            let { id } = req.dataToken
+            let { old_password, new_password, confirm_password } = req.body
+
+            // check new password and confirm password is same or not
+            if (new_password !== confirm_password)
+                return res.status(400).send({
+                    isError: true,
+                    message: "New Password Not Match",
+                    data: null
+                })
+
+            // get users data
+            let checkUsers = await users.findOne({ where: { id } })
+
+            // check if users exist or not
+            if (checkUsers === null)
+                return res.status(400).send({
+                    isError: true,
+                    message: "Users Not Exist",
+                    data: null
+                })
+
+            // validate hash password
+            let checkPassword = await hashMatch(old_password, checkUsers.dataValues.password)
+            if (!checkPassword)
+                return res.status(400).send({
+                    isError: true,
+                    message: "Old Password Not Match",
+                    data: null
+                })
+
+            // change new password
+            await users.update({
+                password: await hashPassword(new_password)
+            }, { 
+                where: { id } 
+            })
+
+            return res.status(200).send({
+                isError: false,
+                message: "Change New Password Successful",
+                data: null
+            })
+        } catch (error) {
+            return res.status(400).send({
+                isError: true,
+                message: error.message,
+                data: null
+            })
+        }
+    },
+    newProfile: async (req, res) => {
+        const t = await sequelize.transaction()
+        try {
+            let newData = req.body
+            let id = req.params.id
+
+            await user_details.create({
+                full_name: newData.full_name,
+                gender: newData.gender,
+                birthdate: newData.birthdate,
+                users_id : id
+            }, {transaction : t})
+            t.commit()
+            return res.status(201).send({
+                isError: false,
+                message: 'Profile created successfully'
+            })
+            
+        } catch (error) {
+            t.rollback()
+            return res.status(404).send({
+                isError: true,
+                message: error
+            })
+        }
+    },
+    editProfile: async (req, res) => {
+        const t = await sequelize.transaction()
+        try {
+            let newData = req.body
+            let id = req.params.id
+    
+            await user_details.update({
+                full_name: newData.full_name,
+                gender: newData.gender,
+                birthdate: newData.birthdate,
+            }, {where: {users_id : id}}, {transaction : t})
+            t.commit()
+            return res.status(201).send({
+                isError: false,
+                message: 'Profile created successfully'
+            })
+            
+        } catch (error) {
+            t.rollback()
+            console.log(error)
+            return res.status(404).send({
+                isError: true,
+                message: error
+            })
+        }
+    },
+    changeEmail: async (req, res) => {
+        const t = await sequelize.transaction()
+        try {
+            let {email} = req.body
+            let { id } = req.params
+            console.log(email)
+            await users.update({
+                email
+            }, { where: { id } }, { transaction: t })
+            
+            t.commit()
+            return res.status(201).send({
+                isError: false,
+                message: "Change Email Success"
+            })
+        } catch (error) {
+            t.rollback()
+            return res.status(404).send({
+                isError: true,
+                message: error
+            })
+        }
+    },
+    getUser: async (req, res) => {
+        try {
+            const id  = req.dataToken.id
+            console.log(id)
+            let getData = await users.findAll({
+                where: {id}
+            })
+            return res.status(201).send({
+                isError: false,
+                message: "Data Acquired",
+                data: getData,
+                id
+            })
+        } catch (error) {
+            console.log(error)
+            return res.status(404).send({
+                isError: true,
+                message: error
+            })
+        }
     }
 }

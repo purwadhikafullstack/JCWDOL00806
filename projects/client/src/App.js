@@ -13,6 +13,8 @@ import NewPassword from "./pages/NewPassword";
 import TenantDashboard from "./pages/tenantDashboard";
 import UserVerify from "./pages/UserVerify";
 import EditUserDetail from "./pages/EditUserDetail";
+import UserChangePassword from "./pages/UserChangePassword";
+import ChangeEmail from "./pages/ChangeEmail";
 import TenantProperty from "./pages/TenantProperty";
 
 function App() {
@@ -40,6 +42,8 @@ function App() {
         <Route path="/tenant/property/:userId" element={<TenantProperty />} />
         <Route path="/users/verify" element={<UserVerify />} />
         <Route path="/users/edit-detail" element={<EditUserDetail />} />
+        <Route path="/users/change-password" element={<UserChangePassword />} />
+        <Route path="/users/change-email" element={<ChangeEmail />} />
       </Routes>
     </>
   );
