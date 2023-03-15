@@ -13,40 +13,34 @@ import {
   Button,
   Progress,
 } from "@chakra-ui/react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
-export default function TenantDashboard() {
+export default function TenantProperty() {
+  const { userId } = useParams();
   const [verified, setVerified] = useState(false);
   const [userProperty, setUserProperty] = useState([]);
+  const [type, setType] = useState([]);
   const [isAdding, setIsAdding] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [type, setType] = useState("");
-  const [city, setCity] = useState("");
-  const [newType, setNewType] = useState("");
-  const [newCity, setNewCity] = useState("");
-  const { id } = useParams();
-  const navigate = useNavigate();
+  const [name, setName] = useState("");
+  const [address, setAddress] = useState("");
+  const [description, setDescription] = useState("");
+  const [newName, setNewName] = useState("");
+  const [newAddress, setNewAddress] = useState("");
+  const [newDescription, setNewDescription] = useState("");
+  const [images, setImages] = useState(null);
 
-  const refresh = () => {
-    setTimeout(() => {
-      window.location.reload();
-    }, 700);
-  };
-
-  let toProperties = async (value) => {
-    try {
-      navigate(`/tenant/property/${id}?id=${value.id}`);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const params = new Proxy(new URLSearchParams(window.location.search), {
+    get: (searchParams, prop) => searchParams.get(prop),
+  });
+  let id = params.id;
 
   let onOpen = async () => {
     try {
       let token = localStorage.getItem("myToken".replace(/"/g, ""));
       console.log(token);
       let response = await axios.post(
-        `http://localhost:8000/tenant/checkLogin/${id}`,
+        `http://localhost:8000/tenant/checkLogin/${userId}`,
         null,
         {
           headers: {
@@ -61,12 +55,24 @@ export default function TenantDashboard() {
       toast(error.response.data.message);
     }
   };
+
   let onGetData = async () => {
     try {
       let data = await axios.get(
-        `http://localhost:8000/tenant/category?id=${id}`
+        `http://localhost:8000/property/getAllProperty?id=${id}`
       );
       setUserProperty(data.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  let getType = async () => {
+    try {
+      let data = await axios.get(
+        `http://localhost:8000/property/getType?id=${id}`
+      );
+      setType(data.data.data);
     } catch (error) {
       console.log(error);
     }
@@ -75,47 +81,48 @@ export default function TenantDashboard() {
   function capitalize(name) {
     return name.replace(/\b\w/g, (x) => x.toUpperCase());
   }
-  let deleteHandler = async (id) => {
+
+  let deleteHandler = async (data) => {
     try {
       let response = await axios.delete(
-        `http://localhost:8000/tenant/category?id=${id}`
+        `http://localhost:8000/property/deleteProperty?id=${data}`
       );
       toast(response.data.message);
-      refresh();
+      onGetData();
     } catch (error) {
       toast(error.response.data.message);
     }
   };
+
   let editHandler = async () => {
     try {
-      let input = { newType, newCity };
+      let input = { newName, newAddress, newDescription };
+      let bodyFormData = new FormData();
+      bodyFormData.append("images", images);
+      await axios.patch(
+        `http://localhost:8000/property/propertyImageUpload?id=${id}&name=${name}&address=${address}`,
+        bodyFormData,
+        {
+          headers: {
+            "Content-Type": "form-data",
+          },
+        }
+      );
       let response = await axios.patch(
-        `http://localhost:8000/tenant/category?id=${id}&type=${type}&city=${city}`,
+        `http://localhost:8000/property/updateProperty?id=${id}&name=${name}&address=${address}&description=${description}`,
         input
       );
       toast(response.data.message);
-      refresh();
-    } catch (error) {
-      toast(error.response.data.message);
-    }
-  };
-  let addHandler = async () => {
-    try {
-      let input = { type, city };
-      let response = await axios.post(
-        `http://localhost:8000/tenant/category?id=${id}`,
-        input
-      );
-      console.log(response);
-      toast(response.data.message);
-      refresh();
+      onGetData();
+      setIsEditing(false);
     } catch (error) {
       toast(error.response.data.message);
     }
   };
   let onSubmitEdit = async (value) => {
-    setType(value.type);
-    setCity(value.city);
+    setName(value.name);
+    setAddress(value.address);
+    setDescription(value.description);
     setIsAdding(false);
     setIsEditing(true);
   };
@@ -123,35 +130,71 @@ export default function TenantDashboard() {
     setIsAdding(true);
     setIsEditing(false);
   };
+
+  let addHandler = async () => {
+    try {
+      let input = { name, address, description };
+      let response = await axios.post(
+        `http://localhost:8000/property/createProperty?id=${id}`,
+        input
+      );
+      let bodyFormData = new FormData();
+      bodyFormData.append("images", images);
+      await axios.post(
+        `http://localhost:8000/property/propertyImageUpload?id=${id}&name=${name}&address=${address}`,
+        bodyFormData,
+        {
+          headers: {
+            "Content-Type": "form-data",
+          },
+        }
+      );
+      toast(response.data.message);
+      onGetData();
+      setIsAdding(false);
+    } catch (error) {
+      toast(error.response.data.message);
+    }
+  };
+
   useEffect(() => {
     onOpen();
   }, []);
   useEffect(() => {
     if (verified) {
       onGetData();
+      getType();
     }
   }, [verified]);
   return (
     <>
       <Toaster />
-      <div>Dashboard</div>
+      <div>
+        {type.type} in {type.city}
+      </div>
       <TableContainer>
         <Table variant="simple">
-          <TableCaption>Your Property Categories</TableCaption>
+          <TableCaption>Your Properties in {type.city}</TableCaption>
           <Thead>
             <Tr>
-              <Th>Property Type</Th>
-              <Th>Property City</Th>
+              <Th>Property Name</Th>
+              <Th>Property Address</Th>
+              <Th>Property Image</Th>
+              <Th>Property Description</Th>
               <Th>Actions</Th>
-              <Th>Properties</Th>
+              <Th>Room List</Th>
             </Tr>
           </Thead>
           <Tbody>
             {userProperty?.map((value, i) => {
               return (
                 <Tr key={i}>
-                  <Td>{capitalize(value.type)}</Td>
-                  <Td>{capitalize(value.city)}</Td>
+                  <Td>{capitalize(value.name)}</Td>
+                  <Td>{capitalize(value.address)}</Td>
+                  <Td>
+                    <img src={`../../../server/${value.picture}`} />
+                  </Td>
+                  <Td>{value.description}</Td>
                   <Td>
                     <Button
                       colorScheme="cyan"
@@ -167,9 +210,7 @@ export default function TenantDashboard() {
                     </Button>
                   </Td>
                   <Td>
-                    <Button onClick={() => toProperties(value)}>
-                      See Properties
-                    </Button>
+                    <Button>See Rooms</Button>
                   </Td>
                 </Tr>
               );
@@ -185,24 +226,39 @@ export default function TenantDashboard() {
             colorScheme="green"
             isIndeterminate
           >
-            Editing "{capitalize(type)}" & "{capitalize(city)}"
+            Editing "{capitalize(name)}"
           </Progress>
 
-          <form className="flex flex-col mt-3 items-center">
-            <h1>Type</h1>
+          <form
+            className="flex flex-col mt-3 items-center"
+            onSubmit={(e) => e.preventDefault()}
+          >
+            <h1>Name</h1>
             <input
               className="border border-black mb-2"
               type="text"
-              placeholder={capitalize(type)}
-              onChange={(event) => setNewType(event.target.value)}
+              placeholder={capitalize(name)}
+              onChange={(event) => setNewName(event.target.value)}
             ></input>
-            <h1>City</h1>
+            <h1>Address</h1>
             <input
               className="border border-black mb-4"
               type="text"
-              placeholder={capitalize(city)}
-              onChange={(event) => setNewCity(event.target.value)}
+              placeholder={capitalize(address)}
+              onChange={(event) => setNewAddress(event.target.value)}
             ></input>
+            <h1>Picture</h1>
+            <input
+              type="file"
+              onChange={(e) => setImages(e.target.files[0])}
+              accept="image/png, image/jpeg"
+            />
+            <h1>Description</h1>
+            <textarea
+              className="border border-black mb-4"
+              placeholder={description}
+              onInput={(event) => setNewDescription(event.target.value)}
+            ></textarea>
             <div>
               <button
                 className="border w-24 h-8 bg-orange-400 active:bg-orange-200 text-white rounded-md"
@@ -222,26 +278,42 @@ export default function TenantDashboard() {
         </div>
       ) : isAdding ? (
         <div className="flex justify-center">
-          <form className="flex flex-col mt-3 items-center">
+          <form
+            className="flex flex-col mt-3 items-center"
+            onSubmit={(e) => e.preventDefault()}
+          >
             <Progress height="24px" className="mb-4 px-2" isIndeterminate>
               Adding New Data
             </Progress>
-            <h1>Type (i.e. Kos)</h1>
+            <h1>Name</h1>
             <input
               className="border border-black mb-2"
               type="text"
-              placeholder="New Type"
-              onChange={(event) => setType(event.target.value)}
+              placeholder="New Property"
+              onChange={(event) => setName(event.target.value)}
               required
             ></input>
-            <h1>City (i.e. Jakarta Utara)</h1>
+            <h1>Address</h1>
             <input
               className="border border-black mb-4"
               type="text"
-              placeholder="New City"
-              onChange={(event) => setCity(event.target.value)}
+              placeholder="Property address"
+              onChange={(event) => setAddress(event.target.value)}
               required
             ></input>
+            <h1>Picture</h1>
+            <input
+              type="file"
+              onChange={(e) => setImages(e.target.files[0])}
+              accept="image/png, image/jpeg"
+            />
+            <h1>Description</h1>
+            <textarea
+              className="border border-black mb-4"
+              placeholder="Property Description"
+              onInput={(event) => setDescription(event.target.value)}
+              required
+            ></textarea>
             <div>
               <button
                 className="border w-24 h-8 bg-orange-400 active:bg-orange-200 text-white rounded-md"

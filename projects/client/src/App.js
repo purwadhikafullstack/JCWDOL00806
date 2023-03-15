@@ -15,6 +15,7 @@ import UserVerify from "./pages/UserVerify";
 import EditUserDetail from "./pages/EditUserDetail";
 import UserChangePassword from "./pages/UserChangePassword";
 import ChangeEmail from "./pages/ChangeEmail";
+import TenantProperty from "./pages/TenantProperty";
 
 function App() {
   const [message, setMessage] = useState("");
@@ -38,6 +39,7 @@ function App() {
         <Route path="/tenant/login" element={<TenantLogin />} />
         <Route path="/users/login" element={<Login />} />
         <Route path="/tenant/dashboard/:id" element={<TenantDashboard />} />
+        <Route path="/tenant/property/:userId" element={<TenantProperty />} />
         <Route path="/users/verify" element={<UserVerify />} />
         <Route path="/users/edit-detail" element={<EditUserDetail />} />
         <Route path="/users/change-password" element={<UserChangePassword />} />
