@@ -18,16 +18,10 @@ const EditUserDetail = () => {
     useEffect(() => {
         getUserDetail()
     }, [])
-
-    useEffect(() => {
-        formik.setFieldValue("fullName", profile?.full_name);
-        formik.setFieldValue("gender", profile?.gender);
-        formik.setFieldValue("birthdate", profile?.birthdate);
-    }, [profile]);
     
     const getUserDetail = async () => {
         let token = localStorage.getItem('myToken'.replace(/"/g, ""))
-        let response = await axios.post(`${process.env.REACT_APP_SERVER_URL}users/user-profile`, null,
+        let response = await axios.post(`${process.env.REACT_APP_SERVER_URL}/users/user-profile`, null,
             { headers: { authorization: token } })
 
         if(!response.data.data[0]) setNewAccount(true)
@@ -35,6 +29,12 @@ const EditUserDetail = () => {
         setUserID(response.data.users_id)
         setFetched(true)
     }
+    
+    useEffect(() => {
+        formik.setFieldValue("fullName", profile?.full_name);
+        formik.setFieldValue("gender", profile?.gender);
+        formik.setFieldValue("birthdate", profile?.birthdate);
+    }, [profile]);
     
     const handleDate = (date) => {
         const newDate = date.toISOString().slice(0, 10)
@@ -47,13 +47,13 @@ const EditUserDetail = () => {
     const onSubmit = async (values) => {
         try {
         if (newAccount) {
-            await axios.post(`${process.env.REACT_APP_SERVER_URL}users/new-profile/${userID}`, {
+            await axios.post(`${process.env.REACT_APP_SERVER_URL}/users/new-profile/${userID}`, {
                 full_name: values.fullName,
                 gender: values.gender,
                 birthdate: values.birthdate
             })
         } else {
-            await axios.patch(`${process.env.REACT_APP_SERVER_URL}users/edit-profile/${userID}`, {
+            await axios.patch(`${process.env.REACT_APP_SERVER_URL}/users/edit-profile/${userID}`, {
                 full_name: values.fullName,
                 gender: values.gender,
                 birthdate: values.birthdate

@@ -11,7 +11,8 @@ const Login = () => {
 
     const onLogin = async (value) => {
         try {
-            let response = await axios.get(`http://localhost:8000/users/login?email=${value.email}&password=${value.password}`)
+            console.log(value.email)
+            let response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/users/login?email=${value.email}&password=${value.password}`)
 
             toast("login success")
             localStorage.setItem('myToken', response.data.data.token)
@@ -32,11 +33,11 @@ const Login = () => {
     })
 
     const loginViaGoogle = () => {
-        window.open("http://localhost:5000/auth/google", "_self")
+        window.open(`${process.env.REACT_APP_SERVER_URL}/auth/google`, "_self")
     }
 
     const loginViaFacebook = () => {
-        window.open("http://localhost:5000/auth/facebook", "_self")
+        window.open(`${process.env.REACT_APP_SERVER_URL}/auth/facebook`, "_self")
     }
 
     const loginForm = () => {

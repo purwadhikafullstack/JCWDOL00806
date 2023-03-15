@@ -15,6 +15,8 @@ import UserVerify from "./pages/UserVerify";
 import EditUserDetail from "./pages/EditUserDetail";
 import UserChangePassword from "./pages/UserChangePassword";
 import ChangeEmail from "./pages/ChangeEmail";
+import PassportLogin from "./pages/PassportLogin";
+import UserDetail from "./pages/UserDetail";
 
 function App() {
   const [message, setMessage] = useState("");
@@ -42,6 +44,8 @@ function App() {
         <Route path="/users/edit-detail" element={<EditUserDetail />} />
         <Route path="/users/change-password" element={<UserChangePassword />} />
         <Route path="/users/change-email" element={<ChangeEmail />} />
+        <Route path="/passport-login" element={<PassportLogin />} />
+        <Route path="/users/my-profile" element={<UserDetail />} />
       </Routes>
     </>
   );
