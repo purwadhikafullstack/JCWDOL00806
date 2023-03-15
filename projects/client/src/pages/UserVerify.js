@@ -102,7 +102,7 @@ const UserVerify = () => {
                 })
         } catch (error) {
             // navigate to login page if token is expired
-            if (error.response.data.message === 'jwt expired') {
+            if (error.response?.data.message === 'jwt expired') {
                 toast("Your session is expired, please login")
                 setTimeout(() => {
                     navigate('/users/login')
