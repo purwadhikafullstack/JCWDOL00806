@@ -32,8 +32,6 @@ const UserDetail = () => {
           <Center>
           <Divider width='90%' />
           </Center>
-        {console.log(profile)}
-        {console.log(userData)}
        <CardBody>
          <Stack spacing='4'>
               <Box>
