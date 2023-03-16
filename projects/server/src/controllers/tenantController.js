@@ -252,6 +252,12 @@ module.exports = {
       let { newType, newCity } = req.body;
       let { type, city, id } = req.query;
 
+      if (newType == "") {
+        newType = type;
+      }
+      if (newCity == "") {
+        newCity = city;
+      }
       let findExisting = await propertyCategory.update(
         {
           type: newType,
