@@ -3,15 +3,16 @@ const { multerUpload } = require("./../lib/multer");
 
 // Import DeleteFiles
 const deleteFiles = require("./../helpers/deleteFiles");
+const uploadImagesProperty = (req, res, next) => {
+  const multerResultProperty = multerUpload.fields([
+    { name: "property", maxCount: 3 },
+  ]);
 
-const uploadImages = (req, res, next) => {
-  const multerResult = multerUpload.fields([{ name: "images", maxCount: 3 }]);
-
-  multerResult(req, res, function (err) {
+  multerResultProperty(req, res, function (err) {
     try {
       if (err) throw err;
 
-      req.files.images.forEach((value) => {
+      req.files.property.forEach((value) => {
         if (value.size > 1100000)
           throw {
             message: `${value.originalname} size too large`,
@@ -21,8 +22,8 @@ const uploadImages = (req, res, next) => {
       next();
     } catch (error) {
       console.log(error);
-      if (req.files.images) {
-        deleteFiles(req.files.images);
+      if (req.files.property) {
+        deleteFiles(req.files.property);
       }
       res.status(400).send({
         isError: true,
@@ -32,4 +33,5 @@ const uploadImages = (req, res, next) => {
     }
   });
 };
-module.exports = uploadImages;
+
+module.exports = uploadImagesProperty;

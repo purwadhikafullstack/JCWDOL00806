@@ -33,12 +33,15 @@ module.exports = {
           data: null,
         });
       } else {
-        await property.create({
-          name,
-          address,
-          description,
-          category_id: id,
-        });
+        await property.create(
+          {
+            name,
+            address,
+            description,
+            category_id: id,
+          },
+          { transaction: t }
+        );
         res.status(201).send({
           isError: false,
           message: "New Property Created",
@@ -58,9 +61,10 @@ module.exports = {
       let { id, name, address } = req.query;
       await property.update(
         {
-          picture: req.files.images[0].path,
+          picture: req.files.property[0].path,
         },
-        { where: { [Op.and]: [{ category_id: id, name, address }] } }
+        { where: { [Op.and]: [{ category_id: id, name, address }] } },
+        { transaction: t }
       );
       res.status(201).send({
         isError: false,
@@ -69,8 +73,8 @@ module.exports = {
       });
       t.commit();
     } catch (error) {
-      t.rollback();
       console.log(error);
+      t.rollback();
     }
   },
 
@@ -141,7 +145,8 @@ module.exports = {
           address: newAddress,
           description: newDescription,
         },
-        { where: { category_id: id, name, address, description } }
+        { where: { category_id: id, name, address, description } },
+        { transaction: t }
       );
 
       res.status(201).send({
@@ -159,16 +164,17 @@ module.exports = {
       let { id, name, address } = req.query;
       await property.update(
         {
-          picture: req.files.images[0].path,
+          picture: req.files.property[0].path,
         },
-        { where: { [Op.and]: [{ category_id: id, name, address }] } }
+        { where: { [Op.and]: [{ category_id: id, name, address }] } },
+        { transaction: t }
       );
+      t.commit();
       res.status(201).send({
         isError: false,
         message: "Image Change Success",
         data: null,
       });
-      t.commit();
     } catch (error) {
       t.rollback();
       console.log(error);
