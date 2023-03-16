@@ -78,12 +78,14 @@ const {
   authFacebookRouter,
   tenantRouter,
   propertyRouter,
+  roomRouter,
 } = require("./routes");
 app.use("/tenant", tenantRouter);
 app.use("/users", usersRouters);
 app.use("/auth/google", authGoogleRouters);
 app.use("/auth/facebook", authFacebookRouter);
 app.use("/property", propertyRouter);
+app.use("/room", roomRouter);
 
 // ===========================
 
@@ -112,6 +114,9 @@ app.use((err, req, res, next) => {
 const clientPath = "../../client/build";
 app.use(express.static(join(__dirname, clientPath)));
 
+//Property image to FE
+const path = require("path");
+app.use("/imageProperty", express.static(path.join(__dirname, "../")));
 // Serve the HTML page
 app.get("*", (req, res) => {
   res.sendFile(join(__dirname, clientPath, "index.html"));

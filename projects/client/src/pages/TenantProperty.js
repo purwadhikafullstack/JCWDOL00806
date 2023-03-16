@@ -12,6 +12,7 @@ import {
   TableContainer,
   Button,
   Progress,
+  Image,
 } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
 
@@ -38,7 +39,6 @@ export default function TenantProperty() {
   let onOpen = async () => {
     try {
       let token = localStorage.getItem("myToken".replace(/"/g, ""));
-      console.log(token);
       let response = await axios.post(
         `http://localhost:8000/tenant/checkLogin/${userId}`,
         null,
@@ -67,6 +67,12 @@ export default function TenantProperty() {
     }
   };
 
+  let srcImg = (link) => {
+    let project = `http://localhost:8000/imageProperty/${link
+      ?.replace(/"/g, "")
+      .replace(/\\/g, "/")}`;
+    return project;
+  };
   let getType = async () => {
     try {
       let data = await axios.get(
@@ -98,7 +104,7 @@ export default function TenantProperty() {
     try {
       let input = { newName, newAddress, newDescription };
       let bodyFormData = new FormData();
-      bodyFormData.append("images", images);
+      bodyFormData.append("property", images);
       await axios.patch(
         `http://localhost:8000/property/propertyImageUpload?id=${id}&name=${name}&address=${address}`,
         bodyFormData,
@@ -139,7 +145,7 @@ export default function TenantProperty() {
         input
       );
       let bodyFormData = new FormData();
-      bodyFormData.append("images", images);
+      bodyFormData.append("property", images);
       await axios.post(
         `http://localhost:8000/property/propertyImageUpload?id=${id}&name=${name}&address=${address}`,
         bodyFormData,
@@ -187,12 +193,18 @@ export default function TenantProperty() {
           </Thead>
           <Tbody>
             {userProperty?.map((value, i) => {
+              console.log(srcImg(value.picture));
               return (
                 <Tr key={i}>
                   <Td>{capitalize(value.name)}</Td>
                   <Td>{capitalize(value.address)}</Td>
                   <Td>
-                    <img src={`../../../server/${value.picture}`} />
+                    <Image
+                      boxSize="70%"
+                      objectFit="cover"
+                      src={`${srcImg(value.picture)}`}
+                      alt={value.name}
+                    />
                   </Td>
                   <Td>{value.description}</Td>
                   <Td>
