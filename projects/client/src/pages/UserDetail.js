@@ -13,13 +13,16 @@ const UserDetail = () => {
   }, [])
 
   const getUserDetail = async () => {
-    let token = localStorage.getItem('myToken'.replace(/"/g, ""))
+    let token = localStorage.getItem('userToken'.replace(/"/g, ""))
     let response = await axios.post(`${process.env.REACT_APP_SERVER_URL}/users/user-profile`, null,
         { headers: { authorization: token } })
     let userData = await axios.post(`${process.env.REACT_APP_SERVER_URL}/users/getuser`, null,
       { headers: { authorization: token } })
+    if (!response.data.data.length) setProfile([])
+    else {
+      setProfile(response.data.data[0])
+    }
     setUserData(userData.data.data[0])
-    setProfile(response.data.data[0])
   }
   
   return (

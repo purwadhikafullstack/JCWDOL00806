@@ -16,7 +16,7 @@ useEffect(() => {
         .find(cookie => cookie.startsWith('jwt='))
         .split('=')[1];
     
-        localStorage.setItem('myToken', jwt)
+        localStorage.setItem('userToken', jwt)
         setTimeout(() => {
             navigate('/')
         }, 2000)

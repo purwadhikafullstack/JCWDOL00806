@@ -15,7 +15,7 @@ const Login = () => {
             let response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/users/login?email=${encodedMail}&password=${value.password}`)
 
             toast("login success")
-            localStorage.setItem('myToken', response.data.data.token)
+            localStorage.setItem('userToken', response.data.data.token)
             setTimeout(() => {
                 navigate('/')
             }, 1000)

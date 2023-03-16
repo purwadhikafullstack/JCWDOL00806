@@ -36,7 +36,7 @@ const ChangeEmail = () => {
     }
 
     const getUserDetail = async () => {
-        let token = localStorage.getItem('myToken'.replace(/"/g, ""))
+        let token = localStorage.getItem('userToken'.replace(/"/g, ""))
         let response = await axios.post(`${process.env.REACT_APP_SERVER_URL}/users/getuser`, null,
             { headers: { authorization: token } })
         console.log(response.data.data[0])

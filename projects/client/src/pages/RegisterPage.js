@@ -31,7 +31,7 @@ const RegisterPage = () => {
           provider: 'website'
         })
 
-        localStorage.setItem('myToken', response.data.data.token)
+        localStorage.setItem('userToken', response.data.data.token)
 
         toast.success('Register Successfull')
         setTimeout(() => {
