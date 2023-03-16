@@ -73,7 +73,6 @@ module.exports = {
         try {
             // get data from client
             let { email, password } = req.query
-            console.log(email)
             // get users data
             let checkUsers = await users.findOne({ where: { 
                 email: email,

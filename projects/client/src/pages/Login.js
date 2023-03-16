@@ -11,8 +11,8 @@ const Login = () => {
 
     const onLogin = async (value) => {
         try {
-            console.log(value.email)
-            let response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/users/login?email=${value.email}&password=${value.password}`)
+            let encodedMail = encodeURIComponent(value.email)
+            let response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/users/login?email=${encodedMail}&password=${value.password}`)
 
             toast("login success")
             localStorage.setItem('myToken', response.data.data.token)
