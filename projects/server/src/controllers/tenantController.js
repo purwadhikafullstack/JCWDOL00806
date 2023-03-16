@@ -114,12 +114,12 @@ module.exports = {
         },
         { transaction: t }
       );
+      t.commit();
       res.status(201).send({
         isError: false,
         message: "Validation Success",
         data: null,
       });
-      t.commit();
     } catch (error) {
       t.rollback();
       console.log(error);

@@ -112,6 +112,9 @@ app.use((err, req, res, next) => {
 const clientPath = "../../client/build";
 app.use(express.static(join(__dirname, clientPath)));
 
+//Property image to FE
+const path = require("path");
+app.use("/imageProperty", express.static(path.join(__dirname, "../")));
 // Serve the HTML page
 app.get("*", (req, res) => {
   res.sendFile(join(__dirname, clientPath, "index.html"));

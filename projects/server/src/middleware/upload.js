@@ -6,6 +6,7 @@ const deleteFiles = require("./../helpers/deleteFiles");
 
 const uploadImages = (req, res, next) => {
   const multerResult = multerUpload.fields([{ name: "images", maxCount: 3 }]);
+
   multerResult(req, res, function (err) {
     try {
       if (err) throw err;
@@ -19,6 +20,7 @@ const uploadImages = (req, res, next) => {
 
       next();
     } catch (error) {
+      console.log(error);
       if (req.files.images) {
         deleteFiles(req.files.images);
       }
@@ -30,5 +32,4 @@ const uploadImages = (req, res, next) => {
     }
   });
 };
-
 module.exports = uploadImages;
