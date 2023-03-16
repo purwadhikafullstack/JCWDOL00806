@@ -132,7 +132,7 @@ const UserChangePassword = () => {
     const onGetUserData = async () => {
         try {
             // get user token in local storage
-            let token = localStorage.getItem('myToken')
+            let token = localStorage.getItem('userToken')
 
             if (!token) throw { message: 'Token is missing' }
 

@@ -20,7 +20,7 @@ const EditUserDetail = () => {
     }, [])
     
     const getUserDetail = async () => {
-        let token = localStorage.getItem('myToken'.replace(/"/g, ""))
+        let token = localStorage.getItem('userToken'.replace(/"/g, ""))
         let response = await axios.post(`${process.env.REACT_APP_SERVER_URL}/users/user-profile`, null,
             { headers: { authorization: token } })
 

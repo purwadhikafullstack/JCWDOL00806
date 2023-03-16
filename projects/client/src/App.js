@@ -18,6 +18,8 @@ import ChangeEmail from "./pages/ChangeEmail";
 import TenantProperty from "./pages/TenantProperty";
 import PassportLogin from "./pages/PassportLogin";
 import UserDetail from "./pages/UserDetail";
+import RoomUnavailable from "./pages/RoomUnavailable";
+import RoomSpecial from "./pages/RoomSpecial";
 
 
 function App() {
@@ -49,6 +51,8 @@ function App() {
         <Route path="/users/change-email" element={<ChangeEmail />} />
         <Route path="/passport-login" element={<PassportLogin />} />
         <Route path="/users/my-profile" element={<UserDetail />} />
+        <Route path="/tenant/room-unavailable" element={<RoomUnavailable />} />
+        <Route path="/tenant/room-specialprice" element={<RoomSpecial />} />
       </Routes>
     </>
   );
