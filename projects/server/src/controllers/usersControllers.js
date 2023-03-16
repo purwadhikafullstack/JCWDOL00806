@@ -73,7 +73,6 @@ module.exports = {
         try {
             // get data from client
             let { email, password } = req.query
-    
             // get users data
             let checkUsers = await users.findOne({ where: { 
                 email: email,
@@ -483,7 +482,9 @@ module.exports = {
             let { id } = req.params
             console.log(email)
             await users.update({
-                email
+                email,
+                is_verified: false,
+                otp_count : 0
             }, { where: { id } }, { transaction: t })
             
             t.commit()

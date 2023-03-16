@@ -10,14 +10,14 @@ const ResetPassword = () => {
     const [confirmed, setConfirmed] = useState(false)
     const onSubmit = async (values) => {
         try {
-            let checkEmail = await axios.get(`${process.env.REACT_APP_SERVER_URL}users/userdetail?email=${values.email}`)
+            let checkEmail = await axios.get(`${process.env.REACT_APP_SERVER_URL}/users/userdetail?email=${values.email}`)
             console.log(checkEmail)
             if (checkEmail.data.data[0].provider !== 'website') {
                 throw toast.error(`This email is registered via ${checkEmail.data.data[0].provider}. Reset password is prohibited`)
             } else if (checkEmail.data.data[0].is_verified !== true) {
                 throw toast.error('Please proceed to verify your account before using reset password feature')
             } else {
-                await axios.get(`${process.env.REACT_APP_SERVER_URL}users/reset-confirm?email=${values.email}&id=${checkEmail.data.data[0].id}`)
+                await axios.get(`${process.env.REACT_APP_SERVER_URL}/users/reset-confirm?email=${values.email}&id=${checkEmail.data.data[0].id}`)
                 setConfirmed(true)
             }
         } catch (error) {
