@@ -1,20 +1,39 @@
-import {useState} from 'react'
+import {useEffect, useState} from 'react'
 import axios from 'axios'
-import { Card,HStack, CardHeader, Input, Alert, AlertIcon, Avatar, Button, Stack, StackDivider, Box, Heading, CardBody, Divider, Center, Select } from '@chakra-ui/react'
+import { Card,HStack, CardHeader, Input, Alert, AlertIcon, AlertTitle, Button, Stack, StackDivider, Box, Heading, CardBody, Divider, Center, Select } from '@chakra-ui/react'
 import toast, {Toaster} from 'react-hot-toast'
 import DatePicker from 'react-datepicker'
+import { useParams } from 'react-router-dom'
 
 const RoomSpecial = () => {
 
+    const { propertyID, roomID } = useParams()
+
     const [dateRange, setDateRange] = useState([null, null]);
     const [startDate, endDate] = dateRange;
-    const [room, setRoom] = useState('')
+    const [roomData, setRoomData] = useState(null)
     const [operand, setOperand] = useState(null)
     const [nominal, setNominal] = useState(null)
 
-    const handleAdd = () => {
-        if (!room) throw toast.error('Please pick your room')
-        else if (!dateRange || dateRange[0] === null || dateRange[1] === null) throw toast.error('Please pick a date range')
+    useEffect(() => {
+      onOpen()
+    }, [])
+  
+    const onOpen = async () => {
+      try {
+        let token = localStorage.getItem("tenantToken".replace(/"/g, ""));
+
+        let response = await axios.post(`${process.env.REACT_APP_SERVER_URL}/room/room-data?propertyID=${propertyID}$1&roomID=${roomID}`, null, {
+          headers: {authorization : token}
+        })
+        setRoomData(response.data.data)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+  
+    const handleAdd = async () => {
+        if (!dateRange || dateRange[0] === null || dateRange[1] === null) throw toast.error('Please pick a date range')
         else if(!operand) throw toast.error("please set your special price operand")
         else if(!nominal) throw toast.error("please set your price")
         
@@ -26,11 +45,47 @@ const RoomSpecial = () => {
         const [endDay, endMonth, endYear] = newEndDate.split('/')
         const formattedEndDate = `${endYear}-${endMonth}-${endDay}`
         
+      let newPrice = 0
+      if (operand === "nominal") {
+        newPrice += parseInt(nominal)
+      } else if (operand === "percentIncrease") {
+        newPrice += (roomData.price + ((parseInt(nominal) / 100) * roomData.price))
+      } else {
+        newPrice += (roomData.price - ((parseInt(nominal) / 100) * roomData.price))
+      }
 
-
+      await axios.post(`${process.env.REACT_APP_SERVER_URL}/room/special-price`, {
+        start_date: formattedStartDate,
+        end_date: formattedEndDate,
+        room_id: roomData.id,
+        price: newPrice
+        })
+      toast.success('Room Special price created succesfully')
     }
   return (
+    <>
+      {!roomData ? (
       <>
+      <Card margin={4}>
+      <Alert
+        status='error'
+        variant='subtle'
+        flexDirection='column'
+        alignItems='center'
+        justifyContent='center'
+        textAlign='center'
+        height='200px'
+        rounded={4}
+      >
+        <AlertIcon boxSize='40px' mr={0} />
+        <AlertTitle mt={4} mb={1} fontSize='lg'>
+          This property / room does not belong to user !!
+        </AlertTitle>
+      </Alert>
+      </Card>
+    </>
+      ): (
+          <>
           <Toaster position='top-center'/>
         <Card margin={4}>
             <CardHeader>
@@ -42,12 +97,8 @@ const RoomSpecial = () => {
               <CardBody>
                 <Stack spacing='4'>
                       <Box>
-                        <Heading size='xs'>Select your room</Heading>
-                          <Select onChange={(e) => setRoom(e.target.value)}>
-                              <option value=''>Pick your room</option>
-                              <option value="test1">test1</option>
-                              <option value="test2">test2</option>
-                        </Select>
+                        <Heading size='xs'>Room name</Heading>
+                        <Input marginTop={2} disabled value={roomData?.name}/>
                       </Box>
                       <Box>
                           <Heading size='xs'>Enter your date range</Heading>
@@ -71,8 +122,8 @@ const RoomSpecial = () => {
                               <Select onChange={(e) => setOperand(e.target.value)} width="53%">
                                   <option value="">Pick operand</option>
                                   <option value="nominal">Nominal</option>
-                                  <option value="percentincrease">% Increase</option>
-                                  <option value="percentdecrease">% Decrease</option>
+                                  <option value="percentIncrease">% Increase</option>
+                                  <option value="percentDecrease">% Decrease</option>
                               </Select>
                               <Input onChange={(e) => setNominal(e.target.value)} type='number'  width='40%' />
                           </HStack>
@@ -82,6 +133,9 @@ const RoomSpecial = () => {
                 </Stack>
               </CardBody>  
         </Card>
+          </>
+      )}
+          
       </>
   )
 }

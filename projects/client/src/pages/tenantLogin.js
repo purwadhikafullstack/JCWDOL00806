@@ -15,7 +15,7 @@ export default function TenantLogin() {
       );
       console.log(result);
       toast(result.data.message);
-      localStorage.setItem("myToken", result.data.data.token);
+      localStorage.setItem("tenantToken", result.data.data.token);
       navigate(`/tenant/dashboard/${result.data.data.id}`);
     } catch (error) {
       console.log(error);
