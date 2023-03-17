@@ -46,7 +46,7 @@ export default function TenantDashboard() {
       let token = localStorage.getItem("tenantToken".replace(/"/g, ""));
       console.log(token);
       let response = await axios.post(
-        `http://localhost:8000/tenant/checkLogin/${id}`,
+        `${process.env.REACT_APP_SERVER_URL}/tenant/checkLogin/${id}`,
         null,
         {
           headers: {
@@ -64,7 +64,7 @@ export default function TenantDashboard() {
   let onGetData = async () => {
     try {
       let data = await axios.get(
-        `http://localhost:8000/tenant/category?id=${id}`
+        `${process.env.REACT_APP_SERVER_URL}/tenant/category?id=${id}`
       );
       setUserProperty(data.data.data);
     } catch (error) {
@@ -78,7 +78,7 @@ export default function TenantDashboard() {
   let deleteHandler = async (id) => {
     try {
       let response = await axios.delete(
-        `http://localhost:8000/tenant/category?id=${id}`
+        `${process.env.REACT_APP_SERVER_URL}/tenant/category?id=${id}`
       );
       toast(response.data.message);
       refresh();
@@ -90,7 +90,7 @@ export default function TenantDashboard() {
     try {
       let input = { newType, newCity };
       let response = await axios.patch(
-        `http://localhost:8000/tenant/category?id=${id}&type=${type}&city=${city}`,
+        `${process.env.REACT_APP_SERVER_URL}/tenant/category?id=${id}&type=${type}&city=${city}`,
         input
       );
       toast(response.data.message);
@@ -103,7 +103,7 @@ export default function TenantDashboard() {
     try {
       let input = { type, city };
       let response = await axios.post(
-        `http://localhost:8000/tenant/category?id=${id}`,
+        `${process.env.REACT_APP_SERVER_URL}/tenant/category?id=${id}`,
         input
       );
       console.log(response);

@@ -11,7 +11,7 @@ export default function TenantLogin() {
   let loginHandler = async () => {
     try {
       let result = await axios.get(
-        `http://localhost:8000/tenant/login?usernameOrEmail=${usernameOrEmail.current.value}&password=${password.current.value}`
+        `${process.env.REACT_APP_SERVER_URL}/tenant/login?usernameOrEmail=${usernameOrEmail.current.value}&password=${password.current.value}`
       );
       console.log(result);
       toast(result.data.message);
