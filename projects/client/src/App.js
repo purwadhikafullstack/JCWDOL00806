@@ -21,7 +21,6 @@ import UserDetail from "./pages/UserDetail";
 import RoomUnavailable from "./pages/RoomUnavailable";
 import RoomSpecial from "./pages/RoomSpecial";
 
-
 function App() {
   const [message, setMessage] = useState("");
 
@@ -43,16 +42,22 @@ function App() {
         <Route path="/tenant/register" element={<TenantRegister />} />
         <Route path="/tenant/login" element={<TenantLogin />} />
         <Route path="/users/login" element={<Login />} />
-        <Route path="/tenant/dashboard/:id" element={<TenantDashboard />} />
-        <Route path="/tenant/property/:userId" element={<TenantProperty />} />
+        <Route path="/tenant/dashboard" element={<TenantDashboard />} />
+        <Route path="/tenant/property" element={<TenantProperty />} />
         <Route path="/users/verify" element={<UserVerify />} />
         <Route path="/users/edit-detail" element={<EditUserDetail />} />
         <Route path="/users/change-password" element={<UserChangePassword />} />
         <Route path="/users/change-email" element={<ChangeEmail />} />
         <Route path="/passport-login" element={<PassportLogin />} />
         <Route path="/users/my-profile" element={<UserDetail />} />
-        <Route path="/room/unavailable/:propertyID/:roomID" element={<RoomUnavailable />} />
-        <Route path="/room/special-price/:propertyID/:roomID" element={<RoomSpecial />} />
+        <Route
+          path="/room/unavailable/:propertyID/:roomID"
+          element={<RoomUnavailable />}
+        />
+        <Route
+          path="/room/special-price/:propertyID/:roomID"
+          element={<RoomSpecial />}
+        />
       </Routes>
     </>
   );

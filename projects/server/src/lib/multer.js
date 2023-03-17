@@ -27,6 +27,9 @@ var storage = multer.diskStorage({
     if (file.fieldname === "property") {
       cb(null, `${defaultPath}/${file.fieldname}`); //Public/property
     }
+    if (file.fieldname === "profile") {
+      cb(null, `${defaultPath}/${file.fieldname}`); //Public/profile
+    }
   },
   filename: (req, file, cb) => {
     cb(

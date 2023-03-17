@@ -11,12 +11,13 @@ export default function TenantLogin() {
   let loginHandler = async () => {
     try {
       let result = await axios.get(
-        `http://localhost:8000/tenant/login?usernameOrEmail=${usernameOrEmail.current.value}&password=${password.current.value}`
+        `${process.env.REACT_APP_SERVER_URL}/tenant/login?usernameOrEmail=${usernameOrEmail.current.value}&password=${password.current.value}`
       );
       console.log(result);
       toast(result.data.message);
       localStorage.setItem("tenantToken", result.data.data.token);
-      navigate(`/tenant/dashboard/${result.data.data.id}`);
+      localStorage.setItem("idTenant", result.data.data.id);
+      navigate(`/tenant/dashboard`);
     } catch (error) {
       console.log(error);
       toast(error.response.data.message);

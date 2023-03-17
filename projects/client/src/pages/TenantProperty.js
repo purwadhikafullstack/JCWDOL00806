@@ -17,7 +17,7 @@ import {
 import { useParams } from "react-router-dom";
 
 export default function TenantProperty() {
-  const { userId } = useParams();
+  const userId = localStorage.getItem("idTenant".replace(/"/g, ""));
   const [verified, setVerified] = useState(false);
   const [userProperty, setUserProperty] = useState([]);
   const [type, setType] = useState([]);
@@ -40,7 +40,7 @@ export default function TenantProperty() {
     try {
       let token = localStorage.getItem("tenantToken".replace(/"/g, ""));
       let response = await axios.post(
-        `http://localhost:8000/tenant/checkLogin/${userId}`,
+        `${process.env.REACT_APP_SERVER_URL}/tenant/checkLogin/${userId}`,
         null,
         {
           headers: {
@@ -59,7 +59,7 @@ export default function TenantProperty() {
   let onGetData = async () => {
     try {
       let data = await axios.get(
-        `http://localhost:8000/property/getAllProperty?id=${id}`
+        `${process.env.REACT_APP_SERVER_URL}/property/getAllProperty?id=${id}`
       );
       setUserProperty(data.data.data);
     } catch (error) {
@@ -68,7 +68,7 @@ export default function TenantProperty() {
   };
 
   let srcImg = (link) => {
-    let project = `http://localhost:8000/imageProperty/${link
+    let project = `${process.env.REACT_APP_SERVER_URL}/image/${link
       ?.replace(/"/g, "")
       .replace(/\\/g, "/")}`;
     return project;
@@ -76,7 +76,7 @@ export default function TenantProperty() {
   let getType = async () => {
     try {
       let data = await axios.get(
-        `http://localhost:8000/property/getType?id=${id}`
+        `${process.env.REACT_APP_SERVER_URL}/property/getType?id=${id}`
       );
       setType(data.data.data);
     } catch (error) {
@@ -91,7 +91,7 @@ export default function TenantProperty() {
   let deleteHandler = async (data) => {
     try {
       let response = await axios.delete(
-        `http://localhost:8000/property/deleteProperty?id=${data}`
+        `${process.env.REACT_APP_SERVER_URL}/property/deleteProperty?id=${data}`
       );
       toast(response.data.message);
       onGetData();
@@ -106,7 +106,7 @@ export default function TenantProperty() {
       let bodyFormData = new FormData();
       bodyFormData.append("property", images);
       await axios.patch(
-        `http://localhost:8000/property/propertyImageUpload?id=${id}&name=${name}&address=${address}`,
+        `${process.env.REACT_APP_SERVER_URL}/property/propertyImageUpload?id=${id}&name=${name}&address=${address}`,
         bodyFormData,
         {
           headers: {
@@ -115,7 +115,7 @@ export default function TenantProperty() {
         }
       );
       let response = await axios.patch(
-        `http://localhost:8000/property/updateProperty?id=${id}&name=${name}&address=${address}&description=${description}`,
+        `${process.env.REACT_APP_SERVER_URL}/property/updateProperty?id=${id}&name=${name}&address=${address}&description=${description}`,
         input
       );
       toast(response.data.message);
@@ -141,13 +141,13 @@ export default function TenantProperty() {
     try {
       let input = { name, address, description };
       let response = await axios.post(
-        `http://localhost:8000/property/createProperty?id=${id}`,
+        `${process.env.REACT_APP_SERVER_URL}/property/createProperty?id=${id}`,
         input
       );
       let bodyFormData = new FormData();
       bodyFormData.append("property", images);
       await axios.post(
-        `http://localhost:8000/property/propertyImageUpload?id=${id}&name=${name}&address=${address}`,
+        `${process.env.REACT_APP_SERVER_URL}/property/propertyImageUpload?id=${id}&name=${name}&address=${address}`,
         bodyFormData,
         {
           headers: {
