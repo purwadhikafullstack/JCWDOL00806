@@ -24,7 +24,7 @@ export default function TenantDashboard() {
   const [city, setCity] = useState("");
   const [newType, setNewType] = useState("");
   const [newCity, setNewCity] = useState("");
-  const { id } = useParams();
+  const id = localStorage.getItem("idTenant".replace(/"/g, ""));
   const navigate = useNavigate();
 
   const refresh = () => {
@@ -35,7 +35,7 @@ export default function TenantDashboard() {
 
   let toProperties = async (value) => {
     try {
-      navigate(`/tenant/property/${id}?id=${value.id}`);
+      navigate(`/tenant/property?id=${value.id}`);
     } catch (error) {
       console.log(error);
     }
