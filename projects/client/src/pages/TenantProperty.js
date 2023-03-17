@@ -17,7 +17,7 @@ import {
 import { useParams } from "react-router-dom";
 
 export default function TenantProperty() {
-  const { userId } = useParams();
+  const userId = localStorage.getItem("idTenant".replace(/"/g, ""));
   const [verified, setVerified] = useState(false);
   const [userProperty, setUserProperty] = useState([]);
   const [type, setType] = useState([]);
