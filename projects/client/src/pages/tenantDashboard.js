@@ -43,7 +43,7 @@ export default function TenantDashboard() {
 
   let onOpen = async () => {
     try {
-      let token = localStorage.getItem("myToken".replace(/"/g, ""));
+      let token = localStorage.getItem("tenantToken".replace(/"/g, ""));
       console.log(token);
       let response = await axios.post(
         `http://localhost:8000/tenant/checkLogin/${id}`,

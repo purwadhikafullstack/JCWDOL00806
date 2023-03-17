@@ -51,8 +51,8 @@ function App() {
         <Route path="/users/change-email" element={<ChangeEmail />} />
         <Route path="/passport-login" element={<PassportLogin />} />
         <Route path="/users/my-profile" element={<UserDetail />} />
-        <Route path="/tenant/room-unavailable" element={<RoomUnavailable />} />
-        <Route path="/tenant/room-specialprice" element={<RoomSpecial />} />
+        <Route path="/room/unavailable/:propertyID/:roomID" element={<RoomUnavailable />} />
+        <Route path="/room/special-price/:propertyID/:roomID" element={<RoomSpecial />} />
       </Routes>
     </>
   );
