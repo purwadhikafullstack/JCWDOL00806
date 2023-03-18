@@ -3,10 +3,10 @@ import axios from 'axios'
 import { Card, CardHeader, Input, Alert, AlertIcon, Avatar, Button, Stack, StackDivider, Box, Heading, CardBody, Divider, Center, AlertTitle } from '@chakra-ui/react'
 import toast, {Toaster} from 'react-hot-toast'
 import DatePicker from 'react-datepicker'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 
 const RoomUnavailable = () => {
-
+    const navigate = useNavigate()
     const { propertyID, roomID } = useParams()
   
     const [dateRange, setDateRange] = useState([null, null]);
@@ -21,7 +21,7 @@ const RoomUnavailable = () => {
       try {
         let token = localStorage.getItem("tenantToken".replace(/"/g, ""));
 
-        let response = await axios.post(`${process.env.REACT_APP_SERVER_URL}/room/room-data?propertyID=${propertyID}$1&roomID=${roomID}`, null, {
+        let response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/room/room-data/${roomID}`, {
           headers: {authorization : token}
         })
         setRoomData(response.data.data)
@@ -48,6 +48,9 @@ const RoomUnavailable = () => {
         room_id: roomData.id
       })
       toast.success("Unavailable room created successfully")
+      setTimeout(() => {
+          navigate(`/tenant/room/${propertyID}`)
+      }, 2000)
     }
   return (
     <>

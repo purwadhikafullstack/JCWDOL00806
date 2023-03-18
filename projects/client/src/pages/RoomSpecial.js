@@ -3,10 +3,10 @@ import axios from 'axios'
 import { Card,HStack, CardHeader, Input, Alert, AlertIcon, AlertTitle, Button, Stack, StackDivider, Box, Heading, CardBody, Divider, Center, Select } from '@chakra-ui/react'
 import toast, {Toaster} from 'react-hot-toast'
 import DatePicker from 'react-datepicker'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 
 const RoomSpecial = () => {
-
+    const navigate = useNavigate()
     const { propertyID, roomID } = useParams()
 
     const [dateRange, setDateRange] = useState([null, null]);
@@ -23,7 +23,7 @@ const RoomSpecial = () => {
       try {
         let token = localStorage.getItem("tenantToken".replace(/"/g, ""));
 
-        let response = await axios.post(`${process.env.REACT_APP_SERVER_URL}/room/room-data?propertyID=${propertyID}$1&roomID=${roomID}`, null, {
+        let response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/room/room-data/${roomID}`, {
           headers: {authorization : token}
         })
         setRoomData(response.data.data)
@@ -61,6 +61,9 @@ const RoomSpecial = () => {
         price: newPrice
         })
       toast.success('Room Special price created succesfully')
+      setTimeout(() => {
+        navigate(`/tenant/room/${propertyID}`)
+      }, 2000)
     }
   return (
     <>
