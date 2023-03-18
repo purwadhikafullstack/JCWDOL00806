@@ -195,29 +195,29 @@ module.exports ={
     getRoomDetail: async (req, res) => {
         try {
             const {id} = req.dataToken
-        const { roomID, propertyID} = req.query
+            const { room_id } = req.params
 
-        const checkRoom = await sequelize.query(`
-        SELECT r.id, r.name, r.price, r.description, r.rules
-        FROM property_categories c
-        JOIN properties p ON p.category_id = c.id
-        JOIN rooms r ON r.property_id = p.id
-        WHERE c.tenant_id = "${id}" AND p.id = "${propertyID}" AND r.id = "${roomID}"
-        GROUP BY r.id
-        LIMIT 1;
-        `)
+            const checkRoom = await sequelize.query(`
+                SELECT r.id, r.name, r.price, r.description, r.rules
+                FROM property_categories c
+                JOIN properties p ON p.category_id = c.id
+                JOIN rooms r ON r.property_id = p.id
+                WHERE c.tenant_id = "${id}" AND r.id = "${room_id}"
+                GROUP BY r.id
+                LIMIT 1;
+            `)
 
-        if (!checkRoom[0].length) return res.status(404).send({
-            isError: true,
-            message: "This property / room does not belong to user",
-            data: null
-        })
+            if (!checkRoom[0].length) return res.status(404).send({
+                isError: true,
+                message: "This property / room does not belong to user",
+                data: null
+            })
 
-        return res.status(201).send({
-            isError: false,
-            message: "Get Room Data Success",
-            data: checkRoom[0][0]
-        })
+            return res.status(201).send({
+                isError: false,
+                message: "Get Room Data Success",
+                data: checkRoom[0][0]
+            })
         } catch (error) {
             return res.status(404).send({
                 isError: true,

@@ -14,7 +14,7 @@ import {
   Progress,
   Image,
 } from "@chakra-ui/react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 
 export default function TenantProperty() {
   const userId = localStorage.getItem("idTenant".replace(/"/g, ""));
@@ -222,7 +222,9 @@ export default function TenantProperty() {
                     </Button>
                   </Td>
                   <Td>
-                    <Button>See Rooms</Button>
+                    <Link to={`/tenant/room/${value.id}`}>
+                      <Button>See Rooms</Button>
+                    </Link>
                   </Td>
                 </Tr>
               );

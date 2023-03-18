@@ -20,6 +20,10 @@ import PassportLogin from "./pages/PassportLogin";
 import UserDetail from "./pages/UserDetail";
 import RoomUnavailable from "./pages/RoomUnavailable";
 import RoomSpecial from "./pages/RoomSpecial";
+import TenantRoom from "./pages/TenantRoom";
+import CreateRoom from "./pages/CreateRoom";
+import EditRoom from "./pages/EditRoom";
+import Unauthorized from "./pages/Unauthorized";
 
 function App() {
   const [message, setMessage] = useState("");
@@ -51,13 +55,17 @@ function App() {
         <Route path="/passport-login" element={<PassportLogin />} />
         <Route path="/users/my-profile" element={<UserDetail />} />
         <Route
-          path="/room/unavailable/:propertyID/:roomID"
+          path="/tenant/room/:propertyID/unavailable/:roomID"
           element={<RoomUnavailable />}
         />
         <Route
-          path="/room/special-price/:propertyID/:roomID"
+          path="/tenant/room/:propertyID/special-price/:roomID"
           element={<RoomSpecial />}
         />
+        <Route path="/tenant/room/:propertyID" element={<TenantRoom />} />
+        <Route path="/tenant/room/:propertyID/create" element={<CreateRoom />} />
+        <Route path="/tenant/room/:propertyID/edit/:roomID" element={<EditRoom />} />
+        <Route path="/401" element={<Unauthorized />}/>
       </Routes>
     </>
   );
