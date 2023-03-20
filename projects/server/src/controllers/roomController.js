@@ -159,6 +159,24 @@ module.exports ={
 
             // check property belongs to users or not
             let checkProperty = await sequelize.query(`
+                SELECT * 
+                FROM property_categories c
+                JOIN properties p ON p.category_id = c.id
+                WHERE c.tenant_id = ? AND p.id = ?;
+            `, {
+                replacements: [id, property_id],
+                type: sequelize.QueryTypes.SELECT
+            })
+
+            if (checkProperty.length === 0)
+                return res.status(400).send({
+                    isError: true,
+                    message: "Property ID Not Belongs To User",
+                    data: null
+                })
+
+            // get room data
+            let roomData = await sequelize.query(`
                 SELECT r.id, r.name, r.price, r.description, r.rules
                 FROM property_categories c
                 JOIN properties p ON p.category_id = c.id
@@ -172,17 +190,10 @@ module.exports ={
                 type: sequelize.QueryTypes.SELECT
             })
 
-            if (checkProperty.length === 0)
-                return res.status(400).send({
-                    isError: true,
-                    message: "Property ID Not Belongs To User",
-                    data: null
-                })
-
             return res.status(200).send({
                 isError: false,
                 message: "Get Room Data Success",
-                data: checkProperty
+                data: roomData
             })
         } catch (error) {
             return res.status(400).send({
