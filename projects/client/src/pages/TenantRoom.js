@@ -50,6 +50,8 @@ const TenantRoom = () => {
             else {
                 navigate('/tenant/login')
             }
+
+            console.log(error.response?.data.message)
         }
     }
 
