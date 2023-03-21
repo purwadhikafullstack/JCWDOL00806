@@ -4,10 +4,12 @@ import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import {Button, FormControl, FormLabel, Input, FormErrorMessage, VStack} from '@chakra-ui/react'
 import axios from 'axios'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 
 const NewPassword = () => {
+
+    const navigate = useNavigate()
 
     const [complete, setComplete] =useState(false)
 
@@ -15,6 +17,9 @@ const NewPassword = () => {
     const onSubmit = async (values) => {
         await axios.patch(`${process.env.REACT_APP_SERVER_URL}/users/change-password/${id}`, { password: values.password })
         setComplete(true)
+        setTimeout(() => {
+            navigate('/users/login')
+          }, 2000)
     }
 
     const formik = useFormik({

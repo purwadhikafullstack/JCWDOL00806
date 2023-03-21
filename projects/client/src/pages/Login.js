@@ -84,7 +84,7 @@ const Login = () => {
                     </div>
 
                     <div className='flex justify-end w-full'>
-                        <Link to="/password/reset">Forgot Password?</Link>
+                        <Link to="/reset-password">Forgot Password?</Link>
                     </div>
 
                     <div className='flex justify-end items-end w-full mt-5'>
