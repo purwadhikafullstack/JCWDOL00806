@@ -104,16 +104,18 @@ export default function TenantProperty() {
     try {
       let input = { newName, newAddress, newDescription };
       let bodyFormData = new FormData();
-      bodyFormData.append("property", images);
-      await axios.patch(
-        `${process.env.REACT_APP_SERVER_URL}/property/propertyImageUpload?id=${id}&name=${name}&address=${address}`,
-        bodyFormData,
-        {
-          headers: {
-            "Content-Type": "form-data",
-          },
-        }
-      );
+      if (images !== null) {
+        bodyFormData.append("property", images);
+        await axios.patch(
+          `${process.env.REACT_APP_SERVER_URL}/property/propertyImageUpload?id=${id}&name=${name}&address=${address}`,
+          bodyFormData,
+          {
+            headers: {
+              "Content-Type": "form-data",
+            },
+          }
+        );
+      }
       let response = await axios.patch(
         `${process.env.REACT_APP_SERVER_URL}/property/updateProperty?id=${id}&name=${name}&address=${address}&description=${description}`,
         input
@@ -121,6 +123,7 @@ export default function TenantProperty() {
       toast(response.data.message);
       onGetData();
       setIsEditing(false);
+      setImages(null);
     } catch (error) {
       toast(error.response.data.message);
     }
