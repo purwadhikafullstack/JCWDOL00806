@@ -1,5 +1,4 @@
 import {useState} from 'react'
-import toast, { Toaster } from 'react-hot-toast'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import {Button, FormControl, FormLabel, Input, FormErrorMessage, VStack} from '@chakra-ui/react'
@@ -50,7 +49,6 @@ const NewPassword = () => {
               </>
           ): (       
         <div className='mx-2 my-4 flex flex-col text-center align-middle p-4 border rounded-lg border-gray-300 drop-shadow-lg'>
-            <Toaster position='top-center'/>
             <VStack spacing={1} mt={2}>
                 <FormControl isInvalid={formik.touched.password && formik.errors.password}>
                     <FormLabel htmlFor="password">Enter your new password</FormLabel>
