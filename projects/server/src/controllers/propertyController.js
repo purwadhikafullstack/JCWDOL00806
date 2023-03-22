@@ -180,4 +180,29 @@ module.exports = {
       console.log(error);
     }
   },
+  getPropertyContent: async (req, res) => {
+    try {
+      // get propert data for landing page
+      let getProperty = await sequelize.query(`
+        SELECT DISTINCT r.property_id, r.price, c.type, c.city, p.name, p.picture
+        FROM property_categories c
+        JOIN properties p ON p.category_id = c.id
+        JOIN rooms r ON r.property_id = p.id
+        GROUP BY r.property_id
+        LIMIT 30;
+      `)
+
+      return res.status(200).send({
+        isError: false,
+        message: "Get property content success",
+        data: getProperty[0]
+      })
+    } catch (error) {
+      return res.status(400).send({
+        isError: true,
+        message: error.message,
+        data: null
+      })
+    }
+  },
 };
