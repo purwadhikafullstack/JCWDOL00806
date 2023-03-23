@@ -17,5 +17,6 @@ Router.post("/category", tenantController.createCategory);
 Router.patch("/category", tenantController.updateCategory);
 Router.delete("/category", tenantController.deleteCategory);
 Router.post("/checkLogin/:id", verifyToken, tenantController.checkTenant);
+Router.get('/room-calendar/:id', tenantController.getRoomStatus)
 
 module.exports = Router;

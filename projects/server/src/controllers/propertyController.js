@@ -122,7 +122,6 @@ module.exports = {
       console.log(error);
     }
   },
-
   updateProperty: async (req, res) => {
     const t = await sequelize.transaction();
     try {
@@ -205,4 +204,27 @@ module.exports = {
       })
     }
   },
+  propertyDetail: async (req, res) => {
+    try {
+      let {id} = req.params
+      let getData = await property.findOne({
+        where: {
+          id
+        }
+      })
+      res.status(201).send({
+        isError: false,
+        message: "Data acquired",
+        data: getData.dataValues
+      })
+      
+    } catch (error) {
+      console.log(error)
+      res.status(404).send({
+        isError: true,
+        message: error.message,
+        data: null
+      })
+    }
+  }
 };

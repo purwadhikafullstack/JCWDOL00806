@@ -20,5 +20,6 @@ Router.patch(
   propertyController.updatePropertyImage
 );
 Router.get("/landing-page-content", propertyController.getPropertyContent)
+Router.get('/propertyDetail/:id', propertyController.propertyDetail)
 
 module.exports = Router;

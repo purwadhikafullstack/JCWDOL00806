@@ -7,6 +7,7 @@ const db = require('../../models/index')
 const room = db.room
 const room_status = db.room_status
 const room_special_price = db.room_special_price
+const order = db.order
 module.exports ={
     createRoom: async (req, res) => {
         try {
@@ -289,6 +290,19 @@ module.exports ={
                 message: error.message,
                 data: null
             })
+        }
+    },
+    bookRoomPlaceholder: async (req, res) => {
+        try {
+            await order.create({
+                start_date: "2023-03-31",
+                end_date: "2023-04-02",
+                status: "complete",
+                room_id: 4,
+                users_id : "616792c4-1467-4e5e-a3e3-a023fc323788"
+            })
+        } catch (error) {
+            console.log(error)
         }
     }
 }
