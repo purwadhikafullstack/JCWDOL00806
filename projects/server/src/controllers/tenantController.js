@@ -305,15 +305,19 @@ module.exports = {
       
       let { id } = req.params
       let getData = await sequelize.query(`
-      SELECT 'Booked' AS status, start_date, DATE_ADD(end_date, INTERVAL 1 DAY) AS end_date
-      FROM orders
-      WHERE room_id = ${id} AND status = 'complete'
+      SELECT r.name AS room_name, 'booked' AS status, o.start_date, DATE_ADD(o.end_date, INTERVAL 1 DAY) as end_date
+      FROM properties p
+      INNER JOIN rooms r ON p.id = r.property_id
+      INNER JOIN orders o ON r.id = o.room_id AND o.status = 'complete'
+      WHERE p.id = ${id}
       UNION
-      SELECT 'Unavailable' AS status, start_date, DATE_ADD(end_date, INTERVAL 1 DAY) AS end_date
-      FROM room_statuses
-      WHERE room_id = ${id};
+      SELECT r.name AS room_name, 'unavailable' AS status, rs.start_date, DATE_ADD(rs.end_date, INTERVAL 1 DAY) as end_date
+      FROM properties p
+      INNER JOIN rooms r ON p.id = r.property_id
+      INNER JOIN room_statuses rs ON r.id = rs.room_id
+      WHERE p.id = ${id};
       `)
-
+      
       res.status(201).send({
         isError: false,
         message: "Data Acquired",

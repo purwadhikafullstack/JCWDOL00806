@@ -94,6 +94,9 @@ const TenantRoom = () => {
                         Create new room
                     </Button>
                 </Link>
+                <Link to={`/tenant/calendar-view/${propertyID}`}>
+                    <Button className='mx-5' colorScheme="blue">See Calendar View</Button>
+                </Link>
             </div>
 
             <TableContainer className='rounded-lg border border-slate-500'>
@@ -134,9 +137,6 @@ const TenantRoom = () => {
                                     
                                     <Link to={`/tenant/room/${propertyID}/special-price/${val?.id}`}>
                                         <Button colorScheme="blue">Set Special Price</Button>
-                                    </Link>
-                                    <Link to={`/tenant/calendar-view/${val?.id}`}>
-                                        <Button colorScheme="green">See Calendar View</Button>
                                     </Link>
                                 </Td>
                             </Tr>

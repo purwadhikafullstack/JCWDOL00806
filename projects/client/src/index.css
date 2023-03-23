@@ -29,9 +29,3 @@ code {
   position: relative;
   bottom: 15%;
 }
-
-.fc-event-title {
-  color: blue !important;
-  font-weight: 800;
-  margin: 2.5em 1em !important;
-}
