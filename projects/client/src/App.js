@@ -67,7 +67,7 @@ function App() {
         <Route path="/tenant/room/:propertyID/create" element={<CreateRoom />} />
         <Route path="/tenant/room/:propertyID/edit/:roomID" element={<EditRoom />} />
         <Route path="/401" element={<Unauthorized />} />
-        <Route path="/tenant/calendar-view" element={<CalendarPage />} /> 
+        <Route path="/tenant/calendar-view/:roomID" element={<CalendarPage />} /> 
       </Routes>
     </>
   );

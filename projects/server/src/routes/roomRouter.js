@@ -12,5 +12,6 @@ Router.delete("/delete/:room_id", verifyToken, roomController.deleteRoom)
 Router.get("/room-data/:room_id", verifyToken, roomController.getRoomDetail)
 Router.post("/unavailable", roomController.addUnavailable)
 Router.post("/special-price", roomController.addSpecialPrice)
+Router.post('/bookRoom', roomController.bookRoomPlaceholder) //placeholder
 
 module.exports = Router

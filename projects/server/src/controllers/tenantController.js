@@ -300,4 +300,32 @@ module.exports = {
       });
     } catch (error) {}
   },
+  getRoomStatus: async (req, res) => {
+    try {
+      
+      let { id } = req.params
+      let getData = await sequelize.query(`
+      SELECT 'Booked' AS status, start_date, DATE_ADD(end_date, INTERVAL 1 DAY) AS end_date
+      FROM orders
+      WHERE room_id = ${id} AND status = 'complete'
+      UNION
+      SELECT 'Unavailable' AS status, start_date, DATE_ADD(end_date, INTERVAL 1 DAY) AS end_date
+      FROM room_statuses
+      WHERE room_id = ${id};
+      `)
+
+      res.status(201).send({
+        isError: false,
+        message: "Data Acquired",
+        data: getData[0]
+      })
+    } catch (error) {
+      console.log(error)
+      res.status(404).send({
+        isError: true, 
+        message: error.message,
+        data: null
+      })
+    }
+  }
 };

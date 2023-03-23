@@ -59,6 +59,11 @@ export default function TenantDashboard() {
       }
     } catch (error) {
       toast(error.response.data.message);
+      if (error.response.data.message === "jwt expired") {
+        setTimeout(() => {
+          navigate(('/tenant/login'))
+        }, 2000);
+      }
     }
   };
   let onGetData = async () => {
