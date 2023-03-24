@@ -25,7 +25,7 @@ import CreateRoom from "./pages/CreateRoom";
 import EditRoom from "./pages/EditRoom";
 import Unauthorized from "./pages/Unauthorized";
 import CalendarPage from "./pages/CalendarPage";
-import TenantNavbar from "./components/TenantNavbar";
+import PropertySearch from "./pages/PropertySearch";
 
 function App() {
   const [message, setMessage] = useState("");
@@ -65,11 +65,20 @@ function App() {
           element={<RoomSpecial />}
         />
         <Route path="/tenant/room/:propertyID" element={<TenantRoom />} />
-        <Route path="/tenant/room/:propertyID/create" element={<CreateRoom />} />
-        <Route path="/tenant/room/:propertyID/edit/:roomID" element={<EditRoom />} />
+        <Route
+          path="/tenant/room/:propertyID/create"
+          element={<CreateRoom />}
+        />
+        <Route
+          path="/tenant/room/:propertyID/edit/:roomID"
+          element={<EditRoom />}
+        />
         <Route path="/401" element={<Unauthorized />} />
+<<<<<<< HEAD
         <Route path="/tenant/calendar-view/:propertyID" element={<CalendarPage />} /> 
         <Route path='tenantNav' element={<TenantNavbar />} />
+=======
+>>>>>>> development
       </Routes>
     </>
   );
