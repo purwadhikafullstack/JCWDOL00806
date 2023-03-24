@@ -148,13 +148,14 @@ module.exports = {
         { where: { category_id: id, name, address, description } },
         { transaction: t }
       );
-
+      t.commit();
       res.status(201).send({
         isError: false,
         message: "Updated Successfully",
         data: null,
       });
     } catch (error) {
+      t.rollback();
       console.log(error);
     }
   },
@@ -190,19 +191,19 @@ module.exports = {
         JOIN rooms r ON r.property_id = p.id
         GROUP BY r.property_id
         LIMIT 30;
-      `)
+      `);
 
       return res.status(200).send({
         isError: false,
         message: "Get property content success",
-        data: getProperty[0]
-      })
+        data: getProperty[0],
+      });
     } catch (error) {
       return res.status(400).send({
         isError: true,
         message: error.message,
-        data: null
-      })
+        data: null,
+      });
     }
   },
 };

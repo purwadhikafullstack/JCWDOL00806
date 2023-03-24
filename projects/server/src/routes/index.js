@@ -4,6 +4,7 @@ const tenantRouter = require("./tenantRouter");
 const authGoogleRouters = require("./authGoogleRouters");
 const propertyRouter = require("./propertyRouter");
 const roomRouter = require("./roomRouter");
+const transactionRouter = require("./transactionRouter");
 
 module.exports = {
   usersRouters,
@@ -12,4 +13,5 @@ module.exports = {
   authGoogleRouters,
   propertyRouter,
   roomRouter,
+  transactionRouter,
 };

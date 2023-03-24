@@ -79,6 +79,7 @@ const {
   tenantRouter,
   propertyRouter,
   roomRouter,
+  transactionRouter,
 } = require("./routes");
 app.use("/tenant", tenantRouter);
 app.use("/users", usersRouters);
@@ -86,6 +87,7 @@ app.use("/auth/google", authGoogleRouters);
 app.use("/auth/facebook", authFacebookRouter);
 app.use("/property", propertyRouter);
 app.use("/room", roomRouter);
+app.use("/transaction", transactionRouter);
 
 // ===========================
 
