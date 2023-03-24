@@ -74,6 +74,7 @@ function App() {
           element={<EditRoom />}
         />
         <Route path="/401" element={<Unauthorized />} />
+        <Route path="/tenant/calendar-view/:propertyID" element={<CalendarPage />} /> 
       </Routes>
     </>
   );

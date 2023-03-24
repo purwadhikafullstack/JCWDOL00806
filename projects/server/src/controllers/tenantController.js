@@ -331,5 +331,34 @@ module.exports = {
         data: null
       })
     }
+  },
+  getTenantData: async (req, res) => {
+    try {
+
+      let { id } = req.dataToken;
+
+
+      let getData = await tenant.findOne({ where: { id } });
+
+      console.log(getData)
+      if (getData === null)
+        return res.status(400).send({
+          isError: true,
+          message: "Users Not Exist",
+          data: null,
+        });
+
+      return res.status(200).send({
+        isError: false,
+        message: "Get Users Data Successful",
+        data: getData,
+      });
+    } catch (error) {
+      return res.status(400).send({
+        isError: true,
+        message: error.message,
+        data: null,
+      });
+    }
   }
 };
