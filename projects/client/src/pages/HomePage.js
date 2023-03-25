@@ -7,6 +7,7 @@ import SearchForm from '../components/SearchForm'
 import PromotionalBanner from '../components/PromotionalBanner'
 
 const HomePage = () => {
+  
   return (
     <div className='overflow-hidden'>
       <div className='relative z-10 border shadow-md'>

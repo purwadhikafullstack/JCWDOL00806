@@ -170,8 +170,6 @@ module.exports = {
     try {
       const userId = req.params.id;
       const authorizedUserId = req.dataToken.id;
-      console.log(userId);
-      console.log(authorizedUserId);
       if (userId !== authorizedUserId) {
         return res.status(403).json({
           message:
@@ -302,8 +300,7 @@ module.exports = {
   },
   getRoomStatus: async (req, res) => {
     try {
-      
-      let { id } = req.params
+      let { id } = req.params;
       let getData = await sequelize.query(`
       SELECT r.name AS room_name, 'booked' AS status, o.start_date, DATE_ADD(o.end_date, INTERVAL 1 DAY) as end_date
       FROM properties p
@@ -316,31 +313,29 @@ module.exports = {
       INNER JOIN rooms r ON p.id = r.property_id
       INNER JOIN room_statuses rs ON r.id = rs.room_id
       WHERE p.id = ${id};
-      `)
-      
+      `);
+
       res.status(201).send({
         isError: false,
         message: "Data Acquired",
-        data: getData[0]
-      })
+        data: getData[0],
+      });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       res.status(404).send({
-        isError: true, 
+        isError: true,
         message: error.message,
-        data: null
-      })
+        data: null,
+      });
     }
   },
   getTenantData: async (req, res) => {
     try {
-
       let { id } = req.dataToken;
-
 
       let getData = await tenant.findOne({ where: { id } });
 
-      console.log(getData)
+      console.log(getData);
       if (getData === null)
         return res.status(400).send({
           isError: true,
@@ -360,5 +355,5 @@ module.exports = {
         data: null,
       });
     }
-  }
+  },
 };
