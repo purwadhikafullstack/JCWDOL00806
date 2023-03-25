@@ -98,7 +98,7 @@ const EditRoom = () => {
                         <Field 
                             as="textarea"
                             name="description"
-                            placeholder="Room Description"
+                            placeholder="Room description"
                             className="py-2 px-2 bg-white w-full
                             border border-slate-500 rounded-lg
                             placeholder-slate-500 focus:outline-none"
@@ -115,7 +115,7 @@ const EditRoom = () => {
                         <Field 
                             as="textarea"
                             name="rules"
-                            placeholder="Room Description"
+                            placeholder="Room rules"
                             className="py-2 px-2 bg-white w-full
                             border border-slate-500 rounded-lg
                             placeholder-slate-500 focus:outline-none"

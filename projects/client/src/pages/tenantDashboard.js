@@ -13,7 +13,7 @@ import {
   Button,
   Progress,
 } from "@chakra-ui/react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 export default function TenantDashboard() {
   const [verified, setVerified] = useState(false);
@@ -140,6 +140,14 @@ export default function TenantDashboard() {
     <>
       <Toaster />
       <div>Dashboard</div>
+      <Link to="/tenant/all-property-room-list">
+        <Button
+          colorScheme="green"
+          className="my-5"
+        >
+          See All Property and Room List
+        </Button>
+      </Link>
       <TableContainer>
         <Table variant="simple">
           <TableCaption>Your Property Categories</TableCaption>

@@ -26,6 +26,7 @@ import EditRoom from "./pages/EditRoom";
 import Unauthorized from "./pages/Unauthorized";
 import CalendarPage from "./pages/CalendarPage";
 import PropertySearch from "./pages/PropertySearch";
+import TenantPropertyRoomList from "./pages/TenantPropertyRoomList";
 
 function App() {
   const [message, setMessage] = useState("");
@@ -74,7 +75,8 @@ function App() {
           element={<EditRoom />}
         />
         <Route path="/401" element={<Unauthorized />} />
-        <Route path="/tenant/calendar-view/:propertyID" element={<CalendarPage />} /> 
+        <Route path="/tenant/calendar-view/:propertyID" element={<CalendarPage />} />
+        <Route path="/tenant/all-property-room-list" element={<TenantPropertyRoomList />} />
       </Routes>
     </>
   );

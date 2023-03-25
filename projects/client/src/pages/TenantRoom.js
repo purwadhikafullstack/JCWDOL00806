@@ -21,6 +21,18 @@ const TenantRoom = () => {
     const [roomData, setRoomData] = useState([])
     const [tenantToken, setTenantToken] = useState("")
 
+    const formatter = new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        minimumFractionDigits: 0,
+    });
+
+    const formatText = (val) => {
+        if (val?.length > 20) val = val.substring(0, 20) + "..."
+        
+        return val
+    }
+
     const onGetData = async () => {
         try {
             // get tenant token in local storage
@@ -116,9 +128,9 @@ const TenantRoom = () => {
                             <Tr key={val.id}>
                                 <Td>{(page - 1) * 10 + idx + 1}</Td>
                                 <Td>{val?.name}</Td>
-                                <Td>{val?.price}</Td>
-                                <Td>{val?.description.substring(0, 20) + "..."}</Td>
-                                <Td>{val?.rules.substring(0, 20) + "..."}</Td>
+                                <Td>{formatter.format(val?.price)}</Td>
+                                <Td>{formatText(val?.description)}</Td>
+                                <Td>{formatText(val?.rules)}</Td>
                                 <Td className='flex gap-2'>
                                     <Link to={`/tenant/room/${propertyID}/edit/${val?.id}`}>
                                         <Button colorScheme="yellow">Edit</Button>
