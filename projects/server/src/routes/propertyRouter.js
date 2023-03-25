@@ -4,6 +4,9 @@ const Router = express.Router();
 const { propertyController } = require("../controllers");
 const uploadImages = require("../middleware/upload");
 const uploadImagesProperty = require("../middleware/uploadProperty");
+
+const { verifyToken } = require("../middleware/decodeToken");
+
 Router.post("/createProperty", propertyController.createProperty);
 Router.post(
   "/propertyImageUpload",
@@ -21,5 +24,6 @@ Router.patch(
 );
 Router.get("/landing-page-content", propertyController.getPropertyContent)
 Router.get('/propertyDetail/:id', propertyController.propertyDetail)
+Router.get("/allPropertyRoomList", verifyToken, propertyController.getAllPropertyAndRoom)
 
 module.exports = Router;

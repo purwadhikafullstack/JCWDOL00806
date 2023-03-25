@@ -26,6 +26,7 @@ import EditRoom from "./pages/EditRoom";
 import Unauthorized from "./pages/Unauthorized";
 import CalendarPage from "./pages/CalendarPage";
 import PropertySearch from "./pages/PropertySearch";
+import TenantPropertyRoomList from "./pages/TenantPropertyRoomList";
 import NotFound from "./pages/NotFound";
 
 function App() {
@@ -75,12 +76,10 @@ function App() {
           element={<EditRoom />}
         />
         <Route path="/401" element={<Unauthorized />} />
-        <Route path="/404" element={<NotFound />} />
         <Route
           path="/tenant/calendar-view/:propertyID"
           element={<CalendarPage />}
         />
-        <Route path="/search" element={<PropertySearch />} />
       </Routes>
     </>
   );

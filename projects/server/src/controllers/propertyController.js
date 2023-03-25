@@ -227,5 +227,43 @@ module.exports = {
         data: null
       })
     }
+  },
+  getAllPropertyAndRoom: async (req, res) => {
+    try {
+      // get data from client
+      let { id } = req.dataToken
+      let { page } = req.query
+
+      // set the number of items per page
+      let limit = 10
+      let offset = (page - 1) * limit
+
+      // get tenant property and room list
+      let getData = await sequelize.query(`
+        SELECT r.id, p.name AS property_name, r.name AS room_name, c.city, r.price, p.address, r.property_id
+        FROM property_categories c
+        JOIN properties p ON p.category_id = c.id
+        JOIN rooms r ON r.property_id = p.id
+        WHERE c.tenant_id = ?
+        GROUP BY r.id
+        LIMIT ? 
+        OFFSET ?;
+      `, {
+        replacements: [id, limit, offset],
+        type: sequelize.QueryTypes.SELECT
+      })
+
+      return res.status(200).send({
+        isError: false,
+        message: "Get property and room list success",
+        data: getData
+      })
+    } catch (error) {
+      return res.status(400).send({
+        isError: true,
+        message: error.message,
+        data: null
+      })
+    }
   }
 };
