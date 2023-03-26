@@ -238,6 +238,21 @@ module.exports = {
       let limit = 10
       let offset = (page - 1) * limit
 
+      // count property and room data
+      let totalData = await sequelize.query(`
+        SELECT COUNT(*) AS total
+        FROM property_categories c
+        JOIN properties p ON p.category_id = c.id
+        JOIN rooms r ON r.property_id = p.id
+        WHERE c.tenant_id = ?
+      `, {
+        replacements: [id],
+        type: sequelize.QueryTypes.SELECT
+      })
+
+      // calculate the number of pages
+      let total_pages = Math.ceil(totalData[0].total / limit)
+
       // get tenant property and room list
       let getData = await sequelize.query(`
         SELECT r.id, p.name AS property_name, r.name AS room_name, c.city, r.price, p.address, r.property_id
@@ -256,7 +271,10 @@ module.exports = {
       return res.status(200).send({
         isError: false,
         message: "Get property and room list success",
-        data: getData
+        data: {
+          total_pages,
+          property_room_list: getData
+        }
       })
     } catch (error) {
       return res.status(400).send({
