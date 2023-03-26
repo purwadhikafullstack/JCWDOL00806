@@ -11,11 +11,14 @@ import {
     Td,
     TableContainer
 } from '@chakra-ui/react'
+import ReactPaginate from 'react-paginate'
 
 const TenantPropertyRoomList = () => {
     const navigate = useNavigate()
 
     const [page, setPage] = useState(1)
+    const [pageCount, setPageCount] = useState()
+    const [tenantToken, setTenantToken] = useState("")
     const [propertyRoomData, setPropertyRoomData] = useState()
 
     const formatter = new Intl.NumberFormat('id-ID', {
@@ -36,7 +39,9 @@ const TenantPropertyRoomList = () => {
             })
 
             // set property and room data
-            setPropertyRoomData(response.data.data)
+            setTenantToken(token)
+            setPropertyRoomData(response.data.data.property_room_list)
+            setPageCount(response.data.data.total_pages)
         } catch (error) {
             // navigate to login page if token is expired
             if (error.response?.data.message === 'jwt expired') {
@@ -53,6 +58,24 @@ const TenantPropertyRoomList = () => {
                 navigate('/tenant/login')
             }
 
+            console.log(error.message)
+        }
+    }
+
+    const handlePageChange = async (selected_page) => {
+        try {
+            let current_page = selected_page.selected + 1
+            
+            // get room data
+            let response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/property/allPropertyRoomList?page=${current_page}`, {
+                headers: { 'Authorization': tenantToken }
+            })
+
+            // set new property room data and page
+            setPage(current_page)
+            setPropertyRoomData(response.data.data.property_room_list)
+            setPageCount(response.data.data.total_pages)
+        } catch (error) {
             console.log(error.message)
         }
     }
@@ -83,7 +106,7 @@ const TenantPropertyRoomList = () => {
                     <Tbody>
                         {propertyRoomData?.map((val, idx) => (
                             <Tr key={val?.id}>
-                                <Td>{(page - 1) * 19 + idx + 1}</Td>
+                                <Td>{(page - 1) * propertyRoomData?.length + idx + 1}</Td>
                                 <Td>{val?.property_name}</Td>
                                 <Td>{val?.room_name}</Td>
                                 <Td>{formatter.format(val?.price)}</Td>
@@ -94,6 +117,25 @@ const TenantPropertyRoomList = () => {
                     </Tbody>
                 </Table>
             </TableContainer>
+
+            <div className='overflow-x-auto'>
+                <ReactPaginate 
+                    breakLabel="..."
+                    previousLabel={"Previous"}
+                    nextLabel={"Next"}
+                    pageRangeDisplayed={1}
+                    pageCount={pageCount}
+                    containerClassName="flex justify-end items-center mt-4"
+                    pageClassName="px-4 py-2 cursor-pointer border"
+                    previousClassName='border px-4 py-2'
+                    nextClassName='border px-4 py-2'
+                    activeClassName="bg-blue-500 text-white"
+                    marginPagesDisplayed={1}
+                    breakClassName="border px-4 py-2"
+                    onPageChange={handlePageChange}
+                    disabledClassName="text-slate-400"
+                />
+            </div>
         </div>
     )
 }

@@ -12,12 +12,14 @@ import {
     Td,
     TableContainer
 } from '@chakra-ui/react'
+import ReactPaginate from 'react-paginate'
 
 const TenantRoom = () => {
     const { propertyID } = useParams()
     const navigate = useNavigate()
 
     const [page, setPage] = useState(1)
+    const [pageCount, setPageCount] = useState()
     const [roomData, setRoomData] = useState([])
     const [tenantToken, setTenantToken] = useState("")
 
@@ -44,9 +46,10 @@ const TenantRoom = () => {
                 headers: { 'Authorization': token }
             })
 
-            // set room data and token
+            // set room data, token and page
             setTenantToken(token)
-            setRoomData(response.data.data)
+            setRoomData(response.data.data.room_data)
+            setPageCount(response.data.data.total_pages)
         } catch (error) {
             // navigate to login page if token is expired
             if (error.response?.data.message === 'jwt expired') {
@@ -81,10 +84,29 @@ const TenantRoom = () => {
                 headers: { 'Authorization': tenantToken }
             })
 
-            // set new room data
-            setRoomData(response.data.data)
+            // set new room data and page
+            setRoomData(response.data.data.room_data)
+            setPageCount(response.data.data.total_pages)
         } catch (error) {
             console.log(error)
+        }
+    }
+
+    const handlePageChange = async (selected_page) => {
+        try {
+            let current_page = selected_page.selected + 1
+            
+            // get room data
+            let response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/room/get-data/${propertyID}?page=${current_page}`, {
+                headers: { 'Authorization': tenantToken }
+            })
+
+            // set new room data and page
+            setPage(current_page)
+            setRoomData(response.data.data.room_data)
+            setPageCount(response.data.data.total_pages)
+        } catch (error) {
+            console.log(error.message)
         }
     }
 
@@ -98,7 +120,7 @@ const TenantRoom = () => {
             py-10 px-3'
         >
             <Toaster />
-            <div className='mb-5'>
+            <div className='mb-5 flex sm:flex-row flex-col gap-2'>
                 <Link 
                     to={`/tenant/room/${propertyID}/create`}
                 >
@@ -107,7 +129,9 @@ const TenantRoom = () => {
                     </Button>
                 </Link>
                 <Link to={`/tenant/calendar-view/${propertyID}`}>
-                    <Button className='mx-5' colorScheme="blue">See Calendar View</Button>
+                    <Button colorScheme="blue">
+                        See Calendar View
+                    </Button>
                 </Link>
             </div>
 
@@ -126,7 +150,7 @@ const TenantRoom = () => {
                     <Tbody>
                         {roomData?.map((val, idx) => (
                             <Tr key={val.id}>
-                                <Td>{(page - 1) * 10 + idx + 1}</Td>
+                                <Td>{(page - 1) * roomData?.length + idx + 1}</Td>
                                 <Td>{val?.name}</Td>
                                 <Td>{formatter.format(val?.price)}</Td>
                                 <Td>{formatText(val?.description)}</Td>
@@ -156,6 +180,25 @@ const TenantRoom = () => {
                     </Tbody>
                 </Table>
             </TableContainer>
+
+            <div className='overflow-x-auto'>
+                <ReactPaginate 
+                    breakLabel="..."
+                    previousLabel={"Previous"}
+                    nextLabel={"Next"}
+                    pageRangeDisplayed={1}
+                    pageCount={pageCount}
+                    containerClassName="flex justify-end items-center mt-4"
+                    pageClassName="px-4 py-2 cursor-pointer border"
+                    previousClassName='border px-4 py-2'
+                    nextClassName='border px-4 py-2'
+                    activeClassName="bg-blue-500 text-white"
+                    marginPagesDisplayed={1}
+                    breakClassName="border px-4 py-2"
+                    onPageChange={handlePageChange}
+                    disabledClassName="text-slate-400"
+                />
+            </div>
         </div>
     )
 }
