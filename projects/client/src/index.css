@@ -29,3 +29,9 @@ code {
   position: relative;
   bottom: 15%;
 }
+
+.table-tiny th,
+.table-tiny td {
+  padding-left: 5px !important;
+  padding-right: 4px !important;
+}

@@ -10,9 +10,11 @@ import {
     Tr,
     Th,
     Td,
-    TableContainer
+    TableContainer,
+    Flex
 } from '@chakra-ui/react'
 import ReactPaginate from 'react-paginate'
+import TenantNavbar from '../components/TenantNavbar'
 
 const TenantRoom = () => {
     const { propertyID } = useParams()
@@ -115,6 +117,11 @@ const TenantRoom = () => {
     }, [])
     
     return (
+        <>
+        <Flex flexDir='row' >
+        <TenantNavbar />
+                <Flex flexDir='column' className="ml-16 w-4/5">
+                    
         <div
             className='flex flex-col
             py-10 px-3'
@@ -136,7 +143,7 @@ const TenantRoom = () => {
             </div>
 
             <TableContainer className='rounded-lg border border-slate-500'>
-                <Table variant="striped" colorScheme="gray">
+                <Table className='table-tiny' variant="striped" colorScheme="gray">
                     <Thead>
                         <Tr>
                             <Th>No.</Th>
@@ -200,6 +207,9 @@ const TenantRoom = () => {
                 />
             </div>
         </div>
+                </Flex>
+        </Flex>
+        </>
     )
 }
 
