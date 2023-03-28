@@ -30,13 +30,13 @@ const TenantNavbar = () => {
             setTenantData(username)
 
         } catch (error) {
-            console.log(error.response.data.message)
-            if (error.response.data.message === 'jwt expire') {
+            if (error.response.data.message === 'jwt expired') {
                 toast.error("Please login first")
                 setTimeout(() => {
                     navigate('/tenant/login')
                 }, 1500);
             }
+            console.log(error.response.data.message)
         }
     }
 
@@ -71,7 +71,7 @@ const TenantNavbar = () => {
                   />
                   
                   <TenantNavItem navOpened={navOpened} link="/tenant/dashboard" icon={faHouseChimneyUser} color="#207BF2" title="Properties" description={"View your properties"} />
-                  <TenantNavItem navOpened={navOpened} link='/tenant/orders' icon={faClipboardList} color="black" title="Orders" description={"View your orders"} />
+                  <TenantNavItem navOpened={navOpened} link='/tenant/orders?status=in%20progress' icon={faClipboardList} color="black" title="Orders" description={"View your orders"} />
                   <TenantNavItem navOpened={navOpened} link='/tenant/sales-report' icon={faDollarSign} color="green" title="Sales" description={"View your Sales reports"} />
 
 
