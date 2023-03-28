@@ -28,6 +28,7 @@ import CalendarPage from "./pages/CalendarPage";
 import PropertySearch from "./pages/PropertySearch";
 import TenantPropertyRoomList from "./pages/TenantPropertyRoomList";
 import NotFound from "./pages/NotFound";
+import TenantOrders from "./pages/TenantOrders";
 
 function App() {
   const [message, setMessage] = useState("");
@@ -85,6 +86,7 @@ function App() {
           path="/tenant/all-property-room-list"
           element={<TenantPropertyRoomList />}
         />
+        <Route path="/tenant/orders" element={<TenantOrders />} />
         <Route path="/404" element={<NotFound />} />
       </Routes>
     </>
