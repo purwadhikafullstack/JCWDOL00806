@@ -60,7 +60,7 @@ export default function PropertyDetail() {
         >
           <Image
             src={`${srcImg(list[0]?.picture)}`}
-            boxSize="70%"
+            boxSize="100%"
             objectFit="cover"
             alt={list[0]?.name}
           />
@@ -77,7 +77,7 @@ export default function PropertyDetail() {
           </div>
         ))}
       </div>
-      <div className="fixed bottom-0 w-full">
+      <div className="bottom-0 w-full">
         <Footer />
       </div>
     </div>
