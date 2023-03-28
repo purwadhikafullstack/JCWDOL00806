@@ -56,6 +56,14 @@ export default function PropertySearch() {
     }
   };
 
+  const detailNavigate = async (id) => {
+    try {
+      navigate(`/property-detail/${id}?city=${city}&start=${start}&end=${end}`);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     onGetData();
   }, []);
@@ -71,8 +79,12 @@ export default function PropertySearch() {
                 grid-cols-1 gap-x-5 gap-y-10"
         >
           {data?.map((val) => (
-            <div key={val?.data_id} className="cursor-pointer">
-              <PropertyCard data={val} onClick={() => checkUserDetail()} />
+            <div
+              key={val?.data_id}
+              className="cursor-pointer"
+              onClick={() => detailNavigate(val.id)}
+            >
+              <PropertyCard data={val} />
             </div>
           ))}
         </div>

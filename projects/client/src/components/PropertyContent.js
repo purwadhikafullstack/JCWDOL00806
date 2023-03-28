@@ -21,30 +21,10 @@ const PropertyContent = () => {
       console.log(error.message);
     }
   };
-
-  const checkUserDetail = async () => {
+  const navigateDetail = async (propertyID) => {
     try {
-      let token = localStorage.getItem("userToken".replace(/"/g, ""));
-      if (!token) throw { message: "Token is missing" };
-      await axios.post(
-        `${process.env.REACT_APP_SERVER_URL}/users/user-profile`,
-        null,
-        { headers: { authorization: token } }
-      );
-    } catch (error) {
-      console.log(error);
-      if (
-        error.response?.data.message === "jwt expired" ||
-        error.message == "Token is missing"
-      ) {
-        toast("Your session is expired, please login");
-        setTimeout(() => {
-          navigate("/users/login");
-        }, 2000);
-      } else {
-        navigate("/404");
-      }
-    }
+      navigate(`/property-detail/${propertyID}`);
+    } catch (error) {}
   };
   useEffect(() => {
     onGetProperty();
@@ -59,8 +39,12 @@ const PropertyContent = () => {
                 grid-cols-1 gap-x-5 gap-y-10"
       >
         {property?.map((val) => (
-          <div key={val?.property_id} className="cursor-pointer">
-            <PropertyCard data={val} onClick={() => checkUserDetail()} />
+          <div
+            key={val?.property_id}
+            className="cursor-pointer"
+            onClick={() => navigateDetail(val.property_id)}
+          >
+            <PropertyCard data={val} />
           </div>
         ))}
       </div>
