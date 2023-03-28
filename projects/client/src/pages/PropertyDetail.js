@@ -54,12 +54,17 @@ export default function PropertyDetail() {
         <Navbar />
       </div>
       <div className="items-center flex justify-items-center">
-        <Image
-          src={`${srcImg(list[0]?.picture)}`}
-          boxSize="70%"
-          objectFit="cover"
-          alt={list[0]?.name}
-        />
+        <div
+          className="overflow-hidden rounded-lg 
+        sm:h-[250px] border shadow-lg"
+        >
+          <Image
+            src={`${srcImg(list[0]?.picture)}`}
+            boxSize="70%"
+            objectFit="cover"
+            alt={list[0]?.name}
+          />
+        </div>
       </div>
       <div
         className="pt-6 pb-20 grid xl:grid-cols-5 
@@ -72,7 +77,9 @@ export default function PropertyDetail() {
           </div>
         ))}
       </div>
-      <Footer />
+      <div className="fixed bottom-0 w-full">
+        <Footer />
+      </div>
     </div>
   );
 }
