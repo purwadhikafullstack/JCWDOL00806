@@ -22,30 +22,6 @@ const PropertyContent = () => {
     }
   };
 
-  const checkUserDetail = async () => {
-    try {
-      let token = localStorage.getItem("userToken".replace(/"/g, ""));
-      if (!token) throw { message: "Token is missing" };
-      await axios.post(
-        `${process.env.REACT_APP_SERVER_URL}/users/user-profile`,
-        null,
-        { headers: { authorization: token } }
-      );
-    } catch (error) {
-      console.log(error);
-      if (
-        error.response?.data.message === "jwt expired" ||
-        error.message == "Token is missing"
-      ) {
-        toast("Your session is expired, please login");
-        setTimeout(() => {
-          navigate("/users/login");
-        }, 2000);
-      } else {
-        navigate("/404");
-      }
-    }
-  };
   useEffect(() => {
     onGetProperty();
   }, []);
@@ -60,7 +36,7 @@ const PropertyContent = () => {
       >
         {property?.map((val) => (
           <div key={val?.property_id} className="cursor-pointer">
-            <PropertyCard data={val} onClick={() => checkUserDetail()} />
+            <PropertyCard data={val} />
           </div>
         ))}
       </div>
