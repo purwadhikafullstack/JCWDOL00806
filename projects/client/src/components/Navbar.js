@@ -6,6 +6,9 @@ import { Link } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars, faXmark } from '@fortawesome/free-solid-svg-icons'
 
+import LoginModal from './LoginModal'
+import RegisterModal from './RegisterModal'
+
 const sidebarVariants = {
     hidden: {
       x: "100vw",
@@ -91,10 +94,6 @@ const Navbar = () => {
                     className='sm:flex hidden 
                     justify-between items-center gap-10'
                 >
-                    <span className='cursor-pointer'>
-                        Rent your property
-                    </span>
-
                     {userData ? (
                         <div 
                             className='sm:flex hidden 
@@ -116,26 +115,8 @@ const Navbar = () => {
                             className='sm:flex hidden 
                             justify-between items-center gap-5'
                         >
-                            <Link to="/users/login">
-                                <Button
-                                    bg="transparent" 
-                                    color="black" 
-                                    border="1px solid #53a8b6"
-                                    _hover={{ bg: "#53a8b6", color: "white" }}
-                                >
-                                    Login
-                                </Button>
-                            </Link>
-
-                            <Link to="/users/register">
-                                <Button
-                                    bg="#53a8b6;" 
-                                    color="white"
-                                    _hover={{ bg: "#53a8b6", color: "white" }}
-                                >
-                                    Register
-                                </Button>
-                            </Link>
+                            <LoginModal />
+                            <RegisterModal />
                         </div>
                     )}
                 </div>
@@ -155,40 +136,36 @@ const Navbar = () => {
                     variants={sidebarVariants}
                     initial={false}
                     animate={toggle ? "show": "hidden"}
-                    className='bg-[#bbe4e9] fixed top-[85px]
-                    right-0 w-full h-screen -z-10 justify-center'
+                    className='bg-white shadow-2xl fixed top-[85px]
+                    right-0 w-[90%] h-screen -z-10 justify-center rounded-l-md'
                 >
-                    <div className='py-[50px] font-bold text-3xl'>
+                    <div className='py-[50px] px-5 font-bold text-xl'>
                         {userData ? (
-                            <div className=' flex flex-col items-center gap-8'>
+                            <div>
                                 <div>{userData}</div>
-                                <hr className='border border-black w-4/5' />
-                                <div>Rent your property</div>
-                                <div 
-                                    className='cursor-pointer'
-                                    onClick={() => {
-                                        handleSidebar()
-                                        onLogout()
-                                    }}
-                                >
-                                    Logout
+                                <hr className='my-5' />
+                                <div>
+                                    <Button
+                                        bg="transparent" 
+                                        color="black" 
+                                        border="1px solid #53a8b6"
+                                        _hover={{ bg: "#53a8b6", color: "white" }}
+                                        onClick={() => {
+                                            onLogout()
+                                            handleSidebar()
+                                        }}
+                                    >
+                                        Logout
+                                    </Button>
                                 </div>
                             </div>   
                         ) : (
-                            <div className=' flex flex-col items-center gap-8'>
-                                <div>Rent your property</div>
-                                <Link 
-                                    to="/users/login"
-                                    onClick={() => handleSidebar()}
-                                >
-                                    Login
-                                </Link>
-                                <Link 
-                                    to="/users/register"
-                                    onClick={() => setToggle((prev) => !prev)}
-                                >
-                                    Register
-                                </Link>
+                            <div>
+                                <hr className='my-5' />
+                                <div className='flex gap-2'>
+                                    <LoginModal />
+                                    <RegisterModal />
+                                </div>
                             </div>
                         )}
                     </div>
