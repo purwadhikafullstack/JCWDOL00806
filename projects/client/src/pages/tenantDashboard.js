@@ -12,7 +12,8 @@ import {
   TableContainer,
   Button,
   Progress,
-  Flex
+  Flex,
+  Heading
 } from "@chakra-ui/react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import TenantNavbar from "../components/TenantNavbar";
@@ -143,8 +144,8 @@ export default function TenantDashboard() {
       <Flex flexDir="row">
       <TenantNavbar />
       <Toaster />
-        <Flex flexDir='column' className="ml-16">
-        <div>Dashboard</div>
+        <Flex flexDir='column' className="ml-16 mt-3">
+        <Heading>Dashboard</Heading>
         <Link to="/tenant/all-property-room-list">
           <Button
             colorScheme="green"

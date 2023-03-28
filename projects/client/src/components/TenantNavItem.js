@@ -20,9 +20,9 @@ const TenantNavItem = ({navOpened, icon, title, description, color, link}) => {
                           href={link}
                   > 
                       <MenuButton w="100%">
-                          <Flex justifyContent="space-around">
-                                <FontAwesomeIcon color={color} size='xl' icon={icon} />
-                                <Text display={navOpened ? "flex" : "none"}>{title}</Text>
+                          <Flex justifyContent="left" alignItems='center'>
+                                <FontAwesomeIcon className='w-5 h-5' color="#207BF2" size='xl' icon={icon} />
+                                <Text mx={3} display={navOpened ? "flex" : "none"}>{title}</Text>
                           </Flex>
                       </MenuButton>
                   </Link>

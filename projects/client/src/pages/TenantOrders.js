@@ -49,7 +49,7 @@ const TenantOrders = () => {
                 <TenantNavbar />
                     <Flex flexDir='column' className="ml-16 mt-3">
                         <Heading>Your orders</Heading>
-                        <Flex flexDir="column" className='border rounded-md p-3'>
+                        <Flex flexDir="column" className='border rounded-md p-3 mt-2'>
                             <Flex flexDir="column">
                                 <Flex flexDir='row' gap={1.5} alignItems='center'>
                                     <Text as='b' className='mr-2' >Status :</Text>
@@ -58,7 +58,7 @@ const TenantOrders = () => {
                                     <Button colorScheme={statusFilter === "rejected" ? "green" : null} onClick={handleFilterClick} name="rejected" size='sm' variant='outline' >Rejected</Button>
                                     <Button colorScheme={statusFilter === "complete" ? "green" : null} onClick={handleFilterClick} name="complete" size='sm' variant='outline' >Complete</Button>
                                 </Flex>
-                                <Divider className='my-3' />
+                                <Divider className='my-2' />
                                   <Skeleton>
                                       test
                                 </Skeleton>
@@ -74,7 +74,7 @@ const TenantOrders = () => {
             <TenantNavbar />
                 <Flex flexDir='column' className="ml-16 mt-3">
                     <Heading>Your orders</Heading>
-                    <Flex flexDir="column" className='border rounded-md p-3 w-[34em]'>
+                    <Flex flexDir="column" className='border rounded-md p-3 w-[39em] mt-2'>
                         <Flex flexDir="column">
                             <Flex flexDir='row' gap={1.5} alignItems='center'>
                                 <Text as='b' className='mr-2' >Status :</Text>
@@ -83,7 +83,7 @@ const TenantOrders = () => {
                                 <Button colorScheme={statusFilter === "rejected" ? "green" : null} onClick={handleFilterClick} name="rejected" size='sm' variant='outline' >Rejected</Button>
                                 <Button colorScheme={statusFilter === "complete" ? "green" : null} onClick={handleFilterClick} name="complete" size='sm' variant='outline' >Complete</Button>
                             </Flex>
-                            <Divider className='my-3' />
+                            <Divider className='my-2' />
                             <OrderList />
                         </Flex>
                     </Flex>
