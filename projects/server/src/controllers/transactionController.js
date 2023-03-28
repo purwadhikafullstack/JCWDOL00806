@@ -6,6 +6,7 @@ const fs = require("fs").promises;
 
 //Import models
 const db = require("../../models/index");
+const order = db.order
 
 module.exports = {
   list: async (req, res) => {
@@ -48,4 +49,47 @@ module.exports = {
       console.log(error);
     }
   },
+  getOrderList: async (req, res) => {
+    try {
+      let { status } = req.query
+      let getData = ""
+
+      if (status === "in progress") {
+        getData = await sequelize.query(`
+        SELECT o.id, r.name, o.payment_proof, status, start_date, end_date, room_id
+        FROM orders o
+        INNER JOIN rooms r ON r.id = o.room_id
+        WHERE status = "Waiting for Confirmation"
+        `)
+      } else if (status === "all") {
+        getData = await sequelize.query(`
+        SELECT o.id, r.name, o.payment_proof, status, start_date, end_date, room_id
+        FROM orders o
+        INNER JOIN rooms r ON r.id = o.room_id
+        WHERE status NOT IN ("Waiting for Payment")
+        `)
+      } else {
+        getData = await sequelize.query(`
+        SELECT o.id, r.name, o.payment_proof, status, start_date, end_date, room_id
+        FROM orders o
+        INNER JOIN rooms r ON r.id = o.room_id
+        WHERE status = "${status}"
+        `)
+      }
+      
+      return res.status(201).send({
+        isError: false,
+        message: "Data acquired",
+        data: getData[0]
+      })
+      
+    } catch (error) {
+      console.log(error)
+      return res.status(404).send({
+        isError: true,
+        message: error.message,
+        data: null
+      })
+    }
+  }
 };

@@ -5,5 +5,6 @@ const Router = express.Router();
 const { transactionController } = require("../controllers");
 
 Router.get("/list", transactionController.list);
+Router.get('/order-list', transactionController.getOrderList)
 
 module.exports = Router;
