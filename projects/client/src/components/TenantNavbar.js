@@ -46,6 +46,7 @@ const TenantNavbar = () => {
           <Flex
               pos="sticky"
               left="3"
+              top="5"
               h="95vh"
               marginTop="2.5vh"
               boxShadow="0 4px 12px 0 rgba(0, 0, 0, 0.15)"

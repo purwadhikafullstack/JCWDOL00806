@@ -4,11 +4,12 @@ const OrderCard = ({id, start, end, status, name}) => {
   return (
       <>
         <Flex className='p-2 mx-auto w-full mb-3 mt-1 border rounded-md' flexDir='column'>
-            <Flex flexDir='row'>
+            <Flex flexDir='row' className=''>
                   <Text fontSize='xs'>Order # {id}</Text>
                   <Divider orientation='vertical' className='mx-5' />
                   <Text fontSize='xs'>Room name : {name}</Text>
-            </Flex>
+              </Flex>
+              <Divider className='mt-2' />
             <Flex flexDir='row'>
                 <Flex flexDir='column' className='w-40'>
                     <Text fontSize='sm'>Status : </Text>

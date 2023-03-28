@@ -73,7 +73,7 @@ const RegisterPage = () => {
 
   return (
     <>
-      <div className='mx-2 my-4 flex flex-col text-center align-middle p-4 border rounded-lg border-gray-300 drop-shadow-lg'>
+      <div className='sm:w-[500px] sm:mx-auto mx-2 my-4 flex flex-col text-center align-middle p-4 border rounded-lg border-slate-300 shadow-lg'>
         <div className="flex flex-col text-center align-middle p-4">
           <h1 className='text-xl font-bold'>Welcome to <span className='text-2xl text-cyan-500'>D'sewa</span></h1>
           <hr className='my-4'></hr>
