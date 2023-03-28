@@ -335,7 +335,6 @@ module.exports = {
 
       let getData = await tenant.findOne({ where: { id } });
 
-      console.log(getData);
       if (getData === null)
         return res.status(400).send({
           isError: true,

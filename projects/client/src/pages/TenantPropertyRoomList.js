@@ -9,9 +9,11 @@ import {
     Tr,
     Th,
     Td,
-    TableContainer
+    TableContainer,
+    Flex
 } from '@chakra-ui/react'
 import ReactPaginate from 'react-paginate'
+import TenantNavbar from '../components/TenantNavbar'
 
 const TenantPropertyRoomList = () => {
     const navigate = useNavigate()
@@ -85,6 +87,11 @@ const TenantPropertyRoomList = () => {
     }, [])
 
     return (
+        <>
+            <Flex flexDir='row'>
+                <TenantNavbar />
+                <Flex flexDir='column' className='ml-16'>
+
         <div
             className='flex flex-col
             py-10 px-3'
@@ -137,6 +144,9 @@ const TenantPropertyRoomList = () => {
                 />
             </div>
         </div>
+                </Flex>
+        </Flex>
+        </>
     )
 }
 

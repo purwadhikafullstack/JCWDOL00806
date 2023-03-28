@@ -29,7 +29,8 @@ module.exports = (sequelize, DataTypes) => {
     status: DataTypes.STRING,
     payment_proof: DataTypes.STRING,
     start_date: DataTypes.DATEONLY,
-    end_date: DataTypes.DATEONLY
+    end_date: DataTypes.DATEONLY,
+    notes: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'order',

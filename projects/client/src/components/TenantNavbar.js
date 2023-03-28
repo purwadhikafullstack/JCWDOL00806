@@ -50,7 +50,7 @@ const TenantNavbar = () => {
               marginTop="2.5vh"
               boxShadow="0 4px 12px 0 rgba(0, 0, 0, 0.15)"
               borderRadius="15px"
-              w={navOpened ? "12em" : "3.2em"}
+              w={navOpened ? "10em" : "3.2em"}
               flexDir="column"
               justifyContent="space-between"
           >
@@ -70,9 +70,9 @@ const TenantNavbar = () => {
                     }}  
                   />
                   
-                  <TenantNavItem navOpened={navOpened} icon={faHouseChimneyUser} color="#207BF2" title="Properties" description={"View your properties"} />
-                  <TenantNavItem navOpened={navOpened} icon={faClipboardList} color="black" title="Orders" description={"View your orders"} />
-                  <TenantNavItem navOpened={navOpened} icon={faDollarSign} color="green" title="Sales" description={"View your Sales reports"} />
+                  <TenantNavItem navOpened={navOpened} link="/tenant/dashboard" icon={faHouseChimneyUser} color="#207BF2" title="Properties" description={"View your properties"} />
+                  <TenantNavItem navOpened={navOpened} link='/tenant/orders' icon={faClipboardList} color="black" title="Orders" description={"View your orders"} />
+                  <TenantNavItem navOpened={navOpened} link='/tenant/sales-report' icon={faDollarSign} color="green" title="Sales" description={"View your Sales reports"} />
 
 
               </Flex>
