@@ -21,7 +21,11 @@ const PropertyContent = () => {
       console.log(error.message);
     }
   };
-
+  const navigateDetail = async (propertyID) => {
+    try {
+      navigate(`/property-detail/${propertyID}`);
+    } catch (error) {}
+  };
   useEffect(() => {
     onGetProperty();
   }, []);
@@ -35,7 +39,11 @@ const PropertyContent = () => {
                 grid-cols-1 gap-x-5 gap-y-10"
       >
         {property?.map((val) => (
-          <div key={val?.property_id} className="cursor-pointer">
+          <div
+            key={val?.property_id}
+            className="cursor-pointer"
+            onClick={() => navigateDetail(val.property_id)}
+          >
             <PropertyCard data={val} />
           </div>
         ))}
