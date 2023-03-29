@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import {
   FormControl,
@@ -7,33 +7,34 @@ import {
   Input,
   Button,
   FormErrorMessage,
+  VStack,
 } from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFacebook, faGoogle } from "@fortawesome/free-brands-svg-icons";
 
 export default function TenantRegister() {
-  let username = useRef();
-  let email = useRef();
-  let phoneNumber = useRef();
-  let password = useRef();
   const [images, setImages] = useState(null);
   const navigate = useNavigate();
 
-  let registerHandler = async () => {
+  let registerHandler = async (value) => {
     try {
       let input = {
-        username: username.current.value,
-        email: email.current.value,
-        phone_number: phoneNumber.current.value,
-        password: password.current.value,
+        username: value.username,
+        email: value.email,
+        phone_number: value.phone_number,
+        password: value.password,
       };
       let checkUsername = await axios.get(
-        `${process.env.REACT_APP_SERVER_URL}/tenant/checkUsername?username=${username.current.value}`
+        `${process.env.REACT_APP_SERVER_URL}/tenant/checkUsername?username=${value.username}`
       );
       let checkEmail = await axios.get(
-        `${process.env.REACT_APP_SERVER_URL}/tenant/checkEmail?email=${email.current.value}`
+        `${process.env.REACT_APP_SERVER_URL}/tenant/checkEmail?email=${value.email}`
       );
       let checkPhone = await axios.get(
-        `${process.env.REACT_APP_SERVER_URL}/tenant/checkPhone?phone_number=${phoneNumber.current.value}`
+        `${process.env.REACT_APP_SERVER_URL}/tenant/checkPhone?phone_number=${value.phone_number}`
       );
       if (checkUsername.data) throw toast.error("Username is taken");
       else if (checkEmail.data)
@@ -48,7 +49,7 @@ export default function TenantRegister() {
         let bodyFormData = new FormData();
         bodyFormData.append("images", images);
         await axios.post(
-          `${process.env.REACT_APP_SERVER_URL}/tenant/verify?username=${username.current.value}`,
+          `${process.env.REACT_APP_SERVER_URL}/tenant/verify?username=${value.username}`,
           bodyFormData,
           {
             headers: {
@@ -65,36 +66,142 @@ export default function TenantRegister() {
       toast(error.message);
     }
   };
+  const formik = useFormik({
+    initialValues: {
+      username: "",
+      email: "",
+      phone_number: "",
+      password: "",
+      confirmPassword: "",
+    },
+    validationSchema: Yup.object().shape({
+      username: Yup.string()
+        .min(3, "Username must be at least 3 characters")
+        .required("Please fill in your username"),
+      email: Yup.string()
+        .email("Invalid email address")
+        .required("please fill in your email"),
+      phone_number: Yup.string()
+        .matches(/^[0-9]+$/, "phone number must be all digits")
+        .required("Please fill in your phone number"),
+      password: Yup.string()
+        .required("please fill in your password")
+        .matches(
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+          "Password must have at least 8 characters and must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
+        ),
+      confirmPassword: Yup.string()
+        .required("Please re-enter your password")
+        .oneOf([Yup.ref("password"), null], "Passwords must match"),
+    }),
+    onSubmit: (values) => {
+      registerHandler(values);
+    },
+  });
 
   return (
     <>
-      <div className="text-center">
-        <h1 className="text-lg">Register Tenant</h1>
-        <FormControl isRequired>
-          <FormLabel>Username</FormLabel>
-          <Input type="text" ref={username} />
-          <FormLabel>Email address</FormLabel>
-          <Input type="email" ref={email} />
-          <FormLabel>Phone Number</FormLabel>
-          <Input type="number" ref={phoneNumber} />
-          <FormLabel>Password</FormLabel>
-          <Input type="password" ref={password} />
-          <FormLabel>KTP</FormLabel>
-          <Input
-            type="file"
-            onChange={(e) => setImages(e.target.files[0])}
-            accept="image/png, image/jpeg"
-          />
-          <Button
-            mt={4}
-            colorScheme="teal"
-            type="submit"
-            onClick={() => registerHandler()}
-          >
-            Register
-          </Button>
-        </FormControl>
-        <Toaster />
+      <div className="sm:w-[500px] sm:mx-auto mx-2 my-4 flex flex-col text-center align-middle p-4 border rounded-lg border-slate-300 shadow-lg">
+        <div className="flex flex-col text-center align-middle p-4">
+          <h1 className="text-xl font-bold">
+            Welcome to <span className="text-2xl text-cyan-500">D'sewa</span>,
+            Tenants
+          </h1>
+          <hr className="my-4"></hr>
+          <Toaster position="top-center" />
+          <VStack spacing={1} mt={2}>
+            <FormControl
+              isInvalid={formik.touched.username && formik.errors.username}
+            >
+              <FormLabel htmlFor="username">Username</FormLabel>
+              <Input
+                id="username"
+                name="username"
+                placeholder="Enter your username"
+                {...formik.getFieldProps("username")}
+              />
+              <FormErrorMessage>{formik.errors.username}</FormErrorMessage>
+            </FormControl>
+
+            <FormControl
+              isInvalid={formik.touched.email && formik.errors.email}
+            >
+              <FormLabel htmlFor="email">Email</FormLabel>
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                placeholder="Enter your email"
+                {...formik.getFieldProps("email")}
+              />
+              <FormErrorMessage>{formik.errors.email}</FormErrorMessage>
+            </FormControl>
+
+            <FormControl
+              isInvalid={
+                formik.touched.phone_number && formik.errors.phone_number
+              }
+            >
+              <FormLabel htmlFor="phone_number">Phone Number</FormLabel>
+              <Input
+                id="phone_number"
+                name="phone_number"
+                placeholder="Enter your phone number"
+                {...formik.getFieldProps("phone_number")}
+              />
+              <FormErrorMessage>{formik.errors.phone_number}</FormErrorMessage>
+            </FormControl>
+
+            <FormControl
+              isInvalid={formik.touched.password && formik.errors.password}
+            >
+              <FormLabel htmlFor="password">Password</FormLabel>
+              <Input
+                id="password"
+                name="password"
+                type="password"
+                placeholder="Enter your password"
+                {...formik.getFieldProps("password")}
+              />
+              <FormErrorMessage>{formik.errors.password}</FormErrorMessage>
+            </FormControl>
+
+            <FormControl
+              isInvalid={
+                formik.touched.confirmPassword && formik.errors.confirmPassword
+              }
+            >
+              <FormLabel htmlFor="confirmPassword">Confirm Password</FormLabel>
+              <Input
+                id="confirmPassword"
+                name="confirmPassword"
+                type="password"
+                placeholder="Confirm your password"
+                {...formik.getFieldProps("confirmPassword")}
+              />
+              <FormErrorMessage>
+                {formik.errors.confirmPassword}
+              </FormErrorMessage>
+              <FormLabel htmlFor="ktp">KTP</FormLabel>
+              <Input
+                type="file"
+                name="ktp"
+                onChange={(e) => setImages(e.target.files[0])}
+                accept="image/png, image/jpeg"
+              />
+            </FormControl>
+
+            <Button
+              mt="6 !important"
+              width="71%"
+              colorScheme="blue"
+              type="submit"
+              onClick={formik.handleSubmit}
+            >
+              Register
+            </Button>
+          </VStack>
+        </div>
       </div>
     </>
   );

@@ -4,6 +4,8 @@ import toast, { Toaster } from "react-hot-toast";
 import SearchForm from "../components/SearchForm";
 import PropertyCard from "../components/PropertyCard";
 import { useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 export default function PropertySearch() {
   const [data, setData] = useState([]);
@@ -71,6 +73,7 @@ export default function PropertySearch() {
   return (
     <>
       <Toaster />
+      <Navbar />
       <SearchForm />
       <div className="lg:px-16 md:px-10 px-5">
         <div
@@ -88,6 +91,9 @@ export default function PropertySearch() {
             </div>
           ))}
         </div>
+      </div>
+      <div className="bottom-0 w-full">
+        <Footer />
       </div>
     </>
   );
