@@ -315,8 +315,8 @@ module.exports ={
             await order.create({
                 start_date: "2023-04-04",
                 end_date: "2023-04-06",
-                status: "Waiting for Payment",
-                room_id: 6,
+                status: "Waiting for Confirmation",
+                room_id: 10,
                 users_id : "8ca1154b-5b7e-4104-a031-21d0c09eea75"
             })
         } catch (error) {
