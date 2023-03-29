@@ -30,6 +30,11 @@ module.exports = (sequelize, DataTypes) => {
     payment_proof: DataTypes.STRING,
     start_date: DataTypes.DATEONLY,
     end_date: DataTypes.DATEONLY,
+    invoice_id: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true
+    },
     notes: DataTypes.STRING
   }, {
     sequelize,
