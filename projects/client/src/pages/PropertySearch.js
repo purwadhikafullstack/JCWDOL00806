@@ -92,7 +92,7 @@ export default function PropertySearch() {
           ))}
         </div>
       </div>
-      <div className="bottom-0 w-full">
+      <div className="flex-shrink">
         <Footer />
       </div>
     </>
