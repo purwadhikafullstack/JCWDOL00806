@@ -6,6 +6,9 @@ import { Formik, Form, Field, ErrorMessage } from 'formik'
 import { Button } from '@chakra-ui/react'
 import { Link, useNavigate } from 'react-router-dom';
 
+import Navbar from '../components/Navbar'
+import Footer from '../components/Footer'
+
 const Login = () => {
     const navigate = useNavigate()
 
@@ -102,49 +105,61 @@ const Login = () => {
     }
 
     return (
-        <section
-            className='flex flex-col justify-center
-            items-center py-10 px-3'
-        >
-            <Toaster />
-            <div 
-                className='sm:w-[500px] w-full rounded-lg
-                px-10 py-10 shadow-lg border-2 border-slate-200'
-            >
-                <h1 className='text-2xl font-semibold mb-5'>
-                    Login
-                </h1>
-                
-                { loginForm() }
-                
-                <div className='mt-10 flex flex-col gap-5'>
-                    <div className='w-full flex justify-between items-center'>
-                        <hr className='w-[40%]' />
-                        <span>OR</span>
-                        <hr className='w-[40%]' />
-                    </div>
+        <div className='flex flex-col min-h-screen overflow-hidden'>
+            <div className='relative z-10 border shadow-md'>
+                <Navbar />
+            </div>
 
-                    <div className='flex flex-col gap-3'>
-                        <Button
-                            type='submit'
-                            colorScheme='red'
-                            width='100%'
-                            onClick={() => loginViaGoogle()}
-                        >
-                            LOGIN WITH GOOGLE
-                        </Button>
-                        <Button
-                            type='submit'
-                            colorScheme='facebook'
-                            width='100%'
-                            onClick={() => loginViaFacebook()}
-                        >
-                            LOGIN WITH FACEBOOK
-                        </Button>
+            <div className='flex-1'>
+                <div
+                    className='flex flex-col justify-center
+                    items-center py-10 px-3'
+                >
+                    <Toaster />
+                    <div 
+                        className='sm:w-[500px] w-full rounded-lg
+                        px-10 py-10 shadow-lg border-2 border-slate-200'
+                    >
+                        <h1 className='text-2xl font-semibold mb-5'>
+                            Login
+                        </h1>
+                        
+                        { loginForm() }
+                        
+                        <div className='mt-10 flex flex-col gap-5'>
+                            <div className='w-full flex justify-between items-center'>
+                                <hr className='w-[40%]' />
+                                <span>OR</span>
+                                <hr className='w-[40%]' />
+                            </div>
+
+                            <div className='flex flex-col gap-3'>
+                                <Button
+                                    type='submit'
+                                    colorScheme='red'
+                                    width='100%'
+                                    onClick={() => loginViaGoogle()}
+                                >
+                                    LOGIN WITH GOOGLE
+                                </Button>
+                                <Button
+                                    type='submit'
+                                    colorScheme='facebook'
+                                    width='100%'
+                                    onClick={() => loginViaFacebook()}
+                                >
+                                    LOGIN WITH FACEBOOK
+                                </Button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </section>
+
+            <div className='flex-shrink'>
+                <Footer />
+            </div>
+        </div>
     )
 }
 

@@ -81,11 +81,13 @@ export default function PropertyDetail() {
     onGetData();
   }, []);
   return (
-    <div className="overflow-hidden">
+    <div className="flex flex-col min-h-screen overflow-hidden">
       <Toaster />
       <div className="relative z-10 border shadow-md">
         <Navbar />
       </div>
+      
+    <div className="flex-1">
       <div className="flex flex-row items-center">
         <div
           className="overflow-hidden rounded-lg 
@@ -122,10 +124,12 @@ export default function PropertyDetail() {
       >
         {list?.map((val, i) => (
           <div key={i} className="cursor-pointer">
-            <RoomCard data={val} />
+            <RoomCard data={val} dateRange={dateRange} />
           </div>
         ))}
       </div>
+    </div>
+
       <div className="flex-shrink">
         <Footer />
       </div>

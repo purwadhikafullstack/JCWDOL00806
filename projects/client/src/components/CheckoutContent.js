@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import DatePicker from "react-datepicker";
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { Image, Divider, Button } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDoorOpen } from "@fortawesome/free-solid-svg-icons";
@@ -10,6 +10,8 @@ import toast, { Toaster } from 'react-hot-toast'
 const CheckoutContent = () => {
     const { roomID } = useParams()
     const navigate = useNavigate()
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
 
     const [roomData, setRoomData] = useState()
     const [userToken, setUserToken] = useState()
@@ -28,6 +30,10 @@ const CheckoutContent = () => {
             let token = localStorage.getItem('userToken')
             if (!token) throw { message: 'Token is missing' }
 
+            // get params start and end
+            let start = queryParams.get("start").substring(0, 15)
+            let end = queryParams.get("end").substring(0, 15)
+
             // get room data
             let response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/transaction/checkout/${roomID}`, {
                 headers: { 'Authorization' : token }
@@ -38,7 +44,16 @@ const CheckoutContent = () => {
             // set room data and user token
             setRoomData(response.data.data[0])
             setUserToken(token)
-            calculateStay()
+
+            // calculate stay if start and end is not null
+            if (start !== "null" && end !== "null") {
+                start = new Date(start)
+                end = new Date(end)
+
+                setStartDate(start)
+                setEndDate(end)
+                calculateStay(start, end)
+            }
 
             const unavailableDates = [];
             

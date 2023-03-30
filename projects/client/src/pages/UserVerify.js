@@ -1,21 +1,22 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Button } from '@chakra-ui/react'
+import { Button, PinInput, PinInputField, HStack } from '@chakra-ui/react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import toast, { Toaster } from 'react-hot-toast'
+
+import Navbar from '../components/Navbar'
+import Footer from '../components/Footer'
 
 const UserVerify = () => {
     const inputOtp = useRef()
     const navigate = useNavigate()
 
+    const [otp, setOtp] = useState("");
     const [userToken, setUserToken] = useState("")
     const [userEmail, setUserEmail] = useState("")
 
     const onVerify = async () => {
         try {
-            // get otp value
-            let otp = inputOtp.current.value
-            
             // validate token
             await axios.post(`http://localhost:8000/users/verify-otp`, {
                 otp_number: otp
@@ -115,61 +116,81 @@ const UserVerify = () => {
         }
     }
 
+    const handleOtpChange = (value) => {
+        setOtp(value);
+    };
+
     useEffect(() => {
         onGetUserData()
     }, [])
 
     return (
-        <div
-            className='flex flex-col justify-center
-            items-center py-10 px-3'
-        >
-            <Toaster />
-            <div
-                className='sm:w-[500px] w-full rounded-lg
-                p-10 shadow-lg border-2 border-slate-200
-                flex flex-col items-center'
-            >
-                <h1 className='font-bold text-[24px] mb-3'>
-                    Account Verification
-                </h1>
-                <div 
-                    className='bg-slate-100 
-                    px-3 py-5 text-center rounded-lg
-                    mb-5'
+        <div className='flex flex-col min-h-screen overflow-hidden'>
+            <div className='relative z-10 border shadow-md'>
+                <Navbar />
+            </div>
+
+            <div className='flex-1'>
+                <div
+                    className='flex flex-col justify-center
+                    items-center py-10 px-3'
                 >
-                    We've sent a OTP to your email - {userEmail}
-                </div>
-
-                <div className='w-full'>
-                    <input 
-                        type="text"
-                        ref={inputOtp}
-                        placeholder='Enter OTP code'
-                        className="py-2 px-2 bg-white w-full
-                        border border-slate-500 rounded-lg
-                        placeholder-slate-500 focus:outline-none"
-                    />
-                    <Button
-                        type='submit'
-                        colorScheme='blue'
-                        width='100%'
-                        className='my-5'
-                        onClick={() => onVerify()}
+                    <Toaster />
+                    <div
+                        className='sm:w-[500px] w-full rounded-lg
+                        p-10 shadow-lg border-2 border-slate-200
+                        flex flex-col items-center'
                     >
-                        Submit
-                    </Button>
-                </div>
+                        <h1 className='font-bold text-[24px] mb-3'>
+                            Account Verification
+                        </h1>
+                        <div 
+                            className='bg-slate-100 
+                            px-3 py-5 text-center rounded-lg
+                            mb-5'
+                        >
+                            We've sent a OTP to your email - {userEmail}
+                        </div>
 
-                <div>
-                    <span>Didn't get the code? {" "}</span>
-                    <span 
-                        className='cursor-pointer text-blue-800'
-                        onClick={() => onResendOtp()}
-                    >
-                        Resend OTP
-                    </span>
+                        <div className='w-full'>
+                            <HStack className='flex justify-center py-2'>
+                                <PinInput onChange={handleOtpChange}>
+                                    <PinInputField />
+                                    <PinInputField />
+                                    <PinInputField />
+                                    <PinInputField />
+                                    <PinInputField />
+                                    <PinInputField />
+                                </PinInput>
+                            </HStack>
+
+                            <Button
+                                type='submit'
+                                colorScheme='blue'
+                                width='100%'
+                                className='my-5'
+                                onClick={() => onVerify()}
+                                isDisabled={otp.length < 6}
+                            >
+                                Submit
+                            </Button>
+                        </div>
+
+                        <div>
+                            <span>Didn't get the code? {" "}</span>
+                            <span 
+                                className='cursor-pointer text-blue-800'
+                                onClick={() => onResendOtp()}
+                            >
+                                Resend OTP
+                            </span>
+                        </div>
+                    </div>
                 </div>
+            </div>
+
+            <div className='flex-shrink'>
+                <Footer />
             </div>
         </div>
     )
