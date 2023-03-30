@@ -90,7 +90,7 @@ const TenantPropertyRoomList = () => {
         <>
             <Flex flexDir='row'>
                 <TenantNavbar />
-                <Flex flexDir='column' className='ml-16'>
+                <Flex flexDir='column' className='ml-16 mt-3'>
 
         <div
             className='flex flex-col

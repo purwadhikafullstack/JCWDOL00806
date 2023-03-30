@@ -13,7 +13,8 @@ import {
   Button,
   Progress,
   Image,
-  Flex
+  Flex,
+  Heading
 } from "@chakra-ui/react";
 import { useParams, Link } from "react-router-dom";
 import TenantNavbar from "../components/TenantNavbar";
@@ -182,10 +183,10 @@ export default function TenantProperty() {
       <Toaster />
       <Flex flexDir='row' >
         <TenantNavbar />
-        <Flex flexDir='column' className="ml-16 w-4/5">
-      <div>
+        <Flex flexDir='column' className="ml-16 w-4/5 mt-3">
+      <Heading>
         {type.type} in {type.city}
-      </div>
+      </Heading>
       <TableContainer>
         <Table className="table-tiny" variant="simple">
           <TableCaption>Your Properties in {type.city}</TableCaption>

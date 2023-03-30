@@ -310,19 +310,6 @@ module.exports ={
             })
         }
     },
-    bookRoomPlaceholder: async (req, res) => {
-        try {
-            await order.create({
-                start_date: "2023-04-04",
-                end_date: "2023-04-06",
-                status: "Waiting for Payment",
-                room_id: 6,
-                users_id : "8ca1154b-5b7e-4104-a031-21d0c09eea75"
-            })
-        } catch (error) {
-            console.log(error)
-        }
-    },
     getUnavailableRoom: async (req, res) => {
         try {
             // get data from client

@@ -15,8 +15,9 @@ export default function TenantLogin() {
 
   let loginHandler = async (value) => {
     try {
+      let encodedMail = encodeURIComponent(value.usernameOrEmail)
       let result = await axios.get(
-        `${process.env.REACT_APP_SERVER_URL}/tenant/login?usernameOrEmail=${value.usernameOrEmail}&password=${value.password}`
+        `${process.env.REACT_APP_SERVER_URL}/tenant/login?usernameOrEmail=${encodedMail}&password=${value.password}`
       );
       console.log(result);
       toast(result.data.message);
