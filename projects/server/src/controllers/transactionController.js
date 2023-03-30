@@ -353,7 +353,8 @@ module.exports = {
       let convertUserId = checkUsers.dataValues.id.substr(0, 8);
 
       let invoice_id = `INV/${year}${month}${date}/${convertUserId}/${uniqueString}`;
-
+      invoice_id = invoice_id.toLocaleUpperCase()
+      
       // create new order
       let insertOrder = await order.create(
         {
@@ -382,7 +383,7 @@ module.exports = {
         CREATE EVENT change_status_order_${insertId}
         ON SCHEDULE AT DATE_ADD(NOW(), INTERVAL 2 HOUR)
         DO
-          UPDATE orders SET status = 'Cancel'
+          UPDATE orders SET status = 'Cancelled'
           WHERE id = ?
       `,
         {
