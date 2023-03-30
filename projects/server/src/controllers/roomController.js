@@ -322,5 +322,48 @@ module.exports ={
         } catch (error) {
             console.log(error)
         }
+    },
+    getUnavailableRoom: async (req, res) => {
+        try {
+            // get data from client
+            let { room_id } = req.params
+
+            // get unavailable from room_statues
+            let unavailable = await sequelize.query(`
+                SELECT rs.start_date, rs.end_date
+                FROM rooms r
+                JOIN room_statuses rs ON r.id = rs.room_id
+                WHERE r.id = ?;
+            `, {
+                replacements: [room_id],
+                type: sequelize.QueryTypes.SELECT
+            })
+
+            // get unavailable from order
+            let booked = await sequelize.query(`
+                SELECT o.start_date, o.end_date
+                FROM rooms r
+                JOIN orders o ON o.room_id = r.id
+                WHERE r.id = ? AND o.status != "Cancel";
+            `, {
+                replacements: [room_id],
+                type: sequelize.QueryTypes.SELECT
+            })
+
+            return res.status(200).send({
+                isEror: false,
+                message: "Get Unavailable Room Success",
+                data: {
+                    unavailable,
+                    booked
+                }
+            })
+        } catch (error) {
+            return res.status(400).send({
+                isError: true,
+                message: error.message,
+                data: null
+            })
+        }
     }
 }

@@ -31,6 +31,7 @@ import NotFound from "./pages/NotFound";
 import PropertyDetail from "./pages/PropertyDetail";
 import TenantOrders from "./pages/TenantOrders";
 import SalesReport from "./pages/SalesReport";
+import Checkout from "./pages/Checkout";
 
 function App() {
   const [message, setMessage] = useState("");
@@ -95,6 +96,7 @@ function App() {
         <Route path="/tenant/orders" element={<TenantOrders />} />
         <Route path="/404" element={<NotFound />} />
         <Route path="/tenant/sales-report" element={<SalesReport />} />
+        <Route path="/checkout/:roomID" element={<Checkout />} />
       </Routes>
     </>
   );

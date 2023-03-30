@@ -21,6 +21,11 @@ module.exports = {
       end_date: {
         type: Sequelize.DATEONLY
       },
+      invoice_id: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        unique: true
+      },
       notes: {
         type: Sequelize.STRING
       },
