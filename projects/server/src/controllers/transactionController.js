@@ -214,6 +214,49 @@ module.exports = {
       });
     }
   },
+  getUserOrderList: async (req, res) => {
+    try {
+      let { id } = req.dataToken;
+      let { status } = req.query;
+      let getData = "";
+
+      if (status === "in progress") {
+        getData = await sequelize.query(`
+        SELECT o.id, r.name, o.payment_proof, status, start_date, end_date, room_id
+        FROM orders o
+        INNER JOIN rooms r ON r.id = o.room_id
+        WHERE status = "Waiting for Confirmation" AND o.users_id = "${id}"
+        `);
+      } else if (status === "all") {
+        getData = await sequelize.query(`
+        SELECT o.id, r.name, o.payment_proof, status, start_date, end_date, room_id
+        FROM orders o
+        INNER JOIN rooms r ON r.id = o.room_id
+        WHERE status NOT IN ("Waiting for Payment") AND o.users_id = "${id}"
+        `);
+      } else {
+        getData = await sequelize.query(`
+        SELECT o.id, r.name, o.payment_proof, status, start_date, end_date, room_id
+        FROM orders o
+        INNER JOIN rooms r ON r.id = o.room_id
+        WHERE status = "${status}" AND o.users_id = "${id}"
+        `);
+      }
+
+      return res.status(201).send({
+        isError: false,
+        message: "Data acquired",
+        data: getData[0],
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(404).send({
+        isError: true,
+        message: error.message,
+        data: null,
+      });
+    }
+  },
   checkout: async (req, res) => {
     try {
       // get data from client
