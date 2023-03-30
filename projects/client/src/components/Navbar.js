@@ -131,9 +131,8 @@ const Navbar = () => {
                                     variant='outline'
                                 />
                                 <MenuList>
-                                    <MenuItem>
-                                        <Link 
-                                            to=""
+                                    <Link to="">
+                                        <MenuItem
                                             className='flex items-center 
                                             gap-2 cursor-pointer'
                                         >
@@ -144,12 +143,11 @@ const Navbar = () => {
                                             <div>
                                                 Profile
                                             </div>
-                                        </Link>
-                                    </MenuItem>
+                                        </MenuItem>
+                                    </Link>
 
-                                    <MenuItem>
-                                        <Link 
-                                            to=""
+                                    <Link to="/users/orders?status=all">
+                                        <MenuItem
                                             className='flex items-center 
                                             gap-2 cursor-pointer'
                                         >
@@ -160,24 +158,23 @@ const Navbar = () => {
                                             <div>
                                                 Order List
                                             </div>
-                                        </Link>
-                                    </MenuItem>
+                                        </MenuItem>
+                                    </Link>
 
                                     {!isVerify ? (
-                                        <MenuItem>
-                                            <Link 
-                                                to="/users/verify"
+                                        <Link to="/users/verify">
+                                            <MenuItem
                                                 className='flex items-center 
                                                 gap-2 cursor-pointer'
                                             >
-                                                <FontAwesomeIcon 
+                                                 <FontAwesomeIcon 
                                                     icon={faCheckCircle} 
                                                     className="mt-1" />
                                                 <div>
                                                     Verify Account
                                                 </div>
-                                            </Link>
-                                        </MenuItem>
+                                            </MenuItem>
+                                        </Link>
                                     ): null}
                                     
                                     <MenuDivider />
