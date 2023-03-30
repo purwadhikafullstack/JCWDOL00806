@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
 import { Button, Image } from "@chakra-ui/react";
 
-const RoomCard = ({ data, onClick }) => {
+const RoomCard = ({ data, onClick, dateRange }) => {
   const getImageSource = (link) => {
     let image = `${process.env.REACT_APP_SERVER_URL}/image/${link
       ?.replace(/"/g, "")
@@ -45,7 +45,7 @@ const RoomCard = ({ data, onClick }) => {
       <div className="text-base flex justify-around">
         <span className="font-semibold">{formatter.format(data?.price)}</span>
         <span className="ml-2">per night</span>
-        <Link to={`/checkout/${data?.id}`}>
+        <Link to={`/checkout/${data?.id}?start=${dateRange[0]}&end=${dateRange[1]}`}>
           <Button>Book Now</Button>
         </Link>
       </div>

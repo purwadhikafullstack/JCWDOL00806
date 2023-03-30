@@ -1,10 +1,23 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { motion } from 'framer-motion'
-import { Button } from '@chakra-ui/react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBars, faXmark } from '@fortawesome/free-solid-svg-icons'
+import { faBars, faXmark, faUser, faList, faCheckCircle } from '@fortawesome/free-solid-svg-icons'
+import { 
+    Button, 
+    Avatar, 
+    Divider,
+    Menu,
+    MenuButton,
+    MenuList,
+    MenuItem,
+    IconButton,
+    MenuItemOption,
+    MenuGroup,
+    MenuOptionGroup,
+    MenuDivider,
+} from '@chakra-ui/react'
 
 import LoginModal from './LoginModal'
 import RegisterModal from './RegisterModal'
@@ -29,7 +42,10 @@ const sidebarVariants = {
 }
 
 const Navbar = () => {
+    const navigate = useNavigate()
+
     const [toggle, setToggle] = useState(false)
+    const [isVerify, setIsVerify] = useState(false)
     const [userData, setUserData] = useState()
 
     const onGetUserData = async () => {
@@ -44,7 +60,10 @@ const Navbar = () => {
 
             // set user data
             let username = response.data.data.username
+            let is_verified = response.data.data.is_verified
+
             setUserData(username)
+            if (is_verified) setIsVerify(true)
         } catch (error) {
             console.log(error.response.data.message)
         }
@@ -61,11 +80,12 @@ const Navbar = () => {
     }
 
     const onLogout = () => {
-        // delete user token in local storage
+        // delete user token in local storage and data
         localStorage.removeItem('userToken')
-
-        // delete user data
         setUserData("")
+
+        // navigate to landing page
+        navigate('/')
     }
 
     useEffect(() => {
@@ -99,16 +119,83 @@ const Navbar = () => {
                             className='sm:flex hidden 
                             justify-between items-center gap-5'
                         >
-                            <div>{userData}</div>
-                            <Button
-                                bg="transparent" 
-                                color="black" 
-                                border="1px solid #53a8b6"
-                                _hover={{ bg: "#53a8b6", color: "white" }}
-                                onClick={() => onLogout()}
-                            >
-                                Logout
-                            </Button>
+                            <div className='flex gap-2 items-center'>
+                                <Avatar bg='teal.500' size={"sm"} />
+                                <div>{userData}</div>
+                            </div>
+                            <Menu>
+                                <MenuButton
+                                    as={IconButton}
+                                    aria-label='Options'
+                                    icon={<FontAwesomeIcon icon={faBars} />}
+                                    variant='outline'
+                                />
+                                <MenuList>
+                                    <MenuItem>
+                                        <Link 
+                                            to=""
+                                            className='flex items-center 
+                                            gap-2 cursor-pointer'
+                                        >
+                                            <FontAwesomeIcon 
+                                                icon={faUser} 
+                                                className="mt-1" 
+                                            />
+                                            <div>
+                                                Profile
+                                            </div>
+                                        </Link>
+                                    </MenuItem>
+
+                                    <MenuItem>
+                                        <Link 
+                                            to=""
+                                            className='flex items-center 
+                                            gap-2 cursor-pointer'
+                                        >
+                                            <FontAwesomeIcon 
+                                                icon={faList} 
+                                                className="mt-1" 
+                                            />
+                                            <div>
+                                                Order List
+                                            </div>
+                                        </Link>
+                                    </MenuItem>
+
+                                    {!isVerify ? (
+                                        <MenuItem>
+                                            <Link 
+                                                to="/users/verify"
+                                                className='flex items-center 
+                                                gap-2 cursor-pointer'
+                                            >
+                                                <FontAwesomeIcon 
+                                                    icon={faCheckCircle} 
+                                                    className="mt-1" />
+                                                <div>
+                                                    Verify Account
+                                                </div>
+                                            </Link>
+                                        </MenuItem>
+                                    ): null}
+                                    
+                                    <MenuDivider />
+                                    
+                                    <div className='px-2'>
+                                        <Button
+                                            bg="transparent" 
+                                            color="black" 
+                                            width='100%'
+                                            border="1px solid #53a8b6"
+                                            _hover={{ bg: "#53a8b6", color: "white" }}
+                                            onClick={() => onLogout()}
+                                        >
+                                            Logout
+                                        </Button>
+                                    </div>
+                                </MenuList>
+                            </Menu>
                         </div>
                     ): (
                         <div
@@ -139,12 +226,60 @@ const Navbar = () => {
                     className='bg-white shadow-2xl fixed top-[85px]
                     right-0 w-[90%] h-screen -z-10 justify-center rounded-l-md'
                 >
-                    <div className='py-[50px] px-5 font-bold text-xl'>
+                    <div className='py-[50px] px-5 text-xl'>
                         {userData ? (
                             <div>
-                                <div>{userData}</div>
-                                <hr className='my-5' />
-                                <div>
+                                <div className='flex gap-2 font-bold'>
+                                    <Avatar bg='teal.500' size={"sm"} />
+                                    <div>{userData}</div>
+                                </div>
+
+                                <Divider orientation='horizontal' className='my-5' />
+                                
+                                <div className='flex flex-col gap-5'>
+                                    <Link 
+                                        to=""
+                                        className='flex items-center 
+                                        gap-2 cursor-pointer'
+                                    >
+                                        <FontAwesomeIcon 
+                                            icon={faUser} 
+                                            className="mt-1" 
+                                        />
+                                        <div>
+                                            Profile
+                                        </div>
+                                    </Link>
+
+                                    <Link 
+                                        to=""
+                                        className='flex items-center 
+                                        gap-2 cursor-pointer'
+                                    >
+                                        <FontAwesomeIcon 
+                                            icon={faList} 
+                                            className="mt-1" 
+                                        />
+                                        <div>
+                                            Order List
+                                        </div>
+                                    </Link>
+
+                                    {!isVerify ? (
+                                        <Link 
+                                            to="/users/verify"
+                                            className='flex items-center 
+                                            gap-2 cursor-pointer'
+                                        >
+                                            <FontAwesomeIcon icon={faCheckCircle} className="mt-1" />
+                                            <div>Verify Account</div>
+                                        </Link>
+                                    ) : null}
+                                </div>
+
+                                <Divider orientation='horizontal' className='my-5' />
+
+                                <div className='flex flex-col'>
                                     <Button
                                         bg="transparent" 
                                         color="black" 
@@ -161,7 +296,8 @@ const Navbar = () => {
                             </div>   
                         ) : (
                             <div>
-                                <hr className='my-5' />
+                                <Divider orientation='horizontal' className='my-5' />
+                                
                                 <div className='flex gap-2'>
                                     <LoginModal />
                                     <RegisterModal />
