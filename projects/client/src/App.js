@@ -32,6 +32,7 @@ import PropertyDetail from "./pages/PropertyDetail";
 import TenantOrders from "./pages/TenantOrders";
 import SalesReport from "./pages/SalesReport";
 import Checkout from "./pages/Checkout";
+import UserOrders from "./pages/UserOrders";
 
 function App() {
   const [message, setMessage] = useState("");
@@ -97,6 +98,7 @@ function App() {
         <Route path="/404" element={<NotFound />} />
         <Route path="/tenant/sales-report" element={<SalesReport />} />
         <Route path="/checkout/:roomID" element={<Checkout />} />
+        <Route path="/users/orders" element={<UserOrders />} />
       </Routes>
     </>
   );
