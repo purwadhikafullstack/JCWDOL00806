@@ -1,9 +1,10 @@
 import {useState, useEffect} from 'react'
 import axios from 'axios'
-import { Card, CardHeader, Input, Alert, AlertIcon, Avatar, Button, Stack, StackDivider, Box, Heading, CardBody, Divider, Center, AlertTitle } from '@chakra-ui/react'
+import { Card, CardHeader, Input, Alert, AlertIcon, Button, Stack, Box, Heading, CardBody, Divider, Center, AlertTitle, Flex } from '@chakra-ui/react'
 import toast, {Toaster} from 'react-hot-toast'
 import DatePicker from 'react-datepicker'
 import { useParams, useNavigate } from 'react-router-dom'
+import TenantNavbar from '../components/TenantNavbar'
 
 const RoomUnavailable = () => {
     const navigate = useNavigate()
@@ -12,6 +13,9 @@ const RoomUnavailable = () => {
     const [dateRange, setDateRange] = useState([null, null]);
     const [startDate, endDate] = dateRange;
     const [roomData, setRoomData] = useState(null)
+    const [unavailable, setUnavailable] = useState()
+
+  const currentDate = new Date().getTime()
   
     useEffect(() => {
       onOpen()
@@ -25,6 +29,36 @@ const RoomUnavailable = () => {
           headers: {authorization : token}
         })
         setRoomData(response.data.data)
+        let room = await axios.get(`${process.env.REACT_APP_SERVER_URL}/room/unavailable-room/${roomID}`)
+
+        const unavailableDates = []
+
+        if (room.data.data.unavailable.length !== 0) {
+          room.data.data.unavailable.forEach(async (val) => {
+            const startDate = new Date(val.start_date)
+            const endDate = new Date(val.end_date)
+
+            for (let date = startDate; date <= endDate; date.setDate(date.getDate() + 1)) {
+                let newDate = date.toISOString().substring(0, 10)
+                unavailableDates.push(newDate);
+            }
+        })
+        }
+
+        if (room.data.data.booked.length !== 0) {
+          room.data.data.booked.forEach(async (val) => {
+              const startDate = new Date(val.start_date)
+              const endDate = new Date(val.end_date)
+
+              for (let date = startDate; date <= endDate; date.setDate(date.getDate() + 1)) {
+                  let newDate = date.toISOString().substring(0, 10)
+                  unavailableDates.push(newDate);
+              }
+          })
+      }
+
+      setUnavailable(unavailableDates)
+
       } catch (error) {
         console.log(error)
       }
@@ -54,64 +88,71 @@ const RoomUnavailable = () => {
     }
   return (
     <>
-      {!roomData ? (
-        <>
-          <Card margin={4}>
-          <Alert
-            status='error'
-            variant='subtle'
-            flexDirection='column'
-            alignItems='center'
-            justifyContent='center'
-            textAlign='center'
-            height='200px'
-            rounded={4}
-          >
-            <AlertIcon boxSize='40px' mr={0} />
-            <AlertTitle mt={4} mb={1} fontSize='lg'>
-              This property / room does not belong to user !!
-            </AlertTitle>
-          </Alert>
-          </Card>
-        </>
-      ) : (
-        <>
-          <Toaster position='top-center'/>
-        <Card margin={4}>
-            <CardHeader>
-                <Heading size='md'>Set your unavailable room date</Heading>
-            </CardHeader>
-                <Center>
-                <Divider width='90%' />
-                </Center>
-              <CardBody>
-                <Stack spacing='4'>
-                      <Box>
-                        <Heading size='xs'>Room name</Heading>
-                        <Input marginTop={2} disabled value={roomData?.name}/>
-                      </Box>
-                      <Box>
-                          <Heading size='xs'>Enter your date range</Heading>
-                          <DatePicker
-                            className='border rounded-md w-52 px-3'
-                            selectsRange={true}
-                            startDate={startDate}
-                            endDate={endDate}
-                            onChange={(update) => {
-                                setDateRange(update);
-                            }}
-                              isClearable={true}
-                              dateFormat='yyyy-MM-dd'>
-                               <div style={{ color: "red" }}>Click the date twice if only one day !</div>
-                              </DatePicker>
-                      </Box>
-                    <Button onClick={handleAdd} colorScheme='blue' type="submit">Add</Button>
+      <Flex flexDir='row'>
+        <TenantNavbar />
+        <Flex flexDir='column' className='ml-16 mt-3'>
+          {!roomData ? (
+            <>
+              <Card className='sm:w-[500px] sm:mx-auto m-4'>
+              <Alert
+                status='error'
+                variant='subtle'
+                flexDirection='column'
+                alignItems='center'
+                justifyContent='center'
+                textAlign='center'
+                height='200px'
+                rounded={4}
+              >
+                <AlertIcon boxSize='40px' mr={0} />
+                <AlertTitle mt={4} mb={1} fontSize='lg'>
+                  This property / room does not belong to user !!
+                </AlertTitle>
+              </Alert>
+              </Card>
+            </>
+          ) : (
+            <>
+              <Toaster position='top-center'/>
+            <Card className='sm:w-[500px] mx-auto m-4'>
+                <CardHeader>
+                    <Heading size='md'>Set your unavailable room date</Heading>
+                </CardHeader>
+                    <Center>
+                    <Divider width='90%' />
+                    </Center>
+                  <CardBody>
+                    <Stack spacing='4'>
+                          <Box>
+                            <Heading size='xs'>Room name</Heading>
+                            <Input marginTop={2} disabled value={roomData?.name}/>
+                          </Box>
+                          <Box>
+                              <Heading size='xs'>Enter your date range</Heading>
+                              <DatePicker
+                                className='border p-2 w-[250px]'
+                                selectsRange={true}
+                                startDate={startDate}
+                                endDate={endDate}
+                                minDate={currentDate}
+                                onChange={(update) => {
+                                    setDateRange(update);
+                                }}
+                                isClearable={true}
+                                dateFormat='yyyy-MM-dd'
+                                excludeDates={unavailable?.map((date) => new Date(date))}>
+                                  <div style={{ color: "red" }}>Click the date twice if only one day !</div>
+                                  </DatePicker>
+                          </Box>
+                        <Button onClick={handleAdd} colorScheme='blue' type="submit">Add</Button>
 
-                </Stack>
-              </CardBody>  
-        </Card>
-          </>
-      )}
+                    </Stack>
+                  </CardBody>  
+            </Card>
+              </>
+          )}
+        </Flex>
+      </Flex>
       </>
   )
 }

@@ -165,11 +165,12 @@ module.exports = {
 
       if (status === "in progress") {
         getData = await sequelize.query(`
-        SELECT o.id, o.invoice_id, r.name, o.payment_proof, status, start_date, end_date, room_id, notes
+        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes
         FROM orders o
         INNER JOIN rooms r ON r.id = o.room_id
         JOIN properties p ON p.id = r.property_id
         JOIN property_categories c ON c.id = p.category_id and c.tenant_id = "${id}"
+        JOIN order_details od ON od.order_id = o.id
         WHERE status = "Waiting for Confirmation"
         ORDER BY o.start_date ASC
         LIMIT ${limit}
@@ -177,11 +178,12 @@ module.exports = {
         `)
       } else if (status === "all") {
         getData = await sequelize.query(`
-        SELECT o.id, o.invoice_id, r.name, o.payment_proof, status, start_date, end_date, room_id, notes
+        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes
         FROM orders o
         INNER JOIN rooms r ON r.id = o.room_id
         JOIN properties p ON p.id = r.property_id
         JOIN property_categories c ON c.id = p.category_id and c.tenant_id = "${id}"
+        JOIN order_details od ON od.order_id = o.id
         WHERE status NOT IN ("Waiting for Payment")
         ORDER BY o.start_date ASC
         LIMIT ${limit}
@@ -189,11 +191,12 @@ module.exports = {
         `)
       } else {
         getData = await sequelize.query(`
-        SELECT o.id, o.invoice_id, r.name, o.payment_proof, status, start_date, end_date, room_id, notes
+        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes
         FROM orders o
         INNER JOIN rooms r ON r.id = o.room_id
         JOIN properties p ON p.id = r.property_id
         JOIN property_categories c ON c.id = p.category_id and c.tenant_id = "${id}"
+        JOIN order_details od ON od.order_id = o.id
         WHERE status = "${status}"
         ORDER BY o.start_date ASC
         LIMIT ${limit}
@@ -500,11 +503,12 @@ module.exports = {
 
       if (status === "in progress") {
         getData = await sequelize.query(`
-        SELECT o.id, o.invoice_id, r.name, o.payment_proof, status, start_date, end_date, room_id, notes
+        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes
         FROM orders o
         INNER JOIN rooms r ON r.id = o.room_id
         JOIN properties p ON p.id = r.property_id
         JOIN property_categories c ON c.id = p.category_id and c.tenant_id = "${id}"
+        JOIN order_details od ON od.order_id = o.id
         WHERE status = "Waiting for Confirmation" AND o.invoice_id LIKE "%${search}%"
         ORDER BY o.start_date ASC
         LIMIT ${limit}
@@ -512,11 +516,12 @@ module.exports = {
         `)
       } else if (status === "all") {
         getData = await sequelize.query(`
-        SELECT o.id, o.invoice_id, r.name, o.payment_proof, status, start_date, end_date, room_id, notes
+        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes
         FROM orders o
         INNER JOIN rooms r ON r.id = o.room_id
         JOIN properties p ON p.id = r.property_id
         JOIN property_categories c ON c.id = p.category_id and c.tenant_id = "${id}"
+        JOIN order_details od ON od.order_id = o.id
         WHERE status NOT IN ("Waiting for Payment") AND o.invoice_id LIKE "%${search}%"
         ORDER BY o.start_date ASC
         LIMIT ${limit}
@@ -524,11 +529,12 @@ module.exports = {
         `)
       } else {
         getData = await sequelize.query(`
-        SELECT o.id, o.invoice_id, r.name, o.payment_proof, status, start_date, end_date, room_id, notes
+        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes
         FROM orders o
         INNER JOIN rooms r ON r.id = o.room_id
         JOIN properties p ON p.id = r.property_id
         JOIN property_categories c ON c.id = p.category_id and c.tenant_id = "${id}"
+        JOIN order_details od ON od.order_id = o.id
         WHERE status = "${status}" AND o.invoice_id LIKE "%${search}%"
         ORDER BY o.start_date ASC
         LIMIT ${limit}

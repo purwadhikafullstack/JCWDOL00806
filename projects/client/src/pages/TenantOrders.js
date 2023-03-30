@@ -67,8 +67,8 @@ const TenantOrders = () => {
 
     const OrderList = () => {
         return orderList.map((order, idx) => {
-           let image = `${process.env.REACT_APP_SERVER_URL}/image/${order.payment_proof?.replace(/"/g, "")
-                .replace(/\\/g, "/")}`
+            let image = `${process.env.REACT_APP_SERVER_URL}/image/${order.payment_proof?.replace(/"/g, "")
+            .replace(/\\/g, "/")}`
             
             return (
                 <OrderCard
@@ -83,6 +83,8 @@ const TenantOrders = () => {
                     image={image}
                     onClose={onClose}
                     notes={order?.notes}
+                    property={order.property_name}
+                    price={order.total_price}
                 />
             )
         })
@@ -131,7 +133,7 @@ const TenantOrders = () => {
                                     <Button colorScheme={statusFilter === "all" ? "green" : null} onClick={handleFilterClick} name="all" size='sm' variant='outline' >All</Button>
                                     <Button colorScheme={statusFilter === "in progress" ? "green" : null} onClick={handleFilterClick} name="in progress" size='sm' variant='outline' >In Progress</Button>
                                     <Button colorScheme={statusFilter === "rejected" ? "green" : null} onClick={handleFilterClick} name="rejected" size='sm' variant='outline' >Rejected</Button>
-                                    <Button colorScheme={statusFilter === "complete" ? "green" : null} onClick={handleFilterClick} name="complete" size='sm' variant='outline' >Complete</Button>
+                                    <Button colorScheme={statusFilter === "completed" ? "green" : null} onClick={handleFilterClick} name="completed" size='sm' variant='outline' >Completed</Button>
                                     <Button colorScheme={statusFilter === "cancelled" ? "green" : null} onClick={handleFilterClick} name="cancelled" size='sm' variant='outline' >Cancelled</Button>
                                 </Flex>
                                 <Flex gap={2} alignItems='center'>
@@ -163,7 +165,7 @@ const TenantOrders = () => {
                                     <Button colorScheme={statusFilter === "all" ? "green" : null} onClick={handleFilterClick} name="all" size='sm' variant='outline' >All</Button>
                                     <Button colorScheme={statusFilter === "in progress" ? "green" : null} onClick={handleFilterClick} name="in progress" size='sm' variant='outline' >In Progress</Button>
                                     <Button colorScheme={statusFilter === "rejected" ? "green" : null} onClick={handleFilterClick} name="rejected" size='sm' variant='outline' >Rejected</Button>
-                                    <Button colorScheme={statusFilter === "complete" ? "green" : null} onClick={handleFilterClick} name="complete" size='sm' variant='outline' >Complete</Button>
+                                    <Button colorScheme={statusFilter === "completed" ? "green" : null} onClick={handleFilterClick} name="completed" size='sm' variant='outline' >Completed</Button>
                                     <Button colorScheme={statusFilter === "cancelled" ? "green" : null} onClick={handleFilterClick} name="cancelled" size='sm' variant='outline' >Cancelled</Button>
                                 </Flex>
                                 <Flex gap={2} alignItems='center'>
@@ -195,7 +197,7 @@ const TenantOrders = () => {
                                     <Button colorScheme={statusFilter === "all" ? "green" : null} onClick={handleFilterClick} name="all" size='sm' variant='outline' >All</Button>
                                     <Button colorScheme={statusFilter === "in progress" ? "green" : null} onClick={handleFilterClick} name="in progress" size='sm' variant='outline' >In Progress</Button>
                                     <Button colorScheme={statusFilter === "rejected" ? "green" : null} onClick={handleFilterClick} name="rejected" size='sm' variant='outline' >Rejected</Button>
-                                    <Button colorScheme={statusFilter === "complete" ? "green" : null} onClick={handleFilterClick} name="complete" size='sm' variant='outline' >Complete</Button>
+                                    <Button colorScheme={statusFilter === "completed" ? "green" : null} onClick={handleFilterClick} name="completed" size='sm' variant='outline' >Completed</Button>
                                     <Button colorScheme={statusFilter === "cancelled" ? "green" : null} onClick={handleFilterClick} name="cancelled" size='sm' variant='outline' >Cancelled</Button>
                                 </Flex>
                                 <Flex gap={2} alignItems='center'>
