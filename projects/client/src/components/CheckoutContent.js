@@ -128,8 +128,11 @@ const CheckoutContent = () => {
                 headers: { 'Authorization' : userToken }
             })
 
-            setIsLoading(false);
             toast.success("Book Room Success")
+            setTimeout(() => {
+                navigate('/users/orders?status=in progress')
+            }, 1000)
+            setIsLoading(false);
         } catch (error) {
             console.log(error.message)
             setIsLoading(false);
