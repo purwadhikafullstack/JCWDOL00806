@@ -4,7 +4,7 @@ import ConfirmAlert from './ConfirmAlert'
 import axios from 'axios'
 import toast, {Toaster} from 'react-hot-toast'
 
-const OrderCard = ({ id, invoice, start, end, status, name, tenantToken, image, onClose, notes }) => {
+const OrderCard = ({ id, invoice, start, end, status, name, tenantToken, image, onClose, notes,property, price }) => {
   
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [detailModal, setDetailModal] = useState(false)
@@ -12,6 +12,12 @@ const OrderCard = ({ id, invoice, start, end, status, name, tenantToken, image, 
   const handleOpenModal = () => {
     setIsModalOpen(true)
   }
+
+  const formatter = new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0,
+});
 
   const handleCancel = async (orderID, notes) => {
     console.log(`cancel ${orderID}`)
@@ -52,24 +58,36 @@ const OrderCard = ({ id, invoice, start, end, status, name, tenantToken, image, 
   return (
     <>
       <Toaster />
-        <Flex className='p-2 mx-auto w-full mb-1 mt-1 border rounded-md' flexDir='column'>
+      <Flex className='py-2 px-3 mx-auto w-full mb-1 mt-1 border rounded-md' flexDir='column'>
             <Flex flexDir='row' className=''>
-                  <Text className='w-2/5' color='gray' fontSize='xs'> {invoice} </Text>
-                  <Divider orientation='vertical' className='mx-5' />
-                  <Text fontSize='xs'>Room name : {name}</Text>
+                  <Text className='w-2/5 font-bold italic' fontSize='sm'> {invoice} </Text>
               </Flex>
               <Divider className='my-2' />
             <Flex flexDir='row' alignItems='center'>
-                <Flex flexDir='column' className='w-2/6'>
-                    <Text fontSize='sm'>Status : </Text>
-                    <Text fontSize='sm'>{status}</Text>
+          <Flex flexDir='column' className='w-2/6'>
+            <Flex className=' mt-[2px]'  flexDir='row'>
+              <Text className='mr-3' fontSize='sm'>Property name</Text>
+              <Text fontSize='sm'>: {property}</Text>
+            </Flex>
+            <Flex className=' mt-[2px]' flexDir='row'>
+              <Text className='mr-7' fontSize='sm'>Room name</Text>
+              <Text fontSize='sm'>: {name}</Text>
+            </Flex>
+            <Flex className='border-b-2 pb-2 mt-[2px]'  flexDir='row'>
+              <Text className='mr-16' fontSize='sm'>Status</Text>
+              <Text fontSize='sm'>: {status} </Text>
+            </Flex>
+            <Flex flexDir='row' className='mt-1'>
+              <Text className='mr-9 font-semibold' fontSize='sm'>Total Price</Text>
+              <Text className='font-bold' fontSize='sm'>: {formatter.format(price)}</Text>
+            </Flex>
                 </Flex>
                 <Flex className='mx-12 w-1/4' flexDir='row' alignItems='center'>
                       <Image
                         boxSize='32px'
                         objectFit='cover'
-                        src=''
-                        alt=''
+                        src={image}
+                        alt='payment-proof'
                         className='border rounded-md'
                       />
             <Button onClick={handleOpenModal} colorScheme='blue' className='mx-4' size='xs'>view image</Button>
