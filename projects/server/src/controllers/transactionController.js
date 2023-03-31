@@ -11,6 +11,9 @@ const users = db.users;
 const room = db.room;
 const order_details = db.order_details;
 
+// import deleteFiles
+const deleteFiles = require("./../helpers/deleteFiles")
+
 module.exports = {
   list: async (req, res) => {
     try {
@@ -402,6 +405,8 @@ module.exports = {
         data: null,
       });
     } catch (error) {
+      t.rollback()
+
       return res.status(400).send({
         isError: true,
         message: error.message,
@@ -556,6 +561,75 @@ module.exports = {
         message: error.message,
         data: null,
       });
+    }
+  },
+  onUploadPaymentProof: async (req, res) => {
+    const t = await sequelize.transaction()
+    try {
+      // get data from client
+      let { id } = req.dataToken
+      let { order_id } = req.params
+
+      // get users data
+      let checkUsers = await users.findOne({ where: { id } })
+
+      // check if users exist or not
+      if (checkUsers === null) {
+        // if user not found, delete image file
+        deleteFiles(req.files.payment_proof)
+
+        return res.status(400).send({
+          isError: true,
+          message: "Users Not Found",
+          data: null,
+        })
+      }
+
+      // get order data
+      let checkOrder = await order.findOne({ where: { id: order_id } })
+
+      // check if order id exist or not
+      if (checkOrder === null) {
+        // if order not found, delete image file
+        deleteFiles(req.files.payment_proof)
+
+        return res.status(400).send({
+          isError: true,
+          message: "Order Not Found",
+          data: null,
+        })
+      }
+
+      // save image path and update status order
+      await order.update({
+        payment_proof: req.files.payment_proof[0].path,
+        status: "Waiting for Confirmation"
+      }, {
+        where: { id: order_id },
+        transaction: t
+      })
+
+      // delete event scheduler
+      await sequelize.query(`DROP EVENT IF EXISTS change_status_order_${order_id}`)
+
+      await t.commit();
+
+      return res.status(200).send({
+        isError: false,
+        message: "Upload Paymnet Proof Success",
+        data: null
+      })
+    } catch (error) {
+      await t.rollback()
+
+      // if something eror, delete image file
+      deleteFiles(req.files.payment_proof)
+
+      return res.status(400).send({
+        isError: true,
+        message: error.message,
+        data: null
+      })
     }
   }
 };
