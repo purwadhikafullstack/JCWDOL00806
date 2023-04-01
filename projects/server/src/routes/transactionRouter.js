@@ -16,7 +16,15 @@ Router.get(
 );
 Router.get("/checkout/:room_id", verifyToken, transactionController.checkout);
 Router.post("/book", verifyToken, transactionController.onBookRoom);
-Router.patch('/tenant-order-status/:id', verifyToken, transactionController.tenantUpdateOrderStatus)
-Router.get('/filter-order-list', verifyToken, transactionController.getTenantOrderFilter)
+Router.patch(
+  "/tenant-order-status/:id",
+  verifyToken,
+  transactionController.tenantUpdateOrderStatus
+);
+Router.get(
+  "/filter-order-list",
+  verifyToken,
+  transactionController.getTenantOrderFilter
+);
 
 module.exports = Router;

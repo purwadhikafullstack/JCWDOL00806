@@ -7,10 +7,11 @@ import {
   Text,
   Divider,
   Skeleton,
+  useDisclosure,
 } from "@chakra-ui/react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import OrderCard from "../components/OrderCard";
+import UserOrderCard from "../components/UserOrderCard";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 
@@ -20,6 +21,7 @@ const UserOrders = () => {
 
   const [statusFilter, setStatusFilter] = useState("");
   const [orderList, setOrderList] = useState([]);
+  const { onClose } = useDisclosure();
 
   useEffect(() => {
     setStatusFilter(searchParams.get("status"));
@@ -32,27 +34,40 @@ const UserOrders = () => {
   };
 
   const getOrderList = async () => {
-    let token = localStorage.getItem("userToken");
-    let response = await axios.get(
-      `${
-        process.env.REACT_APP_SERVER_URL
-      }/transaction/users-order-list?status=${searchParams.get("status")}`,
-      { headers: { authorization: token } }
-    );
-    setOrderList(response.data.data);
+    try {
+      let token = localStorage.getItem("userToken");
+      let response = await axios.get(
+        `${
+          process.env.REACT_APP_SERVER_URL
+        }/transaction/users-order-list?status=${searchParams.get("status")}`,
+        { headers: { authorization: token } }
+      );
+      setOrderList(response.data.data);
+      toast(response.data.message);
+    } catch (error) {
+      if (error.response.data.message == "jwt expired")
+        toast("Login Session Expired");
+      setTimeout(() => {
+        navigate("/users/login");
+      }, 1000);
+    }
   };
 
   const OrderList = () => {
     console.log(orderList);
     return orderList.map((order, idx) => {
       return (
-        <OrderCard
+        <UserOrderCard
           key={idx}
           id={order.id}
           start={order.start_date}
           end={order.end_date}
           status={order.status}
           name={order.name}
+          onClose={onClose}
+          invoice={order.invoice_id}
+          totalPrice={order.total_price}
+          propertyName={order.property_name}
         />
       );
     });
@@ -110,7 +125,16 @@ const UserOrders = () => {
                     size="sm"
                     variant="outline"
                   >
-                    Complete
+                    Completed
+                  </Button>
+                  <Button
+                    colorScheme={statusFilter === "cancelled" ? "green" : null}
+                    onClick={handleFilterClick}
+                    name="cancelled"
+                    size="sm"
+                    variant="outline"
+                  >
+                    Cancelled
                   </Button>
                 </Flex>
                 <Divider className="my-3" />
@@ -169,7 +193,16 @@ const UserOrders = () => {
                     size="sm"
                     variant="outline"
                   >
-                    Complete
+                    Completed
+                  </Button>
+                  <Button
+                    colorScheme={statusFilter === "cancelled" ? "green" : null}
+                    onClick={handleFilterClick}
+                    name="cancelled"
+                    size="sm"
+                    variant="outline"
+                  >
+                    Cancelled
                   </Button>
                 </Flex>
                 <Divider className="my-3" />
