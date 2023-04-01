@@ -12,7 +12,7 @@ const room = db.room;
 const order_details = db.order_details;
 
 // import deleteFiles
-const deleteFiles = require("./../helpers/deleteFiles")
+const deleteFiles = require("./../helpers/deleteFiles");
 
 module.exports = {
   list: async (req, res) => {
@@ -127,15 +127,15 @@ module.exports = {
   },
   getOrderList: async (req, res) => {
     try {
-      let {id} = req.dataToken
-      let { status, page } = req.query
+      let { id } = req.dataToken;
+      let { status, page } = req.query;
 
-      let limit = 5
-      let offset = (page - 1) * limit
+      let limit = 5;
+      let offset = (page - 1) * limit;
 
-      let totalData = null
+      let totalData = null;
 
-      if (status === 'in progress') {
+      if (status === "in progress") {
         totalData = await sequelize.query(`
         SELECT COUNT(*) AS total
         FROM orders o
@@ -143,8 +143,8 @@ module.exports = {
         JOIN properties p ON p.id = r.property_id
         JOIN property_categories c ON c.id = p.category_id and c.tenant_id = "${id}"
         WHERE status = "Waiting for Confirmation"
-        `)
-      } else if (status === 'all') {
+        `);
+      } else if (status === "all") {
         totalData = await sequelize.query(`
       SELECT COUNT(*) AS total
       FROM orders o
@@ -152,7 +152,7 @@ module.exports = {
       JOIN properties p ON p.id = r.property_id
       JOIN property_categories c ON c.id = p.category_id and c.tenant_id = "${id}"
       WHERE status NOT IN ("Waiting for Payment")
-      `)
+      `);
       } else {
         totalData = await sequelize.query(`
       SELECT COUNT(*) AS total
@@ -161,10 +161,11 @@ module.exports = {
       JOIN properties p ON p.id = r.property_id
       JOIN property_categories c ON c.id = p.category_id and c.tenant_id = "${id}"
       WHERE status = "${status}"
-      `)}
-      let total_pages = Math.ceil(totalData[0][0].total / limit)
+      `);
+      }
+      let total_pages = Math.ceil(totalData[0][0].total / limit);
 
-      let getData = null
+      let getData = null;
 
       if (status === "in progress") {
         getData = await sequelize.query(`
@@ -178,7 +179,7 @@ module.exports = {
         ORDER BY o.start_date ASC
         LIMIT ${limit}
         OFFSET ${offset}
-        `)
+        `);
       } else if (status === "all") {
         getData = await sequelize.query(`
         SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes
@@ -191,7 +192,7 @@ module.exports = {
         ORDER BY o.start_date ASC
         LIMIT ${limit}
         OFFSET ${offset}
-        `)
+        `);
       } else {
         getData = await sequelize.query(`
         SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes
@@ -204,16 +205,15 @@ module.exports = {
         ORDER BY o.start_date ASC
         LIMIT ${limit}
         OFFSET ${offset}
-        `)
+        `);
       }
 
       return res.status(201).send({
         isError: false,
         message: "Data acquired",
         data: getData[0],
-        total_pages
-      })
-      
+        total_pages,
+      });
     } catch (error) {
       console.log(error);
       return res.status(404).send({
@@ -231,23 +231,29 @@ module.exports = {
 
       if (status === "in progress") {
         getData = await sequelize.query(`
-        SELECT o.id, r.name, o.payment_proof, status, start_date, end_date, room_id
+        SELECT o.id, r.name, o.payment_proof, status, start_date, end_date, room_id, o.invoice_id, od.total_price, p.name AS property_name
         FROM orders o
+        JOIN order_details od ON o.id = od.order_id
         INNER JOIN rooms r ON r.id = o.room_id
-        WHERE status = "Waiting for Confirmation" AND o.users_id = "${id}"
+        JOIN properties p ON p.id = r.property_id
+        WHERE (status = "Waiting for Confirmation" OR status = "Waiting For Payment") AND o.users_id = "${id}"
         `);
       } else if (status === "all") {
         getData = await sequelize.query(`
-        SELECT o.id, r.name, o.payment_proof, status, start_date, end_date, room_id
+        SELECT o.id, r.name, o.payment_proof, status, start_date, end_date, room_id, o.invoice_id, od.total_price, p.name AS property_name
         FROM orders o
+        JOIN order_details od ON o.id = od.order_id
         INNER JOIN rooms r ON r.id = o.room_id
-        WHERE status NOT IN ("Waiting for Payment") AND o.users_id = "${id}"
+        JOIN properties p ON p.id = r.property_id
+        WHERE o.users_id = "${id}"
         `);
       } else {
         getData = await sequelize.query(`
-        SELECT o.id, r.name, o.payment_proof, status, start_date, end_date, room_id
+        SELECT o.id, r.name, o.payment_proof, status, start_date, end_date, room_id, o.invoice_id, od.total_price, p.name AS property_name
         FROM orders o
+        JOIN order_details od ON o.id = od.order_id
         INNER JOIN rooms r ON r.id = o.room_id
+        JOIN properties p ON p.id = r.property_id
         WHERE status = "${status}" AND o.users_id = "${id}"
         `);
       }
@@ -359,8 +365,8 @@ module.exports = {
       let convertUserId = checkUsers.dataValues.id.substr(0, 8);
 
       let invoice_id = `INV/${year}${month}${date}/${convertUserId}/${uniqueString}`;
-      invoice_id = invoice_id.toLocaleUpperCase()
-      
+      invoice_id = invoice_id.toLocaleUpperCase();
+
       // create new order
       let insertOrder = await order.create(
         {
@@ -405,7 +411,7 @@ module.exports = {
         data: null,
       });
     } catch (error) {
-      t.rollback()
+      t.rollback();
 
       return res.status(400).send({
         isError: true,
@@ -415,67 +421,79 @@ module.exports = {
     }
   },
   tenantUpdateOrderStatus: async (req, res) => {
-    const t = await sequelize.transaction()
+    const t = await sequelize.transaction();
     try {
-      let { notes } = req.body
-      let { id } = req.params
-      let { status } = req.query
-      console.log(status)
-      console.log(notes)
-      if (status === 'cancel') {
-        await order.update({
-          status: 'Cancelled',
-          notes
-        }, {
-          where: { id }
-        }, {
-          transaction: t
-        })
-      } else if (status === 'reject') {
-        await order.update({
-          status: 'Rejected',
-          notes
-        }, {
-          where: { id }
-        }, {
-          transaction: t
-        })
+      let { notes } = req.body;
+      let { id } = req.params;
+      let { status } = req.query;
+      console.log(status);
+      console.log(notes);
+      if (status === "cancel") {
+        await order.update(
+          {
+            status: "Cancelled",
+            notes,
+          },
+          {
+            where: { id },
+          },
+          {
+            transaction: t,
+          }
+        );
+      } else if (status === "reject") {
+        await order.update(
+          {
+            status: "Rejected",
+            notes,
+          },
+          {
+            where: { id },
+          },
+          {
+            transaction: t,
+          }
+        );
       } else {
-        await order.update({
-          status: 'Complete',
-          notes : 'Order Accepted'
-        }, {
-          where: { id }
-        }, {
-          transaction: t
-        })
+        await order.update(
+          {
+            status: "Complete",
+            notes: "Order Accepted",
+          },
+          {
+            where: { id },
+          },
+          {
+            transaction: t,
+          }
+        );
       }
-      
-      t.commit()
+
+      t.commit();
       return res.status(201).send({
         isError: false,
-        message: "Order Cancelled"
-      })
+        message: "Order Cancelled",
+      });
     } catch (error) {
-      t.rollback()
-      console.log(error)
+      t.rollback();
+      console.log(error);
       return res.status(404).send({
         isError: true,
-        message: error
-      })
+        message: error,
+      });
     }
   },
   getTenantOrderFilter: async (req, res) => {
     try {
-      let {id} = req.dataToken
-      let { status, page, search } = req.query
+      let { id } = req.dataToken;
+      let { status, page, search } = req.query;
 
-      let limit = 5
-      let offset = (page - 1) * limit
+      let limit = 5;
+      let offset = (page - 1) * limit;
 
-      let totalData = null
+      let totalData = null;
 
-      if (status === 'in progress') {
+      if (status === "in progress") {
         totalData = await sequelize.query(`
         SELECT COUNT(*) AS total
         FROM orders o
@@ -483,8 +501,8 @@ module.exports = {
         JOIN properties p ON p.id = r.property_id
         JOIN property_categories c ON c.id = p.category_id and c.tenant_id = "${id}"
         WHERE status = "Waiting for Confirmation" AND o.invoice_id LIKE "%${search}%"
-        `)
-      } else if (status === 'all') {
+        `);
+      } else if (status === "all") {
         totalData = await sequelize.query(`
       SELECT COUNT(*) AS total
       FROM orders o
@@ -492,7 +510,7 @@ module.exports = {
       JOIN properties p ON p.id = r.property_id
       JOIN property_categories c ON c.id = p.category_id and c.tenant_id = "${id}"
       WHERE status NOT IN ("Waiting for Payment") AND o.invoice_id LIKE "%${search}%"
-      `)
+      `);
       } else {
         totalData = await sequelize.query(`
       SELECT COUNT(*) AS total
@@ -501,10 +519,11 @@ module.exports = {
       JOIN properties p ON p.id = r.property_id
       JOIN property_categories c ON c.id = p.category_id and c.tenant_id = "${id}"
       WHERE status = "${status}" AND o.invoice_id LIKE "%${search}%"
-      `)}
-      let total_pages = Math.ceil(totalData[0][0].total / limit)
+      `);
+      }
+      let total_pages = Math.ceil(totalData[0][0].total / limit);
 
-      let getData = null
+      let getData = null;
 
       if (status === "in progress") {
         getData = await sequelize.query(`
@@ -518,7 +537,7 @@ module.exports = {
         ORDER BY o.start_date ASC
         LIMIT ${limit}
         OFFSET ${offset}
-        `)
+        `);
       } else if (status === "all") {
         getData = await sequelize.query(`
         SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes
@@ -531,7 +550,7 @@ module.exports = {
         ORDER BY o.start_date ASC
         LIMIT ${limit}
         OFFSET ${offset}
-        `)
+        `);
       } else {
         getData = await sequelize.query(`
         SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes
@@ -544,16 +563,15 @@ module.exports = {
         ORDER BY o.start_date ASC
         LIMIT ${limit}
         OFFSET ${offset}
-        `)
+        `);
       }
 
       return res.status(201).send({
         isError: false,
         message: "Data acquired",
         data: getData[0],
-        total_pages
-      })
-      
+        total_pages,
+      });
     } catch (error) {
       console.log(error);
       return res.status(404).send({
@@ -564,72 +582,77 @@ module.exports = {
     }
   },
   onUploadPaymentProof: async (req, res) => {
-    const t = await sequelize.transaction()
+    const t = await sequelize.transaction();
     try {
       // get data from client
-      let { id } = req.dataToken
-      let { order_id } = req.params
+      let { id } = req.dataToken;
+      let { order_id } = req.params;
 
       // get users data
-      let checkUsers = await users.findOne({ where: { id } })
+      let checkUsers = await users.findOne({ where: { id } });
 
       // check if users exist or not
       if (checkUsers === null) {
         // if user not found, delete image file
-        deleteFiles(req.files.payment_proof)
+        deleteFiles(req.files.payment_proof);
 
         return res.status(400).send({
           isError: true,
           message: "Users Not Found",
           data: null,
-        })
+        });
       }
 
       // get order data
-      let checkOrder = await order.findOne({ where: { id: order_id } })
+      let checkOrder = await order.findOne({ where: { id: order_id } });
 
       // check if order id exist or not
       if (checkOrder === null) {
         // if order not found, delete image file
-        deleteFiles(req.files.payment_proof)
+        deleteFiles(req.files.payment_proof);
 
         return res.status(400).send({
           isError: true,
           message: "Order Not Found",
           data: null,
-        })
+        });
       }
 
       // save image path and update status order
-      await order.update({
-        payment_proof: req.files.payment_proof[0].path,
-        status: "Waiting for Confirmation"
-      }, {
-        where: { id: order_id },
-        transaction: t
-      })
+      await order.update(
+        {
+          payment_proof: req.files.payment_proof[0].path,
+          status: "Waiting for Confirmation",
+        },
+        {
+          where: { id: order_id },
+          transaction: t,
+        }
+      );
 
       // delete event scheduler
-      await sequelize.query(`DROP EVENT IF EXISTS change_status_order_${order_id}`)
+      await sequelize.query(
+        `DROP EVENT IF EXISTS change_status_order_${order_id}`
+      );
 
       await t.commit();
 
       return res.status(200).send({
         isError: false,
         message: "Upload Paymnet Proof Success",
-        data: null
-      })
+        data: null,
+      });
     } catch (error) {
-      await t.rollback()
+      await t.rollback();
 
       // if something eror, delete image file
-      deleteFiles(req.files.payment_proof)
+      deleteFiles(req.files.payment_proof);
 
       return res.status(400).send({
         isError: true,
         message: error.message,
-        data: null
-      })
+        data: null,
+      });
     }
-  }
+  },
 };
