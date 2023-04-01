@@ -140,32 +140,29 @@ const Navbar = () => {
                   variant="outline"
                 />
                 <MenuList>
-                  <MenuItem>
-                    <Link
-                      to=""
+                  <Link to="">
+                    <MenuItem
                       className="flex items-center 
                                             gap-2 cursor-pointer"
                     >
                       <FontAwesomeIcon icon={faUser} className="mt-1" />
                       <div>Profile</div>
-                    </Link>
-                  </MenuItem>
+                    </MenuItem>
+                  </Link>
 
-                  <MenuItem>
-                    <Link
-                      to=""
+                  <Link to="/users/orders?status=all">
+                    <MenuItem
                       className="flex items-center 
                                             gap-2 cursor-pointer"
                     >
                       <FontAwesomeIcon icon={faList} className="mt-1" />
                       <div>Order List</div>
-                    </Link>
-                  </MenuItem>
+                    </MenuItem>
+                  </Link>
 
                   {!isVerify ? (
-                    <MenuItem>
-                      <Link
-                        to="/users/verify"
+                    <Link to="/users/verify">
+                      <MenuItem
                         className="flex items-center 
                                                 gap-2 cursor-pointer"
                       >
@@ -174,8 +171,8 @@ const Navbar = () => {
                           className="mt-1"
                         />
                         <div>Verify Account</div>
-                      </Link>
-                    </MenuItem>
+                      </MenuItem>
+                    </Link>
                   ) : null}
 
                   <MenuDivider />
