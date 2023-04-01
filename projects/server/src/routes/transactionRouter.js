@@ -5,6 +5,9 @@ const { verifyToken } = require("../middleware/decodeToken");
 // Import All Controller
 const { transactionController } = require("../controllers");
 
+// import upload middleware
+const uploadImagesPaymentProof = require("../middleware/uploadPaymnetProof");
+
 Router.get("/list", transactionController.list);
 Router.get("/roomList", transactionController.getRoomList);
 Router.get("/roomListOnly", transactionController.roomListFromHomepage);
@@ -25,6 +28,12 @@ Router.get(
   "/filter-order-list",
   verifyToken,
   transactionController.getTenantOrderFilter
+);
+Router.patch(
+  "/upload-payment/:order_id",
+  verifyToken,
+  uploadImagesPaymentProof,
+  transactionController.onUploadPaymentProof
 );
 
 module.exports = Router;

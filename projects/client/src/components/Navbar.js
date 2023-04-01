@@ -153,7 +153,7 @@ const Navbar = () => {
 
                   <MenuItem>
                     <Link
-                      to="/users/orders?status=all"
+                      to=""
                       className="flex items-center 
                                             gap-2 cursor-pointer"
                     >

@@ -39,6 +39,11 @@ const UserOrderCard = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [detailModal, setDetailModal] = useState(false);
 
+  const formatter = new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0,
+  });
   const handleOpenModal = () => {
     setIsModalOpen(true);
   };
@@ -51,31 +56,51 @@ const UserOrderCard = ({
     <>
       <Toaster />
       <Flex
-        className="p-2 mx-auto w-full mb-1 mt-1 border rounded-md"
+        className="py-2 px-3 mx-auto w-full mb-1 mt-1 border rounded-md"
         flexDir="column"
       >
         <Flex flexDir="row" className="">
-          <Text className="w-2/5" color="gray" fontSize="xs">
+          <Text className="w-2/5 font-bold italic" fontSize="sm">
             {" "}
             {invoice}{" "}
           </Text>
-          <Divider orientation="vertical" className="mx-5" />
         </Flex>
         <Divider className="my-2" />
         <Flex flexDir="row" alignItems="center">
           <Flex flexDir="column" className="w-2/6">
-            <Text fontSize="xs">Property name : {propertyName}</Text>
-            <Text fontSize="xs">Room name : {name}</Text>
-            <Text fontSize="xs">Status : </Text>
-            <Text fontSize="xs">{status}</Text>
-            <Text fontSize="xs">Rp. {totalPrice.toLocaleString("id-ID")}</Text>
+            <Flex className=" mt-[2px]" flexDir="row">
+              <Text className="mr-3" fontSize="sm">
+                Property name
+              </Text>
+              <Text fontSize="sm">: {propertyName}</Text>
+            </Flex>
+            <Flex className=" mt-[2px]" flexDir="row">
+              <Text className="mr-7" fontSize="sm">
+                Room name
+              </Text>
+              <Text fontSize="sm">: {name}</Text>
+            </Flex>
+            <Flex className="border-b-2 pb-2 mt-[2px]" flexDir="row">
+              <Text className="mr-16" fontSize="sm">
+                Status
+              </Text>
+              <Text fontSize="sm">: {status} </Text>
+            </Flex>
+            <Flex flexDir="row" className="mt-1">
+              <Text className="mr-9 font-semibold" fontSize="sm">
+                Total Price
+              </Text>
+              <Text className="font-bold" fontSize="sm">
+                : {formatter.format(totalPrice)}
+              </Text>
+            </Flex>
           </Flex>
           <Flex className="mx-12 w-1/4" flexDir="row" alignItems="center">
             <Image
               boxSize="32px"
               objectFit="cover"
-              src=""
-              alt=""
+              src={image}
+              alt="payment-proof"
               className="border rounded-md"
             />
             <Button
