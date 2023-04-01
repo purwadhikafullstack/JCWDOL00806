@@ -35,9 +35,14 @@ const UserOrderCard = ({
   notes,
   totalPrice,
   propertyName,
+  userToken
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [detailModal, setDetailModal] = useState(false);
+  const [uploadModal, setUploadModal] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
 
   const formatter = new Intl.NumberFormat("id-ID", {
     style: "currency",
@@ -52,6 +57,60 @@ const UserOrderCard = ({
     toast("Cancel Button For User");
   };
 
+  const getImageSource = (link) => {
+    if (!link) return
+    
+    let image = `${process.env.REACT_APP_SERVER_URL}/image/${link
+      ?.replace(/"/g, "")
+      .replace(/\\/g, "/")}`;
+
+    return image;
+};
+
+  const handleFileInputChange = (event) => {
+    const file = event.target.files[0]
+    setSelectedFile(file)
+
+    const reader = new FileReader()
+    
+    reader.onloadend = () => {
+      setImagePreview(reader.result);
+    }
+    
+    reader.readAsDataURL(file);
+  }
+
+  const handleUploadButtonClick = async () => {
+    try {
+      setIsLoading(true)
+
+      // validate file type
+      if (!selectedFile.type.startsWith('image/')) {
+        toast.error("Please upload an image file")
+        setIsLoading(false)
+        return
+      }
+
+      // create form data object and append selectedFile to it
+      const formData = new FormData()
+      formData.append('payment_proof', selectedFile)
+
+      await axios.patch(`${process.env.REACT_APP_SERVER_URL}/transaction/upload-payment/${id}`, formData, {
+        headers: { 'Authorization' : userToken }
+      })
+
+      setIsLoading(false)
+      setUploadModal(false)
+      toast.success("Upload Payment Proof Success")
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000)
+    } catch (error) {
+      setIsLoading(false)
+      console.log(error.message)
+    }
+  }
+
   return (
     <>
       <Toaster />
@@ -60,9 +119,8 @@ const UserOrderCard = ({
         flexDir="column"
       >
         <Flex flexDir="row" className="">
-          <Text className="w-2/5 font-bold italic" fontSize="sm">
-            {" "}
-            {invoice}{" "}
+          <Text className="w-full font-bold italic" fontSize="sm">
+            {invoice}
           </Text>
         </Flex>
         <Divider className="my-2" />
@@ -95,29 +153,69 @@ const UserOrderCard = ({
               </Text>
             </Flex>
           </Flex>
-          <Flex className="mx-12 w-1/4" flexDir="row" alignItems="center">
-            <Image
-              boxSize="32px"
-              objectFit="cover"
-              src={image}
-              alt="payment-proof"
-              className="border rounded-md"
-            />
-            <Button
-              onClick={handleOpenModal}
-              colorScheme="blue"
-              className="mx-4"
-              size="xs"
-            >
-              view image
-            </Button>
+          <Flex className="mx-12 w-1/4 gap-2" flexDir="row" alignItems="center">
+            {image ? (
+              <div className="flex gap-2 items-center">
+                <Image
+                  boxSize='32px'
+                  objectFit='cover'
+                  src={getImageSource(image)}
+                  alt='payment-proof'
+                  className='border rounded-md'
+                />
+                <Button
+                  onClick={handleOpenModal}
+                  colorScheme="blue"
+                  size="xs"
+                >
+                  view image
+                </Button>
+              </div>
+            ) : status === "Waiting for Payment" ? (
+              <Button
+                onClick={() => setUploadModal(true)}
+                colorScheme="blue"
+                size="xs"
+              >
+                upload payment
+              </Button>
+            ) : (
+              <div>No Payment Proof</div>
+            )}
+            <Modal isOpen={uploadModal} onClose={onClose}>
+              <ModalOverlay>
+                <ModalContent>
+                  <ModalHeader>
+                    Upload Payment Proof
+                  </ModalHeader>
+                  <ModalCloseButton 
+                    onClick={() => setUploadModal(false)}
+                  />
+                  <ModalBody className="flex flex-col gap-5">
+                    <input 
+                      type="file" 
+                      onChange={handleFileInputChange} 
+                    />
+                    {imagePreview && <img src={imagePreview} alt="Preview" />}
+                    <Button 
+                      colorScheme="blue"
+                      isLoading={isLoading}
+                      onClick={handleUploadButtonClick}
+                    >
+                      Upload
+                    </Button>
+                  </ModalBody>
+                </ModalContent>
+              </ModalOverlay>
+            </Modal>
+
             <Modal isOpen={isModalOpen} onClose={onClose}>
               <ModalOverlay>
                 <ModalContent>
                   <ModalHeader>Payment Proof</ModalHeader>
                   <ModalCloseButton onClick={() => setIsModalOpen(false)} />
                   <ModalBody>
-                    <Image boxSize="full" objectFit="cover" src={image} />
+                    <Image boxSize="full" objectFit="cover" src={getImageSource(image)} />
                   </ModalBody>
                 </ModalContent>
               </ModalOverlay>
