@@ -12,16 +12,14 @@ import {
   StackDivider,
   Box,
   Heading,
-  Text,
   CardBody,
-  Image,
-  IconButton,
-  CardFooter,
   Divider,
   Center,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
+import Navbar from '../components/Navbar'
+
 const UserDetail = () => {
   const navigate = useNavigate();
 
@@ -86,7 +84,11 @@ const UserDetail = () => {
     <>
       <Toaster />
       {!profile ? null : (
-        <Card margin={4}>
+        <>
+        <div className='relative z-10 border shadow-md'>
+        <Navbar />
+      </div>
+        <Card className="sm:w-[45%] mx-auto my-5">
           <CardHeader>
             <Heading size="md">My Profile</Heading>
           </CardHeader>
@@ -199,6 +201,7 @@ const UserDetail = () => {
             </Stack>
           </CardBody>
         </Card>
+        </>
       )}
     </>
   );

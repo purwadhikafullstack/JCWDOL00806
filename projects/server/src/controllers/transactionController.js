@@ -457,7 +457,7 @@ module.exports = {
       } else {
         await order.update(
           {
-            status: "Complete",
+            status: "Completed",
             notes: "Order Accepted",
           },
           {

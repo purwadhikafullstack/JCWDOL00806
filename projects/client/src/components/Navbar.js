@@ -140,7 +140,7 @@ const Navbar = () => {
                   variant="outline"
                 />
                 <MenuList>
-                  <Link to="">
+                  <Link to="/users/my-profile">
                     <MenuItem
                       className="flex items-center 
                                             gap-2 cursor-pointer"
