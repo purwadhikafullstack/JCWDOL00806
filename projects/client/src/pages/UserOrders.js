@@ -21,6 +21,7 @@ const UserOrders = () => {
 
   const [statusFilter, setStatusFilter] = useState("");
   const [orderList, setOrderList] = useState([]);
+  const [userToken, setUserToken] = useState()
   const { onClose } = useDisclosure();
 
   useEffect(() => {
@@ -44,6 +45,7 @@ const UserOrders = () => {
       );
       setOrderList(response.data.data);
       toast(response.data.message);
+      setUserToken(token)
     } catch (error) {
       if (error.response.data.message == "jwt expired")
         toast("Login Session Expired");
@@ -68,6 +70,8 @@ const UserOrders = () => {
           invoice={order.invoice_id}
           totalPrice={order.total_price}
           propertyName={order.property_name}
+          image={order.payment_proof}
+          userToken={userToken}
         />
       );
     });
