@@ -6,6 +6,7 @@ import {Button, FormControl, FormLabel, Input, FormErrorMessage, VStack, Select 
 import * as Yup from 'yup'
 import axios from 'axios'
 import toast, {Toaster} from 'react-hot-toast'
+import Navbar from "../components/Navbar";
 
 const EditUserDetail = () => {
 
@@ -83,8 +84,11 @@ const EditUserDetail = () => {
     return (
     
         <>
+            <div className='relative z-10 border shadow-md'>
+        <Navbar />
+      </div>
             {!fetched ? null : (
-            <div className='mx-2 my-4 flex flex-col text-center align-middle p-4 border rounded-lg border-gray-300 drop-shadow-lg'>
+            <div className='sm:w-[45%] sm:mx-auto mx-2 my-4 flex flex-col text-center align-middle p-4 border rounded-lg border-gray-300 drop-shadow-lg'>
             <h1 className='text-xl font-bold'>Edit your profile</h1>
             <Toaster position='top-center' />
                 <VStack spacing={1} mt={2}>      
