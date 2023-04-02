@@ -8,6 +8,8 @@ import axios from 'axios'
 import {FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {faFacebook, faGoogle} from '@fortawesome/free-brands-svg-icons'
 
+import Navbar from '../components/Navbar'
+import Footer from '../components/Footer'
 
 const RegisterPage = () => {
 
@@ -72,98 +74,108 @@ const RegisterPage = () => {
 // spread operator (...formik.getFieldProps('fieldName')) is used to make the code easier to read, it's the same as defining the value, onChange, and onBlur method manually
 
   return (
-    <>
-      <div className='sm:w-[500px] sm:mx-auto mx-2 my-4 flex flex-col text-center align-middle p-4 border rounded-lg border-slate-300 shadow-lg'>
-        <div className="flex flex-col text-center align-middle p-4">
-          <h1 className='text-xl font-bold'>Welcome to <span className='text-2xl text-cyan-500'>D'sewa</span></h1>
-          <hr className='my-4'></hr>
-          <Toaster position='top-center' />
-          <VStack spacing={1} mt={2}>
-            <FormControl isInvalid={formik.touched.username && formik.errors.username}>
-              <FormLabel htmlFor="username">Username</FormLabel>
-              <Input
-                id="username"
-                name="username"
-                placeholder="Enter your username"
-                  {...formik.getFieldProps('username')}
-              />
-              <FormErrorMessage>{formik.errors.username}</FormErrorMessage>
-            </FormControl>
+    <div className='flex flex-col min-h-screen overflow-hidden'>
+      <div className='relative z-10 border shadow-md'>
+        <Navbar />
+      </div>
 
-            <FormControl isInvalid={formik.touched.email && formik.errors.email}>
-              <FormLabel htmlFor="email">Email</FormLabel>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="Enter your email"
-                {...formik.getFieldProps('email')}
-              />
-              <FormErrorMessage>{formik.errors.email}</FormErrorMessage>
-            </FormControl>
+      <div className='flex-1'>
+        <div className='sm:w-[500px] sm:mx-auto mx-2 my-4 flex flex-col text-center align-middle p-4 border rounded-lg border-slate-300 shadow-lg'>
+          <div className="flex flex-col text-center align-middle p-4">
+            <h1 className='text-xl font-bold'>Welcome to <span className='text-2xl text-cyan-500'>D'sewa</span></h1>
+            <hr className='my-4'></hr>
+            <Toaster position='top-center' />
+            <VStack spacing={1} mt={2}>
+              <FormControl isInvalid={formik.touched.username && formik.errors.username}>
+                <FormLabel htmlFor="username">Username</FormLabel>
+                <Input
+                  id="username"
+                  name="username"
+                  placeholder="Enter your username"
+                    {...formik.getFieldProps('username')}
+                />
+                <FormErrorMessage>{formik.errors.username}</FormErrorMessage>
+              </FormControl>
 
-            <FormControl isInvalid={formik.touched.phone_number && formik.errors.phone_number}>
-              <FormLabel htmlFor="phone_number">Phone Number</FormLabel>
-              <Input
-                id="phone_number"
-                name="phone_number"
-                placeholder="Enter your phone number"
-                {...formik.getFieldProps('phone_number')}
-              />
-              <FormErrorMessage>{formik.errors.phone_number}</FormErrorMessage>
-            </FormControl>
+              <FormControl isInvalid={formik.touched.email && formik.errors.email}>
+                <FormLabel htmlFor="email">Email</FormLabel>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="Enter your email"
+                  {...formik.getFieldProps('email')}
+                />
+                <FormErrorMessage>{formik.errors.email}</FormErrorMessage>
+              </FormControl>
 
-            <FormControl isInvalid={formik.touched.password && formik.errors.password}>
-              <FormLabel htmlFor="password">Password</FormLabel>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                placeholder="Enter your password"
-                {...formik.getFieldProps('password')}
-              />
-              <FormErrorMessage>{formik.errors.password}</FormErrorMessage>
-            </FormControl>
+              <FormControl isInvalid={formik.touched.phone_number && formik.errors.phone_number}>
+                <FormLabel htmlFor="phone_number">Phone Number</FormLabel>
+                <Input
+                  id="phone_number"
+                  name="phone_number"
+                  placeholder="Enter your phone number"
+                  {...formik.getFieldProps('phone_number')}
+                />
+                <FormErrorMessage>{formik.errors.phone_number}</FormErrorMessage>
+              </FormControl>
 
-            <FormControl
-              isInvalid={formik.touched.confirmPassword && formik.errors.confirmPassword}
-            >
-              <FormLabel htmlFor="confirmPassword">Confirm Password</FormLabel>
-              <Input
-                id="confirmPassword"
-                name="confirmPassword"
-                type="password"
-                placeholder="Confirm your password"
-                {...formik.getFieldProps('confirmPassword')}
-              />
-                <FormErrorMessage>{formik.errors.confirmPassword}</FormErrorMessage>
-            </FormControl>
+              <FormControl isInvalid={formik.touched.password && formik.errors.password}>
+                <FormLabel htmlFor="password">Password</FormLabel>
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  placeholder="Enter your password"
+                  {...formik.getFieldProps('password')}
+                />
+                <FormErrorMessage>{formik.errors.password}</FormErrorMessage>
+              </FormControl>
 
-            <Button mt="6 !important" width='71%' colorScheme="blue" type="submit" onClick={formik.handleSubmit}>
-              Register
-            </Button>
-          </VStack>
-          <div>
-            <span className="form-divider"> Or </span>
-            <br></br>
+              <FormControl
+                isInvalid={formik.touched.confirmPassword && formik.errors.confirmPassword}
+              >
+                <FormLabel htmlFor="confirmPassword">Confirm Password</FormLabel>
+                <Input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type="password"
+                  placeholder="Confirm your password"
+                  {...formik.getFieldProps('confirmPassword')}
+                />
+                  <FormErrorMessage>{formik.errors.confirmPassword}</FormErrorMessage>
+              </FormControl>
+
+              <Button mt="6 !important" width='71%' colorScheme="blue" type="submit" onClick={formik.handleSubmit}>
+                Register
+              </Button>
+            </VStack>
+            <div>
+              <span className="form-divider"> Or </span>
+              <br></br>
+            </div>
+          </div>
+          <div className='flex justify-center flex-col align-middle text-center'>
+
+            <Link>
+              <Button className='mb-4' width='70%' colorScheme='red'>
+                <FontAwesomeIcon className='mx-2' icon={faGoogle} />Continue using Google
+              </Button>
+            </Link>
+
+            <Link to='http://localhost:8000/auth/facebook/callback'>
+              <Button className='mb-4' width='70%' colorScheme='facebook'>
+                <FontAwesomeIcon className='mx-2' icon={faFacebook} />Continue using Facebook
+              </Button>
+            </Link>
           </div>
         </div>
-        <div className='flex justify-center flex-col align-middle text-center'>
+      </div>
 
-          <Link>
-            <Button className='mb-4' width='70%' colorScheme='red'>
-              <FontAwesomeIcon className='mx-2' icon={faGoogle} />Continue using Google
-            </Button>
-          </Link>
-
-          <Link to='http://localhost:8000/auth/facebook/callback'>
-            <Button className='mb-4' width='70%' colorScheme='facebook'>
-              <FontAwesomeIcon className='mx-2' icon={faFacebook} />Continue using Facebook
-            </Button>
-          </Link>
-          </div>
-        </div>
-      </>
+      <div className='flex-shrink'>
+        <Footer />
+      </div>
+    </div>
   )
 }
 

@@ -5,12 +5,6 @@ import {
   Text,
   Image,
   Button,
-  AlertDialog,
-  AlertDialogOverlay,
-  AlertDialogHeader,
-  AlertDialogContent,
-  AlertDialogFooter,
-  useDisclosure,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -87,6 +81,14 @@ const UserOrderCard = ({
       // validate file type
       if (!selectedFile.type.startsWith('image/')) {
         toast.error("Please upload an image file")
+        setIsLoading(false)
+        return
+      }
+        
+      // validate file size
+      let megabytes = (selectedFile.size / 1048576).toFixed(2)
+      if (megabytes >= 1.1) {
+        toast.error("The file you selected is too large.")
         setIsLoading(false)
         return
       }
@@ -192,10 +194,15 @@ const UserOrderCard = ({
                     onClick={() => setUploadModal(false)}
                   />
                   <ModalBody className="flex flex-col gap-5">
-                    <input 
-                      type="file" 
-                      onChange={handleFileInputChange} 
-                    />
+                    <div className="flex flex-col">
+                      <input 
+                        type="file" 
+                        onChange={handleFileInputChange} 
+                      />
+                      <span className="text-slate-500">
+                        Maximum upload file size: 1 MB.
+                      </span>
+                    </div>
                     {imagePreview && <img src={imagePreview} alt="Preview" />}
                     <Button 
                       colorScheme="blue"

@@ -9,11 +9,12 @@ import {
   FormErrorMessage,
   VStack,
 } from "@chakra-ui/react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFacebook, faGoogle } from "@fortawesome/free-brands-svg-icons";
+
+import Navbar from '../components/Navbar'
+import Footer from '../components/Footer'
 
 export default function TenantRegister() {
   const [images, setImages] = useState(null);
@@ -100,109 +101,119 @@ export default function TenantRegister() {
   });
 
   return (
-    <>
-      <div className="sm:w-[500px] sm:mx-auto mx-2 my-4 flex flex-col text-center align-middle p-4 border rounded-lg border-slate-300 shadow-lg">
-        <div className="flex flex-col text-center align-middle p-4">
-          <h1 className="text-xl font-bold">
-            Welcome to <span className="text-2xl text-cyan-500">D'sewa</span>,
-            Tenants
-          </h1>
-          <hr className="my-4"></hr>
-          <Toaster position="top-center" />
-          <VStack spacing={1} mt={2}>
-            <FormControl
-              isInvalid={formik.touched.username && formik.errors.username}
-            >
-              <FormLabel htmlFor="username">Username</FormLabel>
-              <Input
-                id="username"
-                name="username"
-                placeholder="Enter your username"
-                {...formik.getFieldProps("username")}
-              />
-              <FormErrorMessage>{formik.errors.username}</FormErrorMessage>
-            </FormControl>
+    <div className="flex flex-col min-h-screen overflow-hidden">
+      <div className="relative z-10 border shadow-md">
+        <Navbar />
+      </div>
 
-            <FormControl
-              isInvalid={formik.touched.email && formik.errors.email}
-            >
-              <FormLabel htmlFor="email">Email</FormLabel>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="Enter your email"
-                {...formik.getFieldProps("email")}
-              />
-              <FormErrorMessage>{formik.errors.email}</FormErrorMessage>
-            </FormControl>
+      <div className="flex-1">
+        <div className="sm:w-[500px] sm:mx-auto mx-2 my-4 flex flex-col text-center align-middle p-4 border rounded-lg border-slate-300 shadow-lg">
+          <div className="flex flex-col text-center align-middle p-4">
+            <h1 className="text-xl font-bold">
+              Welcome to <span className="text-2xl text-cyan-500">D'sewa</span>,
+              Tenants
+            </h1>
+            <hr className="my-4"></hr>
+            <Toaster position="top-center" />
+            <VStack spacing={1} mt={2}>
+              <FormControl
+                isInvalid={formik.touched.username && formik.errors.username}
+              >
+                <FormLabel htmlFor="username">Username</FormLabel>
+                <Input
+                  id="username"
+                  name="username"
+                  placeholder="Enter your username"
+                  {...formik.getFieldProps("username")}
+                />
+                <FormErrorMessage>{formik.errors.username}</FormErrorMessage>
+              </FormControl>
 
-            <FormControl
-              isInvalid={
-                formik.touched.phone_number && formik.errors.phone_number
-              }
-            >
-              <FormLabel htmlFor="phone_number">Phone Number</FormLabel>
-              <Input
-                id="phone_number"
-                name="phone_number"
-                placeholder="Enter your phone number"
-                {...formik.getFieldProps("phone_number")}
-              />
-              <FormErrorMessage>{formik.errors.phone_number}</FormErrorMessage>
-            </FormControl>
+              <FormControl
+                isInvalid={formik.touched.email && formik.errors.email}
+              >
+                <FormLabel htmlFor="email">Email</FormLabel>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="Enter your email"
+                  {...formik.getFieldProps("email")}
+                />
+                <FormErrorMessage>{formik.errors.email}</FormErrorMessage>
+              </FormControl>
 
-            <FormControl
-              isInvalid={formik.touched.password && formik.errors.password}
-            >
-              <FormLabel htmlFor="password">Password</FormLabel>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                placeholder="Enter your password"
-                {...formik.getFieldProps("password")}
-              />
-              <FormErrorMessage>{formik.errors.password}</FormErrorMessage>
-            </FormControl>
+              <FormControl
+                isInvalid={
+                  formik.touched.phone_number && formik.errors.phone_number
+                }
+              >
+                <FormLabel htmlFor="phone_number">Phone Number</FormLabel>
+                <Input
+                  id="phone_number"
+                  name="phone_number"
+                  placeholder="Enter your phone number"
+                  {...formik.getFieldProps("phone_number")}
+                />
+                <FormErrorMessage>{formik.errors.phone_number}</FormErrorMessage>
+              </FormControl>
 
-            <FormControl
-              isInvalid={
-                formik.touched.confirmPassword && formik.errors.confirmPassword
-              }
-            >
-              <FormLabel htmlFor="confirmPassword">Confirm Password</FormLabel>
-              <Input
-                id="confirmPassword"
-                name="confirmPassword"
-                type="password"
-                placeholder="Confirm your password"
-                {...formik.getFieldProps("confirmPassword")}
-              />
-              <FormErrorMessage>
-                {formik.errors.confirmPassword}
-              </FormErrorMessage>
-              <FormLabel htmlFor="ktp">KTP</FormLabel>
-              <Input
-                type="file"
-                name="ktp"
-                onChange={(e) => setImages(e.target.files[0])}
-                accept="image/png, image/jpeg"
-              />
-            </FormControl>
+              <FormControl
+                isInvalid={formik.touched.password && formik.errors.password}
+              >
+                <FormLabel htmlFor="password">Password</FormLabel>
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  placeholder="Enter your password"
+                  {...formik.getFieldProps("password")}
+                />
+                <FormErrorMessage>{formik.errors.password}</FormErrorMessage>
+              </FormControl>
 
-            <Button
-              mt="6 !important"
-              width="71%"
-              colorScheme="blue"
-              type="submit"
-              onClick={formik.handleSubmit}
-            >
-              Register
-            </Button>
-          </VStack>
+              <FormControl
+                isInvalid={
+                  formik.touched.confirmPassword && formik.errors.confirmPassword
+                }
+              >
+                <FormLabel htmlFor="confirmPassword">Confirm Password</FormLabel>
+                <Input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type="password"
+                  placeholder="Confirm your password"
+                  {...formik.getFieldProps("confirmPassword")}
+                />
+                <FormErrorMessage>
+                  {formik.errors.confirmPassword}
+                </FormErrorMessage>
+                <FormLabel htmlFor="ktp">KTP</FormLabel>
+                <Input
+                  type="file"
+                  name="ktp"
+                  onChange={(e) => setImages(e.target.files[0])}
+                  accept="image/png, image/jpeg"
+                />
+              </FormControl>
+
+              <Button
+                mt="6 !important"
+                width="71%"
+                colorScheme="blue"
+                type="submit"
+                onClick={formik.handleSubmit}
+              >
+                Register
+              </Button>
+            </VStack>
+          </div>
         </div>
       </div>
-    </>
+
+      <div className="flex-shrink">
+        <Footer />
+      </div>
+    </div>
   );
 }

@@ -27,8 +27,8 @@ export default function PropertyDetail() {
         params.end !== null
       ) {
         setCity(params.city);
-        dateRange[0] = new Date(params.start);
-        dateRange[1] = new Date(params.end);
+        dateRange[0] = new Date(params.start.substring(0, 15));
+        dateRange[1] = new Date(params.end.substring(0, 15));
       }
     } catch (error) {
       console.log(error);
@@ -36,6 +36,8 @@ export default function PropertyDetail() {
   };
 
   let srcImg = (link) => {
+    if (!link) return
+
     let project = `${process.env.REACT_APP_SERVER_URL}/image/${link
       ?.replace(/"/g, "")
       .replace(/\\/g, "/")}`;
