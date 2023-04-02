@@ -29,6 +29,11 @@ Router.get(
   verifyToken,
   transactionController.getTenantOrderFilter
 );
+Router.get(
+  "/filter-users-order-list",
+  verifyToken,
+  transactionController.getUserOrderFilter
+);
 Router.patch(
   "/upload-payment/:order_id",
   verifyToken,
