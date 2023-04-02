@@ -47,7 +47,7 @@ const UserOrders = () => {
       toast(response.data.message);
       setUserToken(token)
     } catch (error) {
-      if (error.response.data.message == "jwt expired")
+      if (error.response.data.message === "jwt expired")
         toast("Login Session Expired");
       setTimeout(() => {
         navigate("/users/login");
@@ -78,148 +78,149 @@ const UserOrders = () => {
   };
 
   return (
-    <>
-      {!orderList.length ? (
-        <>
-          <Toaster />
-          <div className="relative z-10 border shadow-md">
-            <Navbar />
-          </div>
-          <Flex flexDir="column" className="ml-16 mt-3">
-            <Heading>Your orders</Heading>
-            <Flex flexDir="column" className="border rounded-md p-3">
-              <Flex flexDir="column">
-                <Flex flexDir="row" gap={1.5} alignItems="center">
-                  <Text as="b" className="mr-2">
-                    Status :
-                  </Text>
-                  <Button
-                    colorScheme={statusFilter === "all" ? "green" : null}
-                    onClick={handleFilterClick}
-                    name="all"
-                    size="sm"
-                    variant="outline"
-                  >
-                    All
-                  </Button>
-                  <Button
-                    colorScheme={
-                      statusFilter === "in progress" ? "green" : null
-                    }
-                    onClick={handleFilterClick}
-                    name="in progress"
-                    size="sm"
-                    variant="outline"
-                  >
-                    In Progress
-                  </Button>
-                  <Button
-                    colorScheme={statusFilter === "rejected" ? "green" : null}
-                    onClick={handleFilterClick}
-                    name="rejected"
-                    size="sm"
-                    variant="outline"
-                  >
-                    Rejected
-                  </Button>
-                  <Button
-                    colorScheme={statusFilter === "complete" ? "green" : null}
-                    onClick={handleFilterClick}
-                    name="complete"
-                    size="sm"
-                    variant="outline"
-                  >
-                    Completed
-                  </Button>
-                  <Button
-                    colorScheme={statusFilter === "cancelled" ? "green" : null}
-                    onClick={handleFilterClick}
-                    name="cancelled"
-                    size="sm"
-                    variant="outline"
-                  >
-                    Cancelled
-                  </Button>
+    <div className="flex flex-col min-h-screen overflow-hidden">
+      <div className="relative z-10 border shadow-md">
+        <Navbar />
+      </div>
+
+      <div className="flex-1">
+        {!orderList.length ? (
+          <>
+            <Toaster />
+            <Flex flexDir="column" className="ml-16 mt-3">
+              <Heading>Your orders</Heading>
+              <Flex flexDir="column" className="border rounded-md p-3">
+                <Flex flexDir="column">
+                  <Flex flexDir="row" gap={1.5} alignItems="center">
+                    <Text as="b" className="mr-2">
+                      Status :
+                    </Text>
+                    <Button
+                      colorScheme={statusFilter === "all" ? "green" : null}
+                      onClick={handleFilterClick}
+                      name="all"
+                      size="sm"
+                      variant="outline"
+                    >
+                      All
+                    </Button>
+                    <Button
+                      colorScheme={
+                        statusFilter === "in progress" ? "green" : null
+                      }
+                      onClick={handleFilterClick}
+                      name="in progress"
+                      size="sm"
+                      variant="outline"
+                    >
+                      In Progress
+                    </Button>
+                    <Button
+                      colorScheme={statusFilter === "rejected" ? "green" : null}
+                      onClick={handleFilterClick}
+                      name="rejected"
+                      size="sm"
+                      variant="outline"
+                    >
+                      Rejected
+                    </Button>
+                    <Button
+                      colorScheme={statusFilter === "complete" ? "green" : null}
+                      onClick={handleFilterClick}
+                      name="complete"
+                      size="sm"
+                      variant="outline"
+                    >
+                      Completed
+                    </Button>
+                    <Button
+                      colorScheme={statusFilter === "cancelled" ? "green" : null}
+                      onClick={handleFilterClick}
+                      name="cancelled"
+                      size="sm"
+                      variant="outline"
+                    >
+                      Cancelled
+                    </Button>
+                  </Flex>
+                  <Divider className="my-3" />
+                  <Skeleton>test</Skeleton>
                 </Flex>
-                <Divider className="my-3" />
-                <Skeleton>test</Skeleton>
               </Flex>
             </Flex>
-          </Flex>
-        </>
-      ) : (
-        <>
-          <Toaster />
-          <div className="relative z-10 border shadow-md">
-            <Navbar />
-          </div>
-          <Flex flexDir="column" className="ml-16 mt-3">
-            <Heading>Your orders</Heading>
-            <Flex flexDir="column" className="border rounded-md p-3 w-[34em]">
-              <Flex flexDir="column">
-                <Flex flexDir="row" gap={1.5} alignItems="center">
-                  <Text as="b" className="mr-2">
-                    Status :
-                  </Text>
-                  <Button
-                    colorScheme={statusFilter === "all" ? "green" : null}
-                    onClick={handleFilterClick}
-                    name="all"
-                    size="sm"
-                    variant="outline"
-                  >
-                    All
-                  </Button>
-                  <Button
-                    colorScheme={
-                      statusFilter === "in progress" ? "green" : null
-                    }
-                    onClick={handleFilterClick}
-                    name="in progress"
-                    size="sm"
-                    variant="outline"
-                  >
-                    In Progress
-                  </Button>
-                  <Button
-                    colorScheme={statusFilter === "rejected" ? "green" : null}
-                    onClick={handleFilterClick}
-                    name="rejected"
-                    size="sm"
-                    variant="outline"
-                  >
-                    Rejected
-                  </Button>
-                  <Button
-                    colorScheme={statusFilter === "complete" ? "green" : null}
-                    onClick={handleFilterClick}
-                    name="complete"
-                    size="sm"
-                    variant="outline"
-                  >
-                    Completed
-                  </Button>
-                  <Button
-                    colorScheme={statusFilter === "cancelled" ? "green" : null}
-                    onClick={handleFilterClick}
-                    name="cancelled"
-                    size="sm"
-                    variant="outline"
-                  >
-                    Cancelled
-                  </Button>
+          </>
+        ) : (
+          <>
+            <Toaster />
+            <Flex flexDir="column" className="ml-16 mt-3">
+              <Heading>Your orders</Heading>
+              <Flex flexDir="column" className="border rounded-md p-3 w-[34em]">
+                <Flex flexDir="column">
+                  <Flex flexDir="row" gap={1.5} alignItems="center">
+                    <Text as="b" className="mr-2">
+                      Status :
+                    </Text>
+                    <Button
+                      colorScheme={statusFilter === "all" ? "green" : null}
+                      onClick={handleFilterClick}
+                      name="all"
+                      size="sm"
+                      variant="outline"
+                    >
+                      All
+                    </Button>
+                    <Button
+                      colorScheme={
+                        statusFilter === "in progress" ? "green" : null
+                      }
+                      onClick={handleFilterClick}
+                      name="in progress"
+                      size="sm"
+                      variant="outline"
+                    >
+                      In Progress
+                    </Button>
+                    <Button
+                      colorScheme={statusFilter === "rejected" ? "green" : null}
+                      onClick={handleFilterClick}
+                      name="rejected"
+                      size="sm"
+                      variant="outline"
+                    >
+                      Rejected
+                    </Button>
+                    <Button
+                      colorScheme={statusFilter === "complete" ? "green" : null}
+                      onClick={handleFilterClick}
+                      name="complete"
+                      size="sm"
+                      variant="outline"
+                    >
+                      Completed
+                    </Button>
+                    <Button
+                      colorScheme={statusFilter === "cancelled" ? "green" : null}
+                      onClick={handleFilterClick}
+                      name="cancelled"
+                      size="sm"
+                      variant="outline"
+                    >
+                      Cancelled
+                    </Button>
+                  </Flex>
+                  <Divider className="my-3" />
+                  <OrderList />
                 </Flex>
-                <Divider className="my-3" />
-                <OrderList />
               </Flex>
             </Flex>
-          </Flex>
-        </>
-      )}
+          </>
+        )}
+      </div>
+      
       <div className="flex-shrink">
         <Footer />
       </div>
-    </>
+    </div>
   );
 };
 

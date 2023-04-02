@@ -19,9 +19,6 @@ import {
   MenuList,
   MenuItem,
   IconButton,
-  MenuItemOption,
-  MenuGroup,
-  MenuOptionGroup,
   MenuDivider,
 } from "@chakra-ui/react";
 
@@ -105,12 +102,12 @@ const Navbar = () => {
     <nav className="lg:px-16 md:px-10 px-5">
       <div
         className="py-6 flex justify-between
-                items-center"
+        items-center"
       >
         <Link
           to="/"
           className="font-bold text-3xl 
-                    text-blue-second"
+          text-blue-second"
           onClick={() => {
             setToggle(false);
             document.body.style.overflow = "auto";
@@ -121,12 +118,12 @@ const Navbar = () => {
 
         <div
           className="sm:flex hidden 
-                    justify-between items-center gap-10"
+          justify-between items-center gap-10"
         >
           {userData ? (
             <div
               className="sm:flex hidden 
-                            justify-between items-center gap-5"
+              justify-between items-center gap-5"
             >
               <div className="flex gap-2 items-center">
                 <Avatar bg="teal.500" size={"sm"} />
@@ -143,7 +140,7 @@ const Navbar = () => {
                   <Link to="/users/my-profile">
                     <MenuItem
                       className="flex items-center 
-                                            gap-2 cursor-pointer"
+                      gap-2 cursor-pointer"
                     >
                       <FontAwesomeIcon icon={faUser} className="mt-1" />
                       <div>Profile</div>
@@ -153,7 +150,7 @@ const Navbar = () => {
                   <Link to="/users/orders?status=all">
                     <MenuItem
                       className="flex items-center 
-                                            gap-2 cursor-pointer"
+                      gap-2 cursor-pointer"
                     >
                       <FontAwesomeIcon icon={faList} className="mt-1" />
                       <div>Order List</div>
@@ -164,7 +161,7 @@ const Navbar = () => {
                     <Link to="/users/verify">
                       <MenuItem
                         className="flex items-center 
-                                                gap-2 cursor-pointer"
+                        gap-2 cursor-pointer"
                       >
                         <FontAwesomeIcon
                           icon={faCheckCircle}
@@ -195,7 +192,7 @@ const Navbar = () => {
           ) : (
             <div
               className="sm:flex hidden 
-                            justify-between items-center gap-5"
+              justify-between items-center gap-5"
             >
               <LoginModal />
               <RegisterModal />
@@ -207,7 +204,7 @@ const Navbar = () => {
           <FontAwesomeIcon
             icon={toggle ? faXmark : faBars}
             className="w-[28px] h-[28px] 
-                        object-contain cursor-pointer"
+            object-contain cursor-pointer"
           />
         </div>
 
@@ -216,7 +213,7 @@ const Navbar = () => {
           initial={false}
           animate={toggle ? "show" : "hidden"}
           className="bg-white shadow-2xl fixed top-[85px]
-                    right-0 w-[90%] h-screen -z-10 justify-center rounded-l-md"
+          right-0 w-[90%] h-screen -z-10 justify-center rounded-l-md"
         >
           <div className="py-[50px] px-5 text-xl">
             {userData ? (
@@ -230,18 +227,20 @@ const Navbar = () => {
 
                 <div className="flex flex-col gap-5">
                   <Link
-                    to=""
+                    to="/users/my-profile"
                     className="flex items-center 
-                                        gap-2 cursor-pointer"
+                    gap-2 cursor-pointer"
+                    onClick={() => handleSidebar()}
                   >
                     <FontAwesomeIcon icon={faUser} className="mt-1" />
                     <div>Profile</div>
                   </Link>
 
                   <Link
-                    to=""
+                    to="/users/orders?status=all"
                     className="flex items-center 
-                                        gap-2 cursor-pointer"
+                    gap-2 cursor-pointer"
+                    onClick={() => handleSidebar()}
                   >
                     <FontAwesomeIcon icon={faList} className="mt-1" />
                     <div>Order List</div>
@@ -251,7 +250,8 @@ const Navbar = () => {
                     <Link
                       to="/users/verify"
                       className="flex items-center 
-                                            gap-2 cursor-pointer"
+                      gap-2 cursor-pointer"
+                      onClick={() => handleSidebar()}
                     >
                       <FontAwesomeIcon icon={faCheckCircle} className="mt-1" />
                       <div>Verify Account</div>

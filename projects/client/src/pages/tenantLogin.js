@@ -5,6 +5,9 @@ import { useNavigate, Link } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 
+import Navbar from '../components/Navbar'
+import Footer from '../components/Footer'
+
 export default function TenantLogin() {
   const navigate = useNavigate();
 
@@ -41,7 +44,7 @@ export default function TenantLogin() {
       >
         <Form
           className="flex flex-col items-start 
-                    gap-5"
+          gap-5"
         >
           <div className="flex flex-col gap-2 w-full">
             <Field
@@ -49,8 +52,8 @@ export default function TenantLogin() {
               name="usernameOrEmail"
               placeholder="Username or Email Address"
               className="py-2 bg-white 
-                            border-b-2 border-slate-500
-                            placeholder-slate-500 focus:outline-none"
+              border-b-2 border-slate-500
+              placeholder-slate-500 focus:outline-none"
             />
             <ErrorMessage
               component="div"
@@ -65,8 +68,8 @@ export default function TenantLogin() {
               name="password"
               placeholder="Password"
               className="py-2 bg-white 
-                            border-b-2 border-slate-500
-                            placeholder-slate-500 focus:outline-none"
+              border-b-2 border-slate-500
+              placeholder-slate-500 focus:outline-none"
             />
             <ErrorMessage
               component="div"
@@ -90,19 +93,31 @@ export default function TenantLogin() {
   };
 
   return (
-    <section
-      className="flex flex-col justify-center
-            items-center py-10 px-3"
-    >
-      <Toaster />
-      <div
-        className="sm:w-[500px] w-full rounded-lg
-                px-10 py-10 shadow-lg border-2 border-slate-200"
-      >
-        <h1 className="text-2xl font-semibold mb-5">Login</h1>
-
-        {loginForm()}
+    <div className="flex flex-col min-h-screen overflow-hidden">
+      <div className="relative z-10 border shadow-md">
+        <Navbar />
       </div>
-    </section>
+
+      <div className="flex-1">
+        <div
+          className="flex flex-col justify-center
+          items-center py-10 px-3"
+        >
+          <Toaster />
+          <div
+            className="sm:w-[500px] w-full rounded-lg
+            px-10 py-10 shadow-lg border-2 border-slate-200"
+          >
+            <h1 className="text-2xl font-semibold mb-5">Login</h1>
+
+            {loginForm()}
+          </div>
+        </div>
+      </div>
+
+      <div className="flex-shrink">
+        <Footer />
+      </div>
+    </div>
   );
 }

@@ -5,6 +5,8 @@ import toast, { Toaster } from 'react-hot-toast'
 import { Formik, Form, Field, ErrorMessage } from 'formik'
 import { Button } from '@chakra-ui/react'
 import { Link, useNavigate } from 'react-router-dom';
+import {FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {faFacebook, faGoogle} from '@fortawesome/free-brands-svg-icons'
 
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
@@ -139,16 +141,20 @@ const Login = () => {
                                     colorScheme='red'
                                     width='100%'
                                     onClick={() => loginViaGoogle()}
+                                    className='flex gap-2 items-center'
                                 >
-                                    LOGIN WITH GOOGLE
+                                    <FontAwesomeIcon icon={faGoogle} />
+                                    <div>Continue using Google</div>
                                 </Button>
                                 <Button
                                     type='submit'
                                     colorScheme='facebook'
                                     width='100%'
                                     onClick={() => loginViaFacebook()}
+                                    className='flex gap-2 items-center'
                                 >
-                                    LOGIN WITH FACEBOOK
+                                    <FontAwesomeIcon icon={faFacebook} />
+                                    <div>Continue using Facebook</div>
                                 </Button>
                             </div>
                         </div>
