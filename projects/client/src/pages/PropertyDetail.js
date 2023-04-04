@@ -36,7 +36,7 @@ export default function PropertyDetail() {
   };
 
   let srcImg = (link) => {
-    if (!link) return
+    if (!link) return;
 
     let project = `${process.env.REACT_APP_SERVER_URL}/image/${link
       ?.replace(/"/g, "")
@@ -88,49 +88,52 @@ export default function PropertyDetail() {
       <div className="relative z-10 border shadow-md">
         <Navbar />
       </div>
-      
-    <div className="flex-1">
-      <div className="flex flex-row items-center">
-        <div
-          className="overflow-hidden rounded-lg 
-        sm:h-[250px] border shadow-lg"
-        >
-          <Image
-            src={`${srcImg(list[0]?.picture)}`}
-            boxSize="100%"
-            objectFit="cover"
-            alt={list[0]?.name}
-          />
+
+      <div className="flex-1">
+        <div className="flex flex-col justify-center lg:flex-row lg:justify-center">
+          <div
+            className=" mb-6 lg:mr-6 overflow-hidden rounded-lg 
+        sm:h-[250px] border shadow-lg lg:w-1/4 mt-4"
+          >
+            <Image
+              src={`${srcImg(list[0]?.picture)}`}
+              boxSize="100%"
+              objectFit="cover"
+              alt={list[0]?.name}
+            />
+          </div>
+          <div className="flex flex-col lg:flex-row items-center justify-center lg:justify-end">
+            <Heading size="xs">Enter your date range</Heading>
+            <DatePicker
+              className="border rounded-md w-52 px-3"
+              selectsRange={true}
+              startDate={start}
+              endDate={end}
+              onChange={(update) => {
+                setDateRange(update);
+              }}
+              isClearable={true}
+              dateFormat="yyyy-MM-dd"
+            >
+              <div style={{ color: "red" }}>
+                Click the date twice if only one day !
+              </div>
+            </DatePicker>
+          </div>
         </div>
-        <Heading size="xs">Enter your date range</Heading>
-        <DatePicker
-          className="border rounded-md w-52 px-3"
-          selectsRange={true}
-          startDate={start}
-          endDate={end}
-          onChange={(update) => {
-            setDateRange(update);
-          }}
-          isClearable={true}
-          dateFormat="yyyy-MM-dd"
-        >
-          <div style={{ color: "red" }}>
-            Click the date twice if only one day !
+        <div className="flex sm:flex-col justify-center pt-6 pb-20 ">
+          <div className="flex flex-row flex-wrap justify-center">
+            {list?.map((val, i) => (
+              <div
+                key={i}
+                className="cursor-pointer border rounded-lg shadow-lg p-4 sm:w-full lg:w-auto mx-2"
+              >
+                <RoomCard data={val} dateRange={dateRange} />
+              </div>
+            ))}
           </div>
-        </DatePicker>
+        </div>
       </div>
-      <div
-        className="pt-6 pb-20 grid xl:grid-cols-5 
-                lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 
-                grid-cols-1 gap-x-5 gap-y-10"
-      >
-        {list?.map((val, i) => (
-          <div key={i} className="cursor-pointer">
-            <RoomCard data={val} dateRange={dateRange} />
-          </div>
-        ))}
-      </div>
-    </div>
 
       <div className="flex-shrink">
         <Footer />
