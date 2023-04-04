@@ -1,26 +1,27 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
-import DatePicker from "react-datepicker";
+import DatePicker from "react-datepicker"
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
-import { Image, Divider, Button } from "@chakra-ui/react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faDoorOpen } from "@fortawesome/free-solid-svg-icons";
+import { Image, Divider, Button } from "@chakra-ui/react"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faDoorOpen } from "@fortawesome/free-solid-svg-icons"
 import toast, { Toaster } from 'react-hot-toast'
 
 const CheckoutContent = () => {
     const { roomID } = useParams()
     const navigate = useNavigate()
-    const location = useLocation();
-    const queryParams = new URLSearchParams(location.search);
+    const location = useLocation()
+    const queryParams = new URLSearchParams(location.search)
 
     const [roomData, setRoomData] = useState()
     const [userToken, setUserToken] = useState()
     const [stay, setStay] = useState(0)
-    const [startDate, setStartDate] = useState(null);
-    const [endDate, setEndDate] = useState(null);
-    const [isOpen, setIsOpen] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
-    const [unavailable, setUnavailable] = useState()
+    const [startDate, setStartDate] = useState(null)
+    const [endDate, setEndDate] = useState(null)
+    const [isOpen, setIsOpen] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
+    const [unavailable, setUnavailable] = useState([])
+    const [isDisable, setIsDisable] = useState(false)
 
     const currentDate = new Date().getTime();
 
@@ -39,6 +40,7 @@ const CheckoutContent = () => {
                 headers: { 'Authorization' : token }
             })
 
+            // get room unavailable data
             let room = await axios.get(`${process.env.REACT_APP_SERVER_URL}/room/unavailable-room/${roomID}`)
 
             // set room data and user token
@@ -54,36 +56,14 @@ const CheckoutContent = () => {
                 setEndDate(end)
                 calculateStay(start, end)
             }
-
-            const unavailableDates = [];
             
             // set unavailable from room_statuses
-            if (room.data.data.unavailable.length !== 0) {
-                room.data.data.unavailable.forEach(async (val) => {
-                    const startDate = new Date(val.start_date)
-                    const endDate = new Date(val.end_date)
-
-                    for (let date = startDate; date <= endDate; date.setDate(date.getDate() + 1)) {
-                        let newDate = date.toISOString().substring(0, 10)
-                        unavailableDates.push(newDate);
-                    }
-                })
-            }
+            if (room.data.data.unavailable.length !== 0)
+                onSetUnavailableDate(room.data.data.unavailable)
 
             // set unavailable from order
-            if (room.data.data.booked.length !== 0) {
-                room.data.data.booked.forEach(async (val) => {
-                    const startDate = new Date(val.start_date)
-                    const endDate = new Date(val.end_date)
-
-                    for (let date = startDate; date <= endDate; date.setDate(date.getDate() + 1)) {
-                        let newDate = date.toISOString().substring(0, 10)
-                        unavailableDates.push(newDate);
-                    }
-                })
-            }
-
-            setUnavailable(unavailableDates)
+            if (room.data.data.booked.length !== 0) 
+                onSetUnavailableDate(room.data.data.booked)
         } catch (error) {
             // navigate to login page if token is expired
             if (error?.response?.data.message === 'jwt expired') {
@@ -105,17 +85,27 @@ const CheckoutContent = () => {
         }
     }
 
+    const onSetUnavailableDate = (data) => {
+        const unavailableDates = unavailable
+
+        data.forEach(async (val) => {
+            let startDate = new Date(val.start_date)
+            let endDate = new Date(val.end_date)
+
+            for (let date = startDate; date <= endDate; date.setDate(date.getDate() + 1)) {
+                let newDate = date.toISOString().substring(0, 10)
+                unavailableDates.push(newDate)
+            }
+        })
+        
+        setUnavailable([...new Set(unavailableDates)])
+    }
+
     const onBookRoom = async () => {
         try {
-            // convert start date
-            const newStartDate = new Date(startDate).toLocaleDateString('id-ID')
-            const [startDay, startMonth, startYear] = newStartDate.split('/')
-            const formattedStartDate = `${startYear}-${startMonth.padStart(2, '0')}-${startDay.padStart(2, '0')}`
-
-            // convert end date
-            const newEndDate = new Date(endDate).toLocaleDateString('id-ID')
-            const [endDay, endMonth, endYear] = newEndDate.split('/')
-            const formattedEndDate = `${endYear}-${endMonth.padStart(2, '0')}-${endDay.padStart(2, '0')}`
+            // convert start date and end date
+            let formattedStartDate = onConvertFormatDate(startDate)
+            let formattedEndDate = onConvertFormatDate(endDate)
 
             setIsLoading(true);
             
@@ -131,10 +121,31 @@ const CheckoutContent = () => {
             toast.success("Book Room Success")
             setTimeout(() => {
                 navigate('/users/orders?status=in progress')
+                setIsLoading(false)
             }, 1000)
-            setIsLoading(false);
         } catch (error) {
-            console.log(error.message)
+            console.log(error.response.data.message)
+            /* 
+                if other user already book first
+                - send toast
+                - update new unavailable room
+                - disable button
+            */
+            if (error.response.data.message === "Room Already Booked") {
+                let booked = [{
+                    start_date: onConvertFormatDate(startDate),
+                    end_date: onConvertFormatDate(endDate),
+                }]
+                
+                onSetUnavailableDate(booked)
+                
+                setIsDisable(true)
+                toast.error("Sorry, the room has already been booked for the selected dates")
+            }
+            if (error.response.data.message === "Room Unavailable") {
+                toast.error("Sorry, the room is unavailable for the selected dates")
+            }
+
             setIsLoading(false);
         }
     }
@@ -176,8 +187,32 @@ const CheckoutContent = () => {
         if (end !== null) {
             setIsOpen(!isOpen)
             calculateStay(start, end)
+            onCheckCanBook(start, end)
         };
     };
+
+    const onCheckCanBook = (start, end) => {
+        let newStart = new Date(onConvertFormatDate(start))
+        let newEnd = new Date(onConvertFormatDate(end))
+
+        // if selected date between unavailable date, disable book button
+        for (let date = newStart; date <= newEnd; date.setDate(date.getDate() + 1)) {
+            let newDate = date.toISOString().substring(0, 10)
+            if (unavailable.includes(newDate))
+                return setIsDisable(true)
+        }
+
+        return setIsDisable(false)
+    }
+
+    const onConvertFormatDate = (val) => {
+        // convert format date like "2023-04-20"
+        let newFormat = new Date(val).toLocaleDateString('id-ID')
+        let [startDay, startMonth, startYear] = newFormat.split('/')
+        let formattedDate = `${startYear}-${startMonth.padStart(2, '0')}-${startDay.padStart(2, '0')}`
+
+        return formattedDate
+    }
       
     const handleClick = (e) => {
         e.preventDefault();
@@ -258,7 +293,7 @@ const CheckoutContent = () => {
                             colorScheme='blue'
                             width='100%'
                             className='mt-5'
-                            isDisabled={stay === 0}
+                            isDisabled={stay === 0 || isDisable}
                             isLoading={isLoading}
                             onClick={() => onBookRoom()}
                         >

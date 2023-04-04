@@ -10,6 +10,7 @@ const order = db.order;
 const users = db.users;
 const room = db.room;
 const order_details = db.order_details;
+const room_status = db.room_status;
 
 // import deleteFiles
 const deleteFiles = require("./../helpers/deleteFiles");
@@ -372,45 +373,117 @@ module.exports = {
     }
   },
   onBookRoom: async (req, res) => {
-    const t = await sequelize.transaction();
+    const t = await sequelize.transaction()
     try {
       // get data from client
-      let { id } = req.dataToken;
-      let { start_date, end_date, room_id } = req.body;
+      let { id } = req.dataToken
+      let { start_date, end_date, room_id } = req.body
 
       // get users data
-      let checkUsers = await users.findOne({ where: { id } });
+      let checkUsers = await users.findOne({ where: { id } })
 
       // check if users exist or not
       if (checkUsers === null)
         return res.status(400).send({
           isError: true,
           message: "Users Not Found",
-          data: null,
-        });
+          data: null
+        })
 
-      // get room price
-      let getRoom = await room.findOne({ where: { id: room_id } });
-      let price = getRoom.dataValues.price;
+      // check if the room is already booked for the specified dates
+      let existingBooking = await order.findAll({
+        where: {
+          room_id: room_id,
+          [Op.or]: [
+            {
+              [Op.and]: [
+                { start_date: { [Op.lte]: start_date } },
+                { end_date: { [Op.gte]: start_date } }
+              ]
+            },
+            {
+              [Op.and]: [
+                { start_date: { [Op.lte]: end_date } },
+                { end_date: { [Op.gte]: end_date } }
+              ]
+            },
+            {
+              [Op.and]: [
+                { start_date: { [Op.gte]: start_date } },
+                { end_date: { [Op.lte]: end_date } }
+              ]
+            }
+          ]
+        }
+      });
+
+      if (existingBooking.length > 0) 
+        return res.status(400).send({
+          isError: true,
+          message: "Room Already Booked",
+          data: null
+        })
+
+      // check if the room is unavailable for the specified dates
+      let unavailableRoom = await room_status.findAll({
+        where: {
+          room_id: room_id,
+          [Op.or]: [
+            {
+              [Op.and]: [
+                { start_date: { [Op.lte]: start_date } },
+                { end_date: { [Op.gte]: start_date } }
+              ]
+            },
+            {
+              [Op.and]: [
+                { start_date: { [Op.lte]: end_date } },
+                { end_date: { [Op.gte]: end_date } }
+              ]
+            },
+            {
+              [Op.and]: [
+                { start_date: { [Op.gte]: start_date } },
+                { end_date: { [Op.lte]: end_date } }
+              ]
+            }
+          ]
+        }
+      });
+
+      if (unavailableRoom.length > 0)
+        return res.status(400).send({
+          isError: true,
+          message: "Room Unavailable",
+          data: null
+        })
+
+      // get room data
+      let getRoom = await room.findOne({ 
+        where: { id: room_id },
+        lock: true,
+        transaction: t
+      });
 
       // calculate total price
-      let checkInDate = new Date(start_date);
-      let checkOutDate = new Date(end_date);
+      let price = getRoom.dataValues.price
+      let checkInDate = new Date(start_date)
+      let checkOutDate = new Date(end_date)
 
-      let timeDiff = checkOutDate.getTime() - checkInDate.getTime();
-      let numDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+      let timeDiff = checkOutDate.getTime() - checkInDate.getTime()
+      let numDays = Math.ceil(timeDiff / (1000 * 3600 * 24))
 
-      let total_price = price * numDays;
+      let total_price = price * numDays
 
       // create unique order id
-      let uniqueString = Date.now().toString(16);
-      let date = new Date().getDate().toString().padStart(2, "0");
-      let month = new Date().getMonth().toString().padStart(2, "0");
+      let uniqueString = Date.now().toString(16)
+      let date = new Date().getDate().toString().padStart(2, "0")
+      let month = new Date().getMonth().toString().padStart(2, "0")
       let year = new Date().getFullYear();
-      let convertUserId = checkUsers.dataValues.id.substr(0, 8);
+      let convertUserId = checkUsers.dataValues.id.substr(0, 8)
 
-      let invoice_id = `INV/${year}${month}${date}/${convertUserId}/${uniqueString}`;
-      invoice_id = invoice_id.toLocaleUpperCase();
+      let invoice_id = `INV/${year}${month}${date}/${convertUserId}/${uniqueString}`
+      invoice_id = invoice_id.toLocaleUpperCase()
 
       // create new order
       let insertOrder = await order.create(
@@ -423,9 +496,9 @@ module.exports = {
           invoice_id,
         },
         { transaction: t }
-      );
+      )
 
-      let insertId = insertOrder.dataValues.id;
+      let insertId = insertOrder.dataValues.id
 
       await order_details.create(
         {
@@ -448,15 +521,15 @@ module.exports = {
         }
       );
 
-      t.commit();
+      t.commit()
 
       return res.status(200).send({
         isError: false,
         message: "Book Room Success",
-        data: null,
-      });
+        data: null
+      })
     } catch (error) {
-      t.rollback();
+      t.rollback()
 
       return res.status(400).send({
         isError: true,
