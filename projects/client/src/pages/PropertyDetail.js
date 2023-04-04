@@ -121,15 +121,17 @@ export default function PropertyDetail() {
             </DatePicker>
           </div>
         </div>
-        <div className="flex justify-center pt-6 pb-20 xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-x-5 gap-y-10">
-          {list?.map((val, i) => (
-            <div
-              key={i}
-              className="cursor-pointer border rounded-lg shadow-lg p-4"
-            >
-              <RoomCard data={val} dateRange={dateRange} />
-            </div>
-          ))}
+        <div className="flex sm:flex-col justify-center pt-6 pb-20 ">
+          <div className="flex flex-row flex-wrap justify-center">
+            {list?.map((val, i) => (
+              <div
+                key={i}
+                className="cursor-pointer border rounded-lg shadow-lg p-4 sm:w-full lg:w-auto mx-2"
+              >
+                <RoomCard data={val} dateRange={dateRange} />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
