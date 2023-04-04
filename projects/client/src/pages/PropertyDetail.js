@@ -93,7 +93,7 @@ export default function PropertyDetail() {
         <div className="flex flex-col justify-center lg:flex-row lg:justify-center">
           <div
             className=" mb-6 lg:mr-6 overflow-hidden rounded-lg 
-        sm:h-[250px] border shadow-lg lg:w-1/3 mt-4"
+        sm:h-[250px] border shadow-lg lg:w-1/4 mt-4"
           >
             <Image
               src={`${srcImg(list[0]?.picture)}`}
