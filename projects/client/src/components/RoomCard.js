@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from 'react-router-dom'
+import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
 import { Button, Image } from "@chakra-ui/react";
@@ -44,8 +44,10 @@ const RoomCard = ({ data, onClick, dateRange }) => {
 
       <div className="text-base flex justify-around">
         <span className="font-semibold">{formatter.format(data?.price)}</span>
-        <span className="ml-2">per night</span>
-        <Link to={`/checkout/${data?.id}?start=${dateRange[0]}&end=${dateRange[1]}`}>
+        <span className="ml-2 mr-2">per night</span>
+        <Link
+          to={`/checkout/${data?.id}?start=${dateRange[0]}&end=${dateRange[1]}`}
+        >
           <Button>Book Now</Button>
         </Link>
       </div>
