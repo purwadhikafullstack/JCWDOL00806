@@ -29,13 +29,13 @@ export default function TenantRegister() {
         password: value.password,
       };
       let checkUsername = await axios.get(
-        `${process.env.REACT_APP_SERVER_URL}/tenant/checkUsername?username=${value.username}`
+        `${process.env.REACT_APP_API_BASE_URL}/tenant/checkUsername?username=${value.username}`
       );
       let checkEmail = await axios.get(
-        `${process.env.REACT_APP_SERVER_URL}/tenant/checkEmail?email=${value.email}`
+        `${process.env.REACT_APP_API_BASE_URL}/tenant/checkEmail?email=${value.email}`
       );
       let checkPhone = await axios.get(
-        `${process.env.REACT_APP_SERVER_URL}/tenant/checkPhone?phone_number=${value.phone_number}`
+        `${process.env.REACT_APP_API_BASE_URL}/tenant/checkPhone?phone_number=${value.phone_number}`
       );
       if (checkUsername.data) throw toast.error("Username is taken");
       else if (checkEmail.data)
@@ -44,13 +44,13 @@ export default function TenantRegister() {
         throw toast.error("Phone number is already registered");
       else {
         let result = await axios.post(
-          `${process.env.REACT_APP_SERVER_URL}/tenant/register`,
+          `${process.env.REACT_APP_API_BASE_URL}/tenant/register`,
           input
         );
         let bodyFormData = new FormData();
         bodyFormData.append("images", images);
         await axios.post(
-          `${process.env.REACT_APP_SERVER_URL}/tenant/verify?username=${value.username}`,
+          `${process.env.REACT_APP_API_BASE_URL}/tenant/verify?username=${value.username}`,
           bodyFormData,
           {
             headers: {

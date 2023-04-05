@@ -21,7 +21,7 @@ const ChangeEmail = () => {
     const onSubmit = async (values) => {
         try {
             console.log(values)
-            await axios.patch(`${process.env.REACT_APP_SERVER_URL}/users/change-email/${userID}`, {
+            await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/users/change-email/${userID}`, {
                 email : values.email
             })
             toast.success("Email successfully changed, Please verify your account")
@@ -37,7 +37,7 @@ const ChangeEmail = () => {
 
     const getUserDetail = async () => {
         let token = localStorage.getItem('userToken'.replace(/"/g, ""))
-        let response = await axios.post(`${process.env.REACT_APP_SERVER_URL}/users/getuser`, null,
+        let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/users/getuser`, null,
             { headers: { authorization: token } })
         console.log(response.data.data[0])
         setProvider(response.data.data[0].provider)

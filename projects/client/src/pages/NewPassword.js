@@ -14,7 +14,7 @@ const NewPassword = () => {
 
     const {id} = useParams()
     const onSubmit = async (values) => {
-        await axios.patch(`${process.env.REACT_APP_SERVER_URL}/users/change-password/${id}`, { password: values.password })
+        await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/users/change-password/${id}`, { password: values.password })
         setComplete(true)
         setTimeout(() => {
             navigate('/users/login')

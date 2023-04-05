@@ -22,7 +22,7 @@ const TenantNavbar = () => {
 
             let token = localStorage.getItem('tenantToken')
 
-            let response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/tenant/tenantData`, {
+            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/tenant/tenantData`, {
                 headers: { 'Authorization' : token }
             })
 

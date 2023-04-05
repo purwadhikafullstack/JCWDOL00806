@@ -44,7 +44,7 @@ const TenantRoom = () => {
             if (!token) throw { message: 'Token is missing' }
 
             // get room data
-            let response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/room/get-data/${propertyID}?page=${page}`, {
+            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/room/get-data/${propertyID}?page=${page}`, {
                 headers: { 'Authorization': token }
             })
 
@@ -75,14 +75,14 @@ const TenantRoom = () => {
     const onDeleteRoom = async (roomID) => {
         try {
             // delete room data
-            await axios.delete(`${process.env.REACT_APP_SERVER_URL}/room/delete/${roomID}`, {
+            await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/room/delete/${roomID}`, {
                 headers: { 'Authorization': tenantToken }
             })
 
             toast.success("Delete room success")
 
             // get room data
-            let response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/room/get-data/${propertyID}?page=${page}`, {
+            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/room/get-data/${propertyID}?page=${page}`, {
                 headers: { 'Authorization': tenantToken }
             })
 
@@ -99,7 +99,7 @@ const TenantRoom = () => {
             let current_page = selected_page.selected + 1
             
             // get room data
-            let response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/room/get-data/${propertyID}?page=${current_page}`, {
+            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/room/get-data/${propertyID}?page=${current_page}`, {
                 headers: { 'Authorization': tenantToken }
             })
 

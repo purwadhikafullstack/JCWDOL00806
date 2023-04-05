@@ -16,7 +16,7 @@ const EditRoom = () => {
     const onEditRoom = async (value) => {
         try {
             // update existing room data
-            await axios.patch(`${process.env.REACT_APP_SERVER_URL}/room/update/${roomID}`,{
+            await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/room/update/${roomID}`,{
                 name: value.name,
                 price: value.price,
                 description: value.description,
@@ -147,7 +147,7 @@ const EditRoom = () => {
             if (!token) throw { message: 'Token is missing' }
 
             // check if property id belong to tenant or not
-            let response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/room/room-data/${roomID}`, {
+            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/room/room-data/${roomID}`, {
                 headers: { 'Authorization': token }
             })
 

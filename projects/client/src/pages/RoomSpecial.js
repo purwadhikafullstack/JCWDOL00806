@@ -27,12 +27,12 @@ const RoomSpecial = () => {
       try {
         let token = localStorage.getItem("tenantToken".replace(/"/g, ""));
 
-        let response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/room/room-data/${roomID}`, {
+        let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/room/room-data/${roomID}`, {
           headers: {authorization : token}
         })
         setRoomData(response.data.data)
         
-        let room = await axios.get(`${process.env.REACT_APP_SERVER_URL}/room/unavailable-room/${roomID}`)
+        let room = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/room/unavailable-room/${roomID}`)
 
         const unavailableDates = []
 
@@ -89,7 +89,7 @@ const RoomSpecial = () => {
         newPrice += (roomData.price - ((parseInt(nominal) / 100) * roomData.price))
       }
 
-      await axios.post(`${process.env.REACT_APP_SERVER_URL}/room/special-price`, {
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/room/special-price`, {
         start_date: formattedStartDate,
         end_date: formattedEndDate,
         room_id: roomData.id,

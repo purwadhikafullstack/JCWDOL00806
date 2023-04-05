@@ -97,6 +97,7 @@ module.exports = {
       let getData = await property.findAll({
         where: { category_id: id },
       });
+      console.log(getData)
       res.status(201).send({
         isError: false,
         message: "Data Acquired",
@@ -180,7 +181,7 @@ module.exports = {
       console.log(error);
     }
   },
-  getPropertyContent: async (req, res) => {
+  getPropertyContent: async (req, res, next) => {
     try {
       // get propert data for landing page
       let getProperty = await sequelize.query(`
@@ -192,20 +193,25 @@ module.exports = {
         GROUP BY r.property_id
         LIMIT 30;
       `);
-
-      console.log(getProperty)
-
+      
       return res.status(200).send({
         isError: false,
         message: "Get property content success",
         data: getProperty[0],
       });
     } catch (error) {
-      return res.status(400).send({
-        isError: true,
-        message: error.message,
+      console.log(error)
+      next({
+           isError: true,
+           message: error.message,
         data: null,
-      });
+           status: 400
+        })
+      // return res.status(400).send({
+      //   isError: true,
+      //   message: error.message,
+      //   data: null,
+      // });
     }
   },
   propertyDetail: async (req, res) => {

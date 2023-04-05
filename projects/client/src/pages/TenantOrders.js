@@ -46,10 +46,10 @@ const TenantOrders = () => {
         let response = ""
         
             if (invoiceFilter) {
-                response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/transaction/filter-order-list?status=${searchParams.get('status')}&search=${invoiceFilter}&page=1`,
+                response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/transaction/filter-order-list?status=${searchParams.get('status')}&search=${invoiceFilter}&page=1`,
                 { headers: { authorization : token} })
             } else {
-                response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/transaction/order-list?status=${searchParams.get('status')}&page=1`,
+                response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/transaction/order-list?status=${searchParams.get('status')}&page=1`,
                 { headers: { authorization: token } })
         }
         console.log(response.data.data)
@@ -67,7 +67,7 @@ const TenantOrders = () => {
 
     const OrderList = () => {
         return orderList.map((order, idx) => {
-            let image = `${process.env.REACT_APP_SERVER_URL}/image/${order.payment_proof?.replace(/"/g, "")
+            let image = `${process.env.REACT_APP_API_BASE_URL}/image/${order.payment_proof?.replace(/"/g, "")
             .replace(/\\/g, "/")}`
             
             return (
@@ -94,7 +94,7 @@ const TenantOrders = () => {
         try {
             let current_page = selected_page.selected + 1
 
-            let response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/transaction/order-list?status=${searchParams.get('status')}&page=${current_page}`,
+            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/transaction/order-list?status=${searchParams.get('status')}&page=${current_page}`,
                 { headers: { authorization: tenantToken } })
             
             setPage(current_page)

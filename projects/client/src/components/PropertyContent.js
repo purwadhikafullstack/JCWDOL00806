@@ -12,7 +12,7 @@ const PropertyContent = () => {
     try {
       // get property data
       let response = await axios.get(
-        `${process.env.REACT_APP_SERVER_URL}/property/landing-page-content`
+        `${process.env.REACT_APP_API_BASE_URL}/property/landing-page-content`
       );
 
       // set property data

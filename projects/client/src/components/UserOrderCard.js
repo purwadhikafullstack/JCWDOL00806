@@ -65,7 +65,7 @@ const UserOrderCard = ({
   const getImageSource = (link) => {
     if (!link) return
     
-    let image = `${process.env.REACT_APP_SERVER_URL}/image/${link
+    let image = `${process.env.REACT_APP_API_BASE_URL}/image/${link
       ?.replace(/"/g, "")
       .replace(/\\/g, "/")}`;
 
@@ -108,7 +108,7 @@ const UserOrderCard = ({
       const formData = new FormData()
       formData.append('payment_proof', selectedFile)
 
-      await axios.patch(`${process.env.REACT_APP_SERVER_URL}/transaction/upload-payment/${id}`, formData, {
+      await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/transaction/upload-payment/${id}`, formData, {
         headers: { 'Authorization' : userToken }
       })
 

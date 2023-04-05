@@ -55,7 +55,7 @@ const UserOrders = () => {
       if (invoiceFilter) {
         response = await axios.get(
           `${
-            process.env.REACT_APP_SERVER_URL
+            process.env.REACT_APP_API_BASE_URL
           }/transaction/filter-users-order-list?status=${searchParams.get(
             "status"
           )}&search=${invoiceFilter}&page=1`,
@@ -64,7 +64,7 @@ const UserOrders = () => {
       } else {
         response = await axios.get(
           `${
-            process.env.REACT_APP_SERVER_URL
+            process.env.REACT_APP_API_BASE_URL
           }/transaction/users-order-list?status=${searchParams.get(
             "status"
           )}&page=1`,
@@ -120,7 +120,7 @@ const UserOrders = () => {
 
       let response = await axios.get(
         `${
-          process.env.REACT_APP_SERVER_URL
+          process.env.REACT_APP_API_BASE_URL
         }/transaction/users-order-list?status=${searchParams.get(
           "status"
         )}&page=${current_page}`,

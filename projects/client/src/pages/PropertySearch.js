@@ -23,7 +23,7 @@ export default function PropertySearch() {
   let onGetData = async () => {
     try {
       let data = await axios.get(
-        `${process.env.REACT_APP_SERVER_URL}/transaction/list?city=${city}&start=${start}&end=${end}`
+        `${process.env.REACT_APP_API_BASE_URL}/transaction/list?city=${city}&start=${start}&end=${end}`
       );
       setData(data.data.data);
       toast(data.data.message);
@@ -37,7 +37,7 @@ export default function PropertySearch() {
       let token = localStorage.getItem("userToken".replace(/"/g, ""));
       if (!token) throw { message: "Token is missing" };
       await axios.post(
-        `${process.env.REACT_APP_SERVER_URL}/users/user-profile`,
+        `${process.env.REACT_APP_API_BASE_URL}/users/user-profile`,
         null,
         { headers: { authorization: token } }
       );
