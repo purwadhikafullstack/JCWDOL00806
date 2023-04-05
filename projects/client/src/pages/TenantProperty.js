@@ -71,7 +71,7 @@ export default function TenantProperty() {
   };
 
   let srcImg = (link) => {
-    let project = `${process.env.REACT_APP_API_BASE_URL}/image/${link
+    let project = `${process.env.REACT_APP_SERVER_URL}/image/${link
       ?.replace(/"/g, "")
       .replace(/\\/g, "/")}`;
     return project;

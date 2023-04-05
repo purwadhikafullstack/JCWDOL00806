@@ -67,7 +67,7 @@ const TenantOrders = () => {
 
     const OrderList = () => {
         return orderList.map((order, idx) => {
-            let image = `${process.env.REACT_APP_API_BASE_URL}/image/${order.payment_proof?.replace(/"/g, "")
+            let image = `${process.env.REACT_APP_SERVER_URL}/image/${order.payment_proof?.replace(/"/g, "")
             .replace(/\\/g, "/")}`
             
             return (

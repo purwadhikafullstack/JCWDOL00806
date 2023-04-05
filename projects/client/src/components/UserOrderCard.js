@@ -65,7 +65,7 @@ const UserOrderCard = ({
   const getImageSource = (link) => {
     if (!link) return
     
-    let image = `${process.env.REACT_APP_API_BASE_URL}/image/${link
+    let image = `${process.env.REACT_APP_SERVER_URL}/image/${link
       ?.replace(/"/g, "")
       .replace(/\\/g, "/")}`;
 
