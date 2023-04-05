@@ -58,7 +58,7 @@ const Navbar = () => {
 
       // get user data
       let response = await axios.get(
-        `${process.env.REACT_APP_SERVER_URL}/users/user-data`,
+        `${process.env.REACT_APP_API_BASE_URL}/users/user-data`,
         {
           headers: { Authorization: token },
         }

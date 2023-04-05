@@ -15,7 +15,7 @@ const CreateRoom = () => {
     const onCreateRoom = async (value) => {
         try {
             // create new room
-            await axios.post(`${process.env.REACT_APP_SERVER_URL}/room/create/${propertyID}`, {
+            await axios.post(`${process.env.REACT_APP_API_BASE_URL}/room/create/${propertyID}`, {
                 name: value.name,
                 price: value.price,
                 description: value.description,
@@ -146,7 +146,7 @@ const CreateRoom = () => {
             if (!token) throw { message: 'Token is missing' }
 
             // check if property id belong to tenant or not
-            let response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/room/get-data/${propertyID}?page=1`, {
+            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/room/get-data/${propertyID}?page=1`, {
                 headers: { 'Authorization': token }
             })
 

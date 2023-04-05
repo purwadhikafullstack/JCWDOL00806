@@ -38,7 +38,7 @@ export default function PropertyDetail() {
   let srcImg = (link) => {
     if (!link) return;
 
-    let project = `${process.env.REACT_APP_SERVER_URL}/image/${link
+    let project = `${process.env.REACT_APP_API_BASE_URL}/image/${link
       ?.replace(/"/g, "")
       .replace(/\\/g, "/")}`;
     return project;
@@ -47,13 +47,13 @@ export default function PropertyDetail() {
     try {
       if (city === null || start === null || end === null) {
         let data = await axios.get(
-          `${process.env.REACT_APP_SERVER_URL}/transaction/roomListOnly?property_id=${propertyID}`
+          `${process.env.REACT_APP_API_BASE_URL}/transaction/roomListOnly?property_id=${propertyID}`
         );
         setList(data.data.data);
         toast(data.data.message);
       } else {
         let data = await axios.get(
-          `${process.env.REACT_APP_SERVER_URL}/transaction/roomList?city=${city}&start=${start}&end=${end}&property_id=${propertyID}`
+          `${process.env.REACT_APP_API_BASE_URL}/transaction/roomList?city=${city}&start=${start}&end=${end}&property_id=${propertyID}`
         );
         setList(data.data.data);
         toast(data.data.message);

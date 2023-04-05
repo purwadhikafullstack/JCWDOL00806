@@ -81,13 +81,13 @@ const {
   roomRouter,
   transactionRouter,
 } = require("./routes");
-app.use("/tenant", tenantRouter);
-app.use("/users", usersRouters);
-app.use("/auth/google", authGoogleRouters);
-app.use("/auth/facebook", authFacebookRouter);
-app.use("/property", propertyRouter);
-app.use("/room", roomRouter);
-app.use("/transaction", transactionRouter);
+app.use("/api/tenant", tenantRouter);
+app.use("/api/users", usersRouters);
+app.use("/api/auth/google", authGoogleRouters);
+app.use("/api/auth/facebook", authFacebookRouter);
+app.use("/api/property", propertyRouter);
+app.use("/api/room", roomRouter);
+app.use("/api/transaction", transactionRouter);
 
 // ===========================
 
@@ -103,8 +103,8 @@ app.use((req, res, next) => {
 // error
 app.use((err, req, res, next) => {
   if (req.path.includes("/api/")) {
-    console.error("Error : ", err.stack);
-    res.status(500).send("Error !");
+    console.error("Error : ", err.message);
+    res.status(err.status).send(err);
   } else {
     next();
   }

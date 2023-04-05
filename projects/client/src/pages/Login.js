@@ -17,7 +17,7 @@ const Login = () => {
     const onLogin = async (value) => {
         try {
             let encodedMail = encodeURIComponent(value.email)
-            let response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/users/login?email=${encodedMail}&password=${value.password}`)
+            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/users/login?email=${encodedMail}&password=${value.password}`)
 
             toast("login success")
             localStorage.setItem('userToken', response.data.data.token)
@@ -38,11 +38,11 @@ const Login = () => {
     })
 
     const loginViaGoogle = () => {
-        window.open(`${process.env.REACT_APP_SERVER_URL}/auth/google`, "_self")
+        window.open(`${process.env.REACT_APP_API_BASE_URL}/auth/google`, "_self")
     }
 
     const loginViaFacebook = () => {
-        window.open(`${process.env.REACT_APP_SERVER_URL}/auth/facebook`, "_self")
+        window.open(`${process.env.REACT_APP_API_BASE_URL}/auth/facebook`, "_self")
     }
 
     const loginForm = () => {

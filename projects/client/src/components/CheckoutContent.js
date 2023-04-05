@@ -36,12 +36,12 @@ const CheckoutContent = () => {
             let end = queryParams.get("end").substring(0, 15)
 
             // get room data
-            let response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/transaction/checkout/${roomID}`, {
+            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/transaction/checkout/${roomID}`, {
                 headers: { 'Authorization' : token }
             })
 
             // get room unavailable data
-            let room = await axios.get(`${process.env.REACT_APP_SERVER_URL}/room/unavailable-room/${roomID}`)
+            let room = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/room/unavailable-room/${roomID}`)
 
             // set room data and user token
             setRoomData(response.data.data[0])
@@ -110,7 +110,7 @@ const CheckoutContent = () => {
             setIsLoading(true);
             
             // create new order
-            await axios.post(`${process.env.REACT_APP_SERVER_URL}/transaction/book`, {
+            await axios.post(`${process.env.REACT_APP_API_BASE_URL}/transaction/book`, {
                 start_date: formattedStartDate,
                 end_date: formattedEndDate,
                 room_id: roomID
@@ -153,7 +153,7 @@ const CheckoutContent = () => {
     const getImageSource = (link) => {
         if (!link) return
         
-        let image = `${process.env.REACT_APP_SERVER_URL}/image/${link
+        let image = `${process.env.REACT_APP_API_BASE_URL}/image/${link
           ?.replace(/"/g, "")
           .replace(/\\/g, "/")}`;
     
