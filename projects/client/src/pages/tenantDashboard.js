@@ -269,7 +269,7 @@ export default function TenantDashboard() {
                   Cancel
                 </button>
                 <button
-                  type="submit"
+                  type="button"
                   className="border w-24 h-8 bg-green-700 hover:bg-green-500 active:bg-green-400 text-white rounded-md mb-2"
                   onClick={() => addHandler()}
                 >

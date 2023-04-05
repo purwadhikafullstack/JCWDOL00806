@@ -106,6 +106,9 @@ const UserOrders = () => {
           image={order.payment_proof}
           userToken={userToken}
           notes={order.notes}
+          room_id={order.room_id}
+          room_rating={order.rating}
+          room_review={order.review}
         />
       );
     });

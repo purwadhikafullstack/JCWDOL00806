@@ -40,5 +40,6 @@ Router.patch(
   uploadImagesPaymentProof,
   transactionController.onUploadPaymentProof
 );
+Router.post("/create-review", verifyToken, transactionController.onCreateReview)
 
 module.exports = Router;

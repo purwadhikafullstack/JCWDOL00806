@@ -18,6 +18,13 @@ const PropertyCard = ({ data, onClick }) => {
     minimumFractionDigits: 0,
   });
 
+  const calculateAverageRating = () => {
+    let averageRating = Number(data?.total_rating) / Number(data?.total_users)
+    let formattedRating = averageRating.toFixed(2);
+
+    return formattedRating
+  }
+
   return (
     <div className="flex flex-col w-full" onClick={onClick}>
       <div
@@ -46,10 +53,20 @@ const PropertyCard = ({ data, onClick }) => {
 
         <div
           className="flex justify-end 
-          items-center w-12"
+          items-center w-16"
         >
-          <FontAwesomeIcon icon={faStar} />
-          <span className="ml-2">5,0</span>
+          {data?.total_rating !== null ? (
+            <div className="flex justify-end items-center gap-2">
+              <FontAwesomeIcon icon={faStar} />
+              <span>
+                {calculateAverageRating()}
+              </span>
+            </div>
+          ) : (
+            <div>
+              <span className="font-semibold">New</span>
+            </div>
+          )}
         </div>
       </div>
 

@@ -19,10 +19,15 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'room_id',
         as: "room"
       })
+      this.belongsTo(models.order, {
+        foreignKey: 'order_id',
+        as: "order"
+      })
     }
   }
   review.init({
-    review: DataTypes.TEXT
+    review: DataTypes.TEXT,
+    rating: DataTypes.INTEGER,
   }, {
     sequelize,
     modelName: 'review',

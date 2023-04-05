@@ -11,6 +11,7 @@ const users = db.users;
 const room = db.room;
 const order_details = db.order_details;
 const room_status = db.room_status;
+const reviews = db.review;
 
 // import deleteFiles
 const deleteFiles = require("./../helpers/deleteFiles");
@@ -267,11 +268,12 @@ module.exports = {
 
       if (status === "in progress") {
         getData = await sequelize.query(`
-        SELECT o.id, r.name, o.payment_proof, status, start_date, end_date, room_id, o.invoice_id, od.total_price, p.name AS property_name , o.notes
+        SELECT o.id, r.name, o.payment_proof, status, start_date, end_date, o.room_id, o.invoice_id, od.total_price, p.name AS property_name , o.notes, rv.rating, rv.review
         FROM orders o
         JOIN order_details od ON o.id = od.order_id
         INNER JOIN rooms r ON r.id = o.room_id
         JOIN properties p ON p.id = r.property_id
+        LEFT JOIN reviews rv ON rv.order_id = o.id
         WHERE (status = "Waiting for Confirmation" OR status = "Waiting For Payment") AND o.users_id = "${id}"
         ORDER BY o.start_date ASC
         LIMIT ${limit}
@@ -279,11 +281,12 @@ module.exports = {
         `);
       } else if (status === "all") {
         getData = await sequelize.query(`
-        SELECT o.id, r.name, o.payment_proof, status, start_date, end_date, room_id, o.invoice_id, od.total_price, p.name AS property_name , o.notes
+        SELECT o.id, r.name, o.payment_proof, status, start_date, end_date, o.room_id, o.invoice_id, od.total_price, p.name AS property_name , o.notes, rv.rating, rv.review
         FROM orders o
         JOIN order_details od ON o.id = od.order_id
         INNER JOIN rooms r ON r.id = o.room_id
         JOIN properties p ON p.id = r.property_id
+        LEFT JOIN reviews rv ON rv.order_id = o.id
         WHERE o.users_id = "${id}"
         ORDER BY o.start_date ASC
         LIMIT ${limit}
@@ -291,11 +294,12 @@ module.exports = {
         `);
       } else {
         getData = await sequelize.query(`
-        SELECT o.id, r.name, o.payment_proof, status, start_date, end_date, room_id, o.invoice_id, od.total_price, p.name AS property_name , o.notes
+        SELECT o.id, r.name, o.payment_proof, status, start_date, end_date, o.room_id, o.invoice_id, od.total_price, p.name AS property_name , o.notes, rv.rating, rv.review
         FROM orders o
         JOIN order_details od ON o.id = od.order_id
         INNER JOIN rooms r ON r.id = o.room_id
         JOIN properties p ON p.id = r.property_id
+        LEFT JOIN reviews rv ON rv.order_id = o.id
         WHERE status = "${status}" AND o.users_id = "${id}"
         ORDER BY o.start_date ASC
         LIMIT ${limit}
@@ -743,11 +747,12 @@ module.exports = {
 
       if (status === "in progress") {
         getData = await sequelize.query(`
-        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes
+        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, o.room_id, notes, rv.rating, rv.review
         FROM orders o
         JOIN order_details od ON o.id = od.order_id
         INNER JOIN rooms r ON r.id = o.room_id
         JOIN properties p ON p.id = r.property_id
+        LEFT JOIN reviews rv ON rv.order_id = o.id
         WHERE (status = "Waiting for Confirmation" OR status = "Waiting For Payment") AND o.users_id = "${id}" AND o.invoice_id LIKE "%${search}%"
         ORDER BY o.start_date ASC
         LIMIT ${limit}
@@ -755,11 +760,12 @@ module.exports = {
         `);
       } else if (status === "all") {
         getData = await sequelize.query(`
-        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes
+        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, o.room_id, notes, rv.rating, rv.review
         FROM orders o
         JOIN order_details od ON o.id = od.order_id
         INNER JOIN rooms r ON r.id = o.room_id
         JOIN properties p ON p.id = r.property_id
+        LEFT JOIN reviews rv ON rv.order_id = o.id
         WHERE o.users_id = "${id}" AND o.invoice_id LIKE "%${search}%"
         ORDER BY o.start_date ASC
         LIMIT ${limit}
@@ -767,11 +773,12 @@ module.exports = {
         `);
       } else {
         getData = await sequelize.query(`
-        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes
+        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, o.room_id, notes, rv.rating, rv.review
         FROM orders o
         JOIN order_details od ON o.id = od.order_id
         INNER JOIN rooms r ON r.id = o.room_id
         JOIN properties p ON p.id = r.property_id
+        LEFT JOIN reviews rv ON rv.order_id = o.id
         WHERE status = "${status}" AND o.users_id = "${id}" AND o.invoice_id LIKE "%${search}%"
         ORDER BY o.start_date ASC
         LIMIT ${limit}
@@ -868,4 +875,47 @@ module.exports = {
       });
     }
   },
+  onCreateReview: async (req, res) => {
+    try {
+      // get data from client
+      let { id } = req.dataToken
+      let { rating, review, room_id, order_id } = req.body
+
+      // get users data
+      let checkUsers = await users.findOne({ where: { id } });
+
+      // check if users exist or not
+      if (checkUsers === null) {
+        // if user not found, delete image file
+        deleteFiles(req.files.payment_proof);
+
+        return res.status(400).send({
+          isError: true,
+          message: "Users Not Found",
+          data: null,
+        });
+      }
+
+      // create new review
+      await reviews.create({
+        review,
+        rating,
+        users_id: checkUsers.dataValues.id,
+        room_id,
+        order_id
+      })
+
+      return res.status(200).send({
+        isError: false,
+        message: "Create Review Success",
+        data: null
+      })
+    } catch (error) {
+      return res.status(400).send({
+        isError: true,
+        message: error.message,
+        data: null
+      })
+    }
+  }
 };
