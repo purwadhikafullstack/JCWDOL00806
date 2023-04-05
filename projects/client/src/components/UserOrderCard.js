@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import {
   Divider,
   Flex,
@@ -12,10 +12,13 @@ import {
   ModalCloseButton,
   ModalBody,
   Box,
+  Textarea
 } from "@chakra-ui/react";
 import ConfirmAlert from "./ConfirmAlert";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faStar } from "@fortawesome/free-solid-svg-icons";
 
 const UserOrderCard = ({
   id,
@@ -29,7 +32,10 @@ const UserOrderCard = ({
   notes,
   totalPrice,
   propertyName,
-  userToken
+  userToken,
+  room_id,
+  room_rating,
+  room_review,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [detailModal, setDetailModal] = useState(false);
@@ -37,6 +43,11 @@ const UserOrderCard = ({
   const [isLoading, setIsLoading] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+
+  const [rating, setRating] = useState(0)
+  const [review, setReview] = useState("")
+  const [reviewFormModal, setReviewFormModal] = useState(false)
+  const [seeReviewModal, setSeeReviewModal] = useState(false)
 
   const formatter = new Intl.NumberFormat("id-ID", {
     style: "currency",
@@ -111,6 +122,73 @@ const UserOrderCard = ({
       setIsLoading(false)
       console.log(error.message)
     }
+  }
+
+  const handleReviewChange = (e) => {
+    let inputValue = e.target.value
+    setReview(inputValue)
+  }
+
+  const onSendReview = async () => {
+    try {
+      await axios.post(`${process.env.REACT_APP_SERVER_URL}/transaction/create-review`, {
+        rating, 
+        review, 
+        room_id,
+        order_id: id
+      }, { 
+        headers: { 'Authorization' : userToken }
+      })
+
+      toast.success("Create Review Success")
+      setReviewFormModal(false)
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000)
+    } catch (error) {
+      console.log(error.response.data.message)
+    }
+  }
+
+  const ratingStar = () => {
+    let starsArray = [1, 2, 3, 4, 5]
+
+    return (
+      <div>
+        {starsArray.map((val) => (
+          <FontAwesomeIcon
+            key={val}
+            icon={faStar} 
+            style={{color: val <= rating ? "#F0C400" : "#BFBFBF"}} 
+            size={"xl"} 
+            className="cursor-pointer" 
+            onClick={() => setRating(val)} />
+        ))}
+      </div>
+    )
+  }
+
+  const userRatingStar = () => {
+    let starsArray = [1, 2, 3, 4, 5]
+
+    return (
+      <div>
+        {starsArray.map((val) => (
+          <FontAwesomeIcon
+            key={val}
+            icon={faStar} 
+            style={{color: val <= room_rating ? "#F0C400" : "#BFBFBF"}} 
+            size={"xl"} />
+        ))}
+      </div>
+    )
+  }
+
+  const checkDate = () => {
+    let timeDiff = new Date() - new Date(end).setHours(0, 0, 0)
+    let daysDiff = timeDiff / (1000 * 3600 * 24)
+    
+    return daysDiff
   }
 
   return (
@@ -250,14 +328,101 @@ const UserOrderCard = ({
         ) : (
           <>
             <Flex flexDir="row" className="mt-2" justifyContent="flex-end">
+              {status === "Completed" && room_rating === null && checkDate() > 1 ? (
+                <Button
+                  onClick={() => setReviewFormModal(true)}
+                  colorScheme="blue"
+                  className="mx-2"
+                  size="xs"
+                >
+                  Write a Review
+                </Button>
+              ): status === "Completed" && room_rating !== null && checkDate() > 1 ? (
+                <Button
+                  onClick={() => setSeeReviewModal(true)}
+                  colorScheme="blue"
+                  className="mx-2"
+                  size="xs"
+                >
+                  See Your Review
+                </Button>
+              ): null}
+
               <Button
                 onClick={() => setDetailModal(true)}
                 colorScheme="gray"
-                className="mx-4"
+                className="mx-2"
                 size="xs"
               >
                 See Detail
               </Button>
+
+              <Modal isOpen={reviewFormModal} onClose={onClose}>
+                <ModalOverlay>
+                  <ModalContent className="pb-2">
+                    <ModalHeader>
+                      {propertyName}, {name}
+                    </ModalHeader>
+                    <ModalCloseButton onClick={() => setReviewFormModal(false)} />
+                    <ModalBody className="flex flex-col gap-5">
+                      <div>
+                        <h3 className="text-slate-500 mb-2">How was your experience?</h3>
+                        { ratingStar() }
+                      </div>
+                      <div>
+                        <h3 className="text-slate-500 mb-2">
+                          Your Feedback:
+                        </h3>
+                        <Textarea 
+                          value={review}
+                          onChange={handleReviewChange}
+                          placeholder='Write a review about your stay in this room. Your honest feedback is greatly appreciated.' 
+                        />
+                      </div>
+                      <Button 
+                        colorScheme="blue"
+                        isLoading={isLoading}
+                        onClick={() => onSendReview()}
+                        isDisabled={rating < 1 || review.length === 0}
+                      >
+                        Send
+                      </Button>
+                    </ModalBody>
+                  </ModalContent>
+                </ModalOverlay>
+              </Modal>
+
+              <Modal isOpen={seeReviewModal} onClose={onClose}>
+                <ModalOverlay>
+                  <ModalContent className="pb-2">
+                    <ModalHeader>
+                      {propertyName}, {name}
+                    </ModalHeader>
+                    <ModalCloseButton onClick={() => setSeeReviewModal(false)} />
+                    <ModalBody className="flex flex-col gap-5">
+                      <div>
+                        <h3 className="text-slate-500 mb-2">Your experience</h3>
+                        { userRatingStar() }
+                      </div>
+                      <div>
+                        <h3 className="text-slate-500 mb-2">
+                          Your Feedback:
+                        </h3>
+                        <Box
+                          className="mb-2 mt-2 px-3 py-2 h-28"
+                          maxW="sm"
+                          borderWidth="1px"
+                          borderRadius="lg"
+                          overflow="hidden"
+                        >
+                          {room_review}
+                        </Box>
+                      </div>
+                    </ModalBody>
+                  </ModalContent>
+                </ModalOverlay>
+              </Modal>
+
               <Modal isOpen={detailModal} onClose={onClose}>
                 <ModalOverlay>
                   <ModalContent>

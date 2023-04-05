@@ -185,14 +185,15 @@ module.exports = {
     try {
       // get propert data for landing page
       let getProperty = await sequelize.query(`
-        SELECT DISTINCT r.property_i, r.price, c.type, c.city, p.name, p.picture
+        SELECT DISTINCT r.property_id, r.price, c.type, c.city, p.name, p.picture, SUM(rv.rating) as total_rating, COUNT(rv.rating) as total_users
         FROM property_categories c
         JOIN properties p ON p.category_id = c.id
         JOIN rooms r ON r.property_id = p.id
+        LEFT JOIN reviews rv ON rv.room_id = r.id
         GROUP BY r.property_id
         LIMIT 30;
       `);
-      console.log(getProperty)
+      
       return res.status(200).send({
         isError: false,
         message: "Get property content success",

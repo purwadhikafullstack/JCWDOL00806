@@ -18,7 +18,7 @@ const PropertyContent = () => {
       // set property data
       setProperty(response.data.data);
     } catch (error) {
-      console.log(error.message);
+      console.log(error.response.data.message);
     }
   };
   const navigateDetail = async (propertyID) => {
