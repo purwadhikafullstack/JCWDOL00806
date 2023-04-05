@@ -23,7 +23,7 @@ const OrderCard = ({ id, invoice, start, end, status, name, tenantToken, image, 
     console.log(`cancel ${orderID}`)
     console.log(`notes : ${notes}`)
 
-    await axios.patch(`${process.env.REACT_APP_SERVER_URL}/transaction/tenant-order-status/${id}?status=cancel`, {
+    await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/transaction/tenant-order-status/${id}?status=cancel`, {
       notes
     }, { headers: { authorization: tenantToken } })
     toast.success("Order Cancelled")
@@ -36,7 +36,7 @@ const OrderCard = ({ id, invoice, start, end, status, name, tenantToken, image, 
   const handleReject = async (orderID, notes) => {
     console.log(`reject ${orderID}`)
     console.log(`notes : ${notes}`)
-    await axios.patch(`${process.env.REACT_APP_SERVER_URL}/transaction/tenant-order-status/${id}?status=reject`, {
+    await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/transaction/tenant-order-status/${id}?status=reject`, {
       notes
     }, { headers: { authorization: tenantToken } })
     toast.success("Order Rejected")
@@ -48,7 +48,7 @@ const OrderCard = ({ id, invoice, start, end, status, name, tenantToken, image, 
   const handleAccept = async (orderID, notes) => {
     console.log(`accept ${orderID}`)
     console.log(`notes : ${notes}`)
-    await axios.patch(`${process.env.REACT_APP_SERVER_URL}/transaction/tenant-order-status/${id}?status=complete`, null , { headers: { authorization: tenantToken } })
+    await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/transaction/tenant-order-status/${id}?status=complete`, null , { headers: { authorization: tenantToken } })
     toast.success("Order Accepted")
     setTimeout(() => {
       window.location.reload()

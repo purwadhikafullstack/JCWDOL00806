@@ -36,7 +36,7 @@ const TenantPropertyRoomList = () => {
             if (!token) throw { message: 'Token is missing' }
 
             // get property and room list
-            let response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/property/allPropertyRoomList?page=${page}`, {
+            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/property/allPropertyRoomList?page=${page}`, {
                 headers: { 'Authorization': token }
             })
 
@@ -69,7 +69,7 @@ const TenantPropertyRoomList = () => {
             let current_page = selected_page.selected + 1
             
             // get room data
-            let response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/property/allPropertyRoomList?page=${current_page}`, {
+            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/property/allPropertyRoomList?page=${current_page}`, {
                 headers: { 'Authorization': tenantToken }
             })
 

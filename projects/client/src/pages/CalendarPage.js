@@ -20,7 +20,7 @@ const CalendarPage = () => {
     }, [])
     
   const getData = async () => {
-    let response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/tenant/room-calendar/${propertyID}`)
+    let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/tenant/room-calendar/${propertyID}`)
 
     let mapped = await response.data.data.map((e) => {
       if (e.status === "unavailable") {
@@ -43,7 +43,7 @@ const CalendarPage = () => {
   }
 
   const getPropertyDetail = async () => {
-    let response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/property/propertyDetail/${propertyID}`)
+    let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/property/propertyDetail/${propertyID}`)
     setPropertyData(response.data.data)
   }
     return (

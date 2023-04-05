@@ -6,7 +6,7 @@ import { Button, Image } from "@chakra-ui/react";
 
 const RoomCard = ({ data, onClick, dateRange }) => {
   const getImageSource = (link) => {
-    let image = `${process.env.REACT_APP_SERVER_URL}/image/${link
+    let image = `${process.env.REACT_APP_API_BASE_URL}/image/${link
       ?.replace(/"/g, "")
       .replace(/\\/g, "/")}`;
 

@@ -37,12 +37,12 @@ const UserDetail = () => {
   const getUserDetail = async () => {
     let token = localStorage.getItem("userToken".replace(/"/g, ""));
     let response = await axios.post(
-      `${process.env.REACT_APP_SERVER_URL}/users/user-profile`,
+      `${process.env.REACT_APP_API_BASE_URL}/users/user-profile`,
       null,
       { headers: { authorization: token } }
     );
     let userData = await axios.post(
-      `${process.env.REACT_APP_SERVER_URL}/users/getuser`,
+      `${process.env.REACT_APP_API_BASE_URL}/users/getuser`,
       null,
       { headers: { authorization: token } }
     );
@@ -59,7 +59,7 @@ const UserDetail = () => {
       let bodyFormData = new FormData();
       bodyFormData.append("profile", images);
       let response = await axios.patch(
-        `${process.env.REACT_APP_SERVER_URL}/users/profile-pic/${userData.id}`,
+        `${process.env.REACT_APP_API_BASE_URL}/users/profile-pic/${userData.id}`,
         bodyFormData,
         {
           headers: {
@@ -76,7 +76,7 @@ const UserDetail = () => {
     }
   };
   let srcImg = (link) => {
-    let project = `${process.env.REACT_APP_SERVER_URL}/image/${link
+    let project = `${process.env.REACT_APP_API_BASE_URL}/image/${link
       ?.replace(/"/g, "")
       .replace(/\\/g, "/")}`;
     return project;
