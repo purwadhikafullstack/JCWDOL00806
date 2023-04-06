@@ -50,28 +50,48 @@ module.exports = {
       });
     } catch (error) {
       t.rollback();
-      console.log(error);
-      return res.status(404).send({
+      console.log(error)
+      next({
         isError: true,
-        message: error,
+        message: error.message,
         data: null,
-      });
+        status: 400
+      })
     }
   },
   checkUsername: async (req, res) => {
-    console.log(req, "req");
+    try {
     let username = req.query.username;
     let getData = await users.findAll({
       where: { username },
     });
-    res.status(201).send(Boolean(getData.length));
+    return res.status(201).send(Boolean(getData.length));
+    } catch (error) {
+      console.log(error)
+      next({
+        isError: true,
+        message: error.message,
+        data: null,
+        status: 400
+      })
+    }
   },
   checkEmail: async (req, res) => {
+    try {
     let email = req.query.email;
     let getData = await users.findAll({
       where: { email },
     });
-    res.status(201).send(Boolean(getData.length));
+    return res.status(201).send(Boolean(getData.length));
+    } catch (error) {
+      console.log(error)
+      next({
+        isError: true,
+        message: error.message,
+        data: null,
+        status: 400
+      })
+    }
   },
   login: async (req, res) => {
     try {
@@ -117,11 +137,13 @@ module.exports = {
         },
       });
     } catch (error) {
-      res.status(400).send({
+      console.log(error)
+      next({
         isError: true,
         message: error.message,
         data: null,
-      });
+        status: 400
+      })
     }
   },
   userDetail: async (req, res) => {
@@ -135,11 +157,13 @@ module.exports = {
         data: getData,
       });
     } catch (error) {
-      res.status(404).send({
+      console.log(error)
+      next({
         isError: true,
-        message: error,
+        message: error.message,
         data: null,
-      });
+        status: 400
+      })
     }
   },
   resetConfirm: async (req, res) => {
@@ -177,11 +201,13 @@ module.exports = {
       });
     } catch (error) {
       t.rollback();
-      console.log(error.message);
-      return res.status(404).send({
+      console.log(error)
+      next({
         isError: true,
         message: error.message,
-      });
+        data: null,
+        status: 400
+      })
     }
   },
   newPassword: async (req, res) => {
@@ -206,14 +232,13 @@ module.exports = {
       });
     } catch (error) {
       t.rollback();
-      console.log(error, message);
-      return (
-        res.status(404),
-        send({
-          isError: true,
-          message: error.message,
-        })
-      );
+      console.log(error)
+      next({
+        isError: true,
+        message: error.message,
+        data: null,
+        status: 400
+      })
     }
   },
   onSendOTP: async (req, res) => {
@@ -283,11 +308,13 @@ module.exports = {
         data: null,
       });
     } catch (error) {
-      return res.status(400).send({
+      console.log(error)
+      next({
         isError: true,
         message: error.message,
         data: null,
-      });
+        status: 400
+      })
     }
   },
   onVerifyAccount: async (req, res) => {
@@ -335,11 +362,13 @@ module.exports = {
         data: null,
       });
     } catch (error) {
-      return res.status(400).send({
+      console.log(error)
+      next({
         isError: true,
         message: error.message,
         data: null,
-      });
+        status: 400
+      })
     }
   },
   onGetUserData: async (req, res) => {
@@ -364,11 +393,13 @@ module.exports = {
         data: checkUsers,
       });
     } catch (error) {
-      return res.status(400).send({
+      console.log(error)
+      next({
         isError: true,
         message: error.message,
         data: null,
-      });
+        status: 400
+      })
     }
   },
   userProfile: async (req, res) => {
@@ -384,10 +415,13 @@ module.exports = {
         users_id,
       });
     } catch (error) {
-      return res.status(404).send({
+      console.log(error)
+      next({
         isError: true,
-        message: error,
-      });
+        message: error.message,
+        data: null,
+        status: 400
+      })
     }
   },
   changeNewPassword: async (req, res) => {
@@ -443,11 +477,13 @@ module.exports = {
         data: null,
       });
     } catch (error) {
-      return res.status(400).send({
+      console.log(error)
+      next({
         isError: true,
         message: error.message,
         data: null,
-      });
+        status: 400
+      })
     }
   },
   newProfile: async (req, res) => {
@@ -472,10 +508,13 @@ module.exports = {
       });
     } catch (error) {
       t.rollback();
-      return res.status(404).send({
+      console.log(error)
+      next({
         isError: true,
-        message: error,
-      });
+        message: error.message,
+        data: null,
+        status: 400
+      })
     }
   },
   editProfile: async (req, res) => {
@@ -500,11 +539,13 @@ module.exports = {
       });
     } catch (error) {
       t.rollback();
-      console.log(error);
-      return res.status(404).send({
+      console.log(error)
+      next({
         isError: true,
-        message: error,
-      });
+        message: error.message,
+        data: null,
+        status: 400
+      })
     }
   },
   updateProfilePicture: async (req, res) => {
@@ -526,11 +567,13 @@ module.exports = {
       });
     } catch (error) {
       t.rollback();
-      console.log(error);
-      return res.status(404).send({
+      console.log(error)
+      next({
         isError: true,
-        message: error,
-      });
+        message: error.message,
+        data: null,
+        status: 400
+      })
     }
   },
   changeEmail: async (req, res) => {
@@ -556,10 +599,13 @@ module.exports = {
       });
     } catch (error) {
       t.rollback();
-      return res.status(404).send({
+      console.log(error)
+      next({
         isError: true,
-        message: error,
-      });
+        message: error.message,
+        data: null,
+        status: 400
+      })
     }
   },
   getUser: async (req, res) => {
@@ -576,11 +622,13 @@ module.exports = {
         id,
       });
     } catch (error) {
-      console.log(error);
-      return res.status(404).send({
+      console.log(error)
+      next({
         isError: true,
-        message: error,
-      });
+        message: error.message,
+        data: null,
+        status: 400
+      })
     }
   },
 };

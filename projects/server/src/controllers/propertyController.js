@@ -51,7 +51,13 @@ module.exports = {
       }
     } catch (error) {
       t.rollback();
-      console.log(error);
+      console.log(error)
+      next({
+        isError: true,
+        message: error.message,
+        data: null,
+        status: 400
+      })
     }
   },
 
@@ -73,8 +79,14 @@ module.exports = {
       });
       t.commit();
     } catch (error) {
-      console.log(error);
       t.rollback();
+      console.log(error)
+      next({
+        isError: true,
+        message: error.message,
+        data: null,
+        status: 400
+      })
     }
   },
 
@@ -89,7 +101,15 @@ module.exports = {
         message: "Type acquired",
         data: getCategory,
       });
-    } catch (error) {}
+    } catch (error) {
+      console.log(error)
+      next({
+        isError: true,
+        message: error.message,
+        data: null,
+        status: 400
+      })
+    }
   },
   getAllProperty: async (req, res) => {
     try {
@@ -104,7 +124,13 @@ module.exports = {
         data: getData,
       });
     } catch (error) {
-      console.log(error);
+      console.log(error)
+      next({
+        isError: true,
+        message: error.message,
+        data: null,
+        status: 400
+      })
     }
   },
 
@@ -120,7 +146,13 @@ module.exports = {
         data: null,
       });
     } catch (error) {
-      console.log(error);
+      console.log(error)
+      next({
+        isError: true,
+        message: error.message,
+        data: null,
+        status: 400
+      })
     }
   },
   updateProperty: async (req, res) => {
@@ -156,7 +188,13 @@ module.exports = {
       });
     } catch (error) {
       t.rollback();
-      console.log(error);
+      console.log(error)
+      next({
+        isError: true,
+        message: error.message,
+        data: null,
+        status: 400
+      })
     }
   },
   updatePropertyImage: async (req, res) => {
@@ -178,7 +216,13 @@ module.exports = {
       });
     } catch (error) {
       t.rollback();
-      console.log(error);
+      console.log(error)
+      next({
+        isError: true,
+        message: error.message,
+        data: null,
+        status: 400
+      })
     }
   },
   getPropertyContent: async (req, res, next) => {
@@ -207,11 +251,6 @@ module.exports = {
         data: null,
            status: 400
         })
-      // return res.status(400).send({
-      //   isError: true,
-      //   message: error.message,
-      //   data: null,
-      // });
     }
   },
   propertyDetail: async (req, res) => {
@@ -230,10 +269,11 @@ module.exports = {
       
     } catch (error) {
       console.log(error)
-      res.status(404).send({
+      next({
         isError: true,
         message: error.message,
-        data: null
+        data: null,
+        status: 400
       })
     }
   },
@@ -286,10 +326,12 @@ module.exports = {
         }
       })
     } catch (error) {
-      return res.status(400).send({
+      console.log(error)
+      next({
         isError: true,
         message: error.message,
-        data: null
+        data: null,
+        status: 400
       })
     }
   }

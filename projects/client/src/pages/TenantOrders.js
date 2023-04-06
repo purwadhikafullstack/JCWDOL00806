@@ -85,6 +85,8 @@ const TenantOrders = () => {
                     notes={order?.notes}
                     property={order.property_name}
                     price={order.total_price}
+                    users_id={order.users_id}
+                    rules={order.rules}
                 />
             )
         })

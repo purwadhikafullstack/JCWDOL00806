@@ -24,6 +24,7 @@ Router.patch(
   verifyToken,
   transactionController.tenantUpdateOrderStatus
 );
+Router.patch("/tenant-accept/:id", verifyToken, transactionController.tenantAcceptOrder)
 Router.patch(
   "/users-order-status/:id",
   verifyToken,

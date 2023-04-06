@@ -70,33 +70,65 @@ module.exports = {
       t.commit();
     } catch (error) {
       t.rollback();
-      res.status(500).send({
+      console.log(error)
+      next({
         isError: true,
         message: error.message,
         data: null,
-      });
+        status: 400
+      })
     }
   },
   checkUsername: async (req, res) => {
-    let { username } = req.query;
+    try {
+      let { username } = req.query;
     let getData = await tenant.findAll({
       where: { username },
     });
-    res.status(201).send(Boolean(getData.length));
+    return res.status(201).send(Boolean(getData.length));
+    } catch (error) {
+      console.log(error)
+      next({
+        isError: true,
+        message: error.message,
+        data: null,
+        status: 400
+      })
+    }
   },
   checkEmail: async (req, res) => {
-    let { email } = req.query;
+    try {
+      let { email } = req.query;
     let getData = await tenant.findAll({
       where: { email },
     });
     res.status(201).send(Boolean(getData.length));
+    } catch (error) {
+      console.log(error)
+      next({
+        isError: true,
+        message: error.message,
+        data: null,
+        status: 400
+      })
+    }
   },
   checkPhone: async (req, res) => {
+    try {
     let { phone_number } = req.query;
     let getData = await tenant.findAll({
       where: { phone_number },
     });
-    res.status(201).send(Boolean(getData.length));
+    return res.status(201).send(Boolean(getData.length));
+    } catch (error) {
+      console.log(error)
+      next({
+        isError: true,
+        message: error.message,
+        data: null,
+        status: 400
+      })
+    }
   },
   verifyTenant: async (req, res) => {
     const t = await sequelize.transaction();
@@ -122,7 +154,13 @@ module.exports = {
       });
     } catch (error) {
       t.rollback();
-      console.log(error);
+      console.log(error)
+      next({
+        isError: true,
+        message: error.message,
+        data: null,
+        status: 400
+      })
     }
   },
 
@@ -164,7 +202,15 @@ module.exports = {
           id: findUsernameOrEmail.dataValues.id,
         },
       });
-    } catch (error) {}
+    } catch (error) {
+      console.log(error)
+      next({
+        isError: true,
+        message: error.message,
+        data: null,
+        status: 400
+      })
+    }
   },
   checkTenant: async (req, res) => {
     try {
@@ -182,7 +228,13 @@ module.exports = {
         data: null,
       });
     } catch (error) {
-      console.log(error);
+      console.log(error)
+      next({
+        isError: true,
+        message: error.message,
+        data: null,
+        status: 400
+      })
     }
   },
   getCategory: async (req, res) => {
@@ -202,7 +254,15 @@ module.exports = {
         message: "Data Acquired",
         data,
       });
-    } catch (error) {}
+    } catch (error) {
+      console.log(error)
+      next({
+        isError: true,
+        message: error.message,
+        data: null,
+        status: 400
+      })
+    }
   },
 
   createCategory: async (req, res) => {
@@ -241,7 +301,13 @@ module.exports = {
       }
     } catch (error) {
       t.rollback();
-      console.log(error);
+      console.log(error)
+      next({
+        isError: true,
+        message: error.message,
+        data: null,
+        status: 400
+      })
     }
   },
   updateCategory: async (req, res) => {
@@ -279,7 +345,13 @@ module.exports = {
       t.commit();
     } catch (error) {
       t.rollback();
-      console.log(error);
+      console.log(error)
+      next({
+        isError: true,
+        message: error.message,
+        data: null,
+        status: 400
+      })
     }
   },
 
@@ -296,7 +368,15 @@ module.exports = {
         message: "Deleted Successfully",
         data: null,
       });
-    } catch (error) {}
+    } catch (error) {
+      console.log(error)
+      next({
+        isError: true,
+        message: error.message,
+        data: null,
+        status: 400
+      })
+    }
   },
   getRoomStatus: async (req, res) => {
     try {
@@ -321,12 +401,13 @@ module.exports = {
         data: getData[0],
       });
     } catch (error) {
-      console.log(error);
-      res.status(404).send({
+      console.log(error)
+      next({
         isError: true,
         message: error.message,
         data: null,
-      });
+        status: 400
+      })
     }
   },
   getTenantData: async (req, res) => {
@@ -348,11 +429,13 @@ module.exports = {
         data: getData,
       });
     } catch (error) {
-      return res.status(400).send({
+      console.log(error)
+      next({
         isError: true,
         message: error.message,
         data: null,
-      });
+        status: 400
+      })
     }
   },
 };
