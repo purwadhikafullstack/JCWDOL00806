@@ -12,12 +12,12 @@ import {
   ModalCloseButton,
   ModalBody,
   Box,
-  Textarea
+  Textarea,
 } from "@chakra-ui/react";
 import ConfirmAlert from "./ConfirmAlert";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
 
 const UserOrderCard = ({
@@ -39,15 +39,15 @@ const UserOrderCard = ({
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [detailModal, setDetailModal] = useState(false);
-  const [uploadModal, setUploadModal] = useState(false)
+  const [uploadModal, setUploadModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
 
-  const [rating, setRating] = useState(0)
-  const [review, setReview] = useState("")
-  const [reviewFormModal, setReviewFormModal] = useState(false)
-  const [seeReviewModal, setSeeReviewModal] = useState(false)
+  const [rating, setRating] = useState(0);
+  const [review, setReview] = useState("");
+  const [reviewFormModal, setReviewFormModal] = useState(false);
+  const [seeReviewModal, setSeeReviewModal] = useState(false);
 
   const formatter = new Intl.NumberFormat("id-ID", {
     style: "currency",
@@ -59,137 +59,155 @@ const UserOrderCard = ({
   };
 
   const handleCancel = async (orderID, notes) => {
-    toast("Cancel Button For User");
+    let response = await axios.patch(
+      `${process.env.REACT_APP_API_BASE_URL}/transaction/users-order-status/${orderID}`,
+      { notes },
+      { headers: { Authorization: userToken } }
+    );
+    toast.success("Order Cancelled");
+    setTimeout(() => {
+      window.location.reload();
+    }, 1500);
   };
 
   const getImageSource = (link) => {
-    if (!link) return
-    
+    if (!link) return;
+
     let image = `${process.env.REACT_APP_SERVER_URL}/image/${link
       ?.replace(/"/g, "")
       .replace(/\\/g, "/")}`;
 
     return image;
-};
+  };
 
   const handleFileInputChange = (event) => {
-    const file = event.target.files[0]
-    setSelectedFile(file)
+    const file = event.target.files[0];
+    setSelectedFile(file);
 
-    const reader = new FileReader()
-    
+    const reader = new FileReader();
+
     reader.onloadend = () => {
       setImagePreview(reader.result);
-    }
-    
+    };
+
     reader.readAsDataURL(file);
-  }
+  };
 
   const handleUploadButtonClick = async () => {
     try {
-      setIsLoading(true)
+      setIsLoading(true);
 
       // validate file type
-      if (!selectedFile.type.startsWith('image/')) {
-        toast.error("Please upload an image file")
-        setIsLoading(false)
-        return
+      if (!selectedFile.type.startsWith("image/")) {
+        toast.error("Please upload an image file");
+        setIsLoading(false);
+        return;
       }
-        
+
       // validate file size
-      let megabytes = (selectedFile.size / 1048576).toFixed(2)
+      let megabytes = (selectedFile.size / 1048576).toFixed(2);
       if (megabytes >= 1.1) {
-        toast.error("The file you selected is too large.")
-        setIsLoading(false)
-        return
+        toast.error("The file you selected is too large.");
+        setIsLoading(false);
+        return;
       }
 
       // create form data object and append selectedFile to it
-      const formData = new FormData()
-      formData.append('payment_proof', selectedFile)
+      const formData = new FormData();
+      formData.append("payment_proof", selectedFile);
 
-      await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/transaction/upload-payment/${id}`, formData, {
-        headers: { 'Authorization' : userToken }
-      })
+      await axios.patch(
+        `${process.env.REACT_APP_API_BASE_URL}/transaction/upload-payment/${id}`,
+        formData,
+        {
+          headers: { Authorization: userToken },
+        }
+      );
 
-      setIsLoading(false)
-      setUploadModal(false)
-      toast.success("Upload Payment Proof Success")
+      setIsLoading(false);
+      setUploadModal(false);
+      toast.success("Upload Payment Proof Success");
       setTimeout(() => {
         window.location.reload();
-      }, 1000)
+      }, 1000);
     } catch (error) {
-      setIsLoading(false)
-      console.log(error.message)
+      setIsLoading(false);
+      console.log(error.message);
     }
-  }
+  };
 
   const handleReviewChange = (e) => {
-    let inputValue = e.target.value
-    setReview(inputValue)
-  }
+    let inputValue = e.target.value;
+    setReview(inputValue);
+  };
 
   const onSendReview = async () => {
     try {
-      await axios.post(`${process.env.REACT_APP_SERVER_URL}/transaction/create-review`, {
-        rating, 
-        review, 
-        room_id,
-        order_id: id
-      }, { 
-        headers: { 'Authorization' : userToken }
-      })
+      await axios.post(
+        `${process.env.REACT_APP_SERVER_URL}/transaction/create-review`,
+        {
+          rating,
+          review,
+          room_id,
+          order_id: id,
+        },
+        {
+          headers: { Authorization: userToken },
+        }
+      );
 
-      toast.success("Create Review Success")
-      setReviewFormModal(false)
+      toast.success("Create Review Success");
+      setReviewFormModal(false);
       setTimeout(() => {
         window.location.reload();
-      }, 1000)
+      }, 1000);
     } catch (error) {
-      console.log(error.response.data.message)
+      console.log(error.response.data.message);
     }
-  }
+  };
 
   const ratingStar = () => {
-    let starsArray = [1, 2, 3, 4, 5]
+    let starsArray = [1, 2, 3, 4, 5];
 
     return (
       <div>
         {starsArray.map((val) => (
           <FontAwesomeIcon
             key={val}
-            icon={faStar} 
-            style={{color: val <= rating ? "#F0C400" : "#BFBFBF"}} 
-            size={"xl"} 
-            className="cursor-pointer" 
-            onClick={() => setRating(val)} />
+            icon={faStar}
+            style={{ color: val <= rating ? "#F0C400" : "#BFBFBF" }}
+            size={"xl"}
+            className="cursor-pointer"
+            onClick={() => setRating(val)}
+          />
         ))}
       </div>
-    )
-  }
+    );
+  };
 
   const userRatingStar = () => {
-    let starsArray = [1, 2, 3, 4, 5]
+    let starsArray = [1, 2, 3, 4, 5];
 
     return (
       <div>
         {starsArray.map((val) => (
           <FontAwesomeIcon
             key={val}
-            icon={faStar} 
-            style={{color: val <= room_rating ? "#F0C400" : "#BFBFBF"}} 
-            size={"xl"} />
+            icon={faStar}
+            style={{ color: val <= room_rating ? "#F0C400" : "#BFBFBF" }}
+            size={"xl"}
+          />
         ))}
       </div>
-    )
-  }
+    );
+  };
 
   const checkDate = () => {
-    let timeDiff = new Date() - new Date(end).setHours(0, 0, 0)
-    let daysDiff = timeDiff / (1000 * 3600 * 24)
-    
-    return daysDiff
-  }
+    let timeDiff = new Date() - new Date(end).setHours(0, 0, 0);
+    let daysDiff = timeDiff / (1000 * 3600 * 24);
+
+    return daysDiff;
+  };
 
   return (
     <>
@@ -237,17 +255,13 @@ const UserOrderCard = ({
             {image ? (
               <div className="flex gap-2 items-center">
                 <Image
-                  boxSize='32px'
-                  objectFit='cover'
+                  boxSize="32px"
+                  objectFit="cover"
                   src={getImageSource(image)}
-                  alt='payment-proof'
-                  className='border rounded-md'
+                  alt="payment-proof"
+                  className="border rounded-md"
                 />
-                <Button
-                  onClick={handleOpenModal}
-                  colorScheme="blue"
-                  size="xs"
-                >
+                <Button onClick={handleOpenModal} colorScheme="blue" size="xs">
                   view image
                 </Button>
               </div>
@@ -265,24 +279,17 @@ const UserOrderCard = ({
             <Modal isOpen={uploadModal} onClose={onClose}>
               <ModalOverlay>
                 <ModalContent>
-                  <ModalHeader>
-                    Upload Payment Proof
-                  </ModalHeader>
-                  <ModalCloseButton 
-                    onClick={() => setUploadModal(false)}
-                  />
+                  <ModalHeader>Upload Payment Proof</ModalHeader>
+                  <ModalCloseButton onClick={() => setUploadModal(false)} />
                   <ModalBody className="flex flex-col gap-5">
                     <div className="flex flex-col">
-                      <input 
-                        type="file" 
-                        onChange={handleFileInputChange} 
-                      />
+                      <input type="file" onChange={handleFileInputChange} />
                       <span className="text-slate-500">
                         Maximum upload file size: 1 MB.
                       </span>
                     </div>
                     {imagePreview && <img src={imagePreview} alt="Preview" />}
-                    <Button 
+                    <Button
                       colorScheme="blue"
                       isLoading={isLoading}
                       onClick={handleUploadButtonClick}
@@ -300,7 +307,11 @@ const UserOrderCard = ({
                   <ModalHeader>Payment Proof</ModalHeader>
                   <ModalCloseButton onClick={() => setIsModalOpen(false)} />
                   <ModalBody>
-                    <Image boxSize="full" objectFit="cover" src={getImageSource(image)} />
+                    <Image
+                      boxSize="full"
+                      objectFit="cover"
+                      src={getImageSource(image)}
+                    />
                   </ModalBody>
                 </ModalContent>
               </ModalOverlay>
@@ -328,7 +339,9 @@ const UserOrderCard = ({
         ) : (
           <>
             <Flex flexDir="row" className="mt-2" justifyContent="flex-end">
-              {status === "Completed" && room_rating === null && checkDate() > 1 ? (
+              {status === "Completed" &&
+              room_rating === null &&
+              checkDate() > 1 ? (
                 <Button
                   onClick={() => setReviewFormModal(true)}
                   colorScheme="blue"
@@ -337,7 +350,9 @@ const UserOrderCard = ({
                 >
                   Write a Review
                 </Button>
-              ): status === "Completed" && room_rating !== null && checkDate() > 1 ? (
+              ) : status === "Completed" &&
+                room_rating !== null &&
+                checkDate() > 1 ? (
                 <Button
                   onClick={() => setSeeReviewModal(true)}
                   colorScheme="blue"
@@ -346,7 +361,7 @@ const UserOrderCard = ({
                 >
                   See Your Review
                 </Button>
-              ): null}
+              ) : null}
 
               <Button
                 onClick={() => setDetailModal(true)}
@@ -363,23 +378,25 @@ const UserOrderCard = ({
                     <ModalHeader>
                       {propertyName}, {name}
                     </ModalHeader>
-                    <ModalCloseButton onClick={() => setReviewFormModal(false)} />
+                    <ModalCloseButton
+                      onClick={() => setReviewFormModal(false)}
+                    />
                     <ModalBody className="flex flex-col gap-5">
                       <div>
-                        <h3 className="text-slate-500 mb-2">How was your experience?</h3>
-                        { ratingStar() }
+                        <h3 className="text-slate-500 mb-2">
+                          How was your experience?
+                        </h3>
+                        {ratingStar()}
                       </div>
                       <div>
-                        <h3 className="text-slate-500 mb-2">
-                          Your Feedback:
-                        </h3>
-                        <Textarea 
+                        <h3 className="text-slate-500 mb-2">Your Feedback:</h3>
+                        <Textarea
                           value={review}
                           onChange={handleReviewChange}
-                          placeholder='Write a review about your stay in this room. Your honest feedback is greatly appreciated.' 
+                          placeholder="Write a review about your stay in this room. Your honest feedback is greatly appreciated."
                         />
                       </div>
-                      <Button 
+                      <Button
                         colorScheme="blue"
                         isLoading={isLoading}
                         onClick={() => onSendReview()}
@@ -398,16 +415,16 @@ const UserOrderCard = ({
                     <ModalHeader>
                       {propertyName}, {name}
                     </ModalHeader>
-                    <ModalCloseButton onClick={() => setSeeReviewModal(false)} />
+                    <ModalCloseButton
+                      onClick={() => setSeeReviewModal(false)}
+                    />
                     <ModalBody className="flex flex-col gap-5">
                       <div>
                         <h3 className="text-slate-500 mb-2">Your experience</h3>
-                        { userRatingStar() }
+                        {userRatingStar()}
                       </div>
                       <div>
-                        <h3 className="text-slate-500 mb-2">
-                          Your Feedback:
-                        </h3>
+                        <h3 className="text-slate-500 mb-2">Your Feedback:</h3>
                         <Box
                           className="mb-2 mt-2 px-3 py-2 h-28"
                           maxW="sm"

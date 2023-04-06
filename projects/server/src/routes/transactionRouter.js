@@ -24,6 +24,11 @@ Router.patch(
   verifyToken,
   transactionController.tenantUpdateOrderStatus
 );
+Router.patch(
+  "/users-order-status/:id",
+  verifyToken,
+  transactionController.userUpdateOrderStatus
+);
 Router.get(
   "/filter-order-list",
   verifyToken,
@@ -40,6 +45,10 @@ Router.patch(
   uploadImagesPaymentProof,
   transactionController.onUploadPaymentProof
 );
-Router.post("/create-review", verifyToken, transactionController.onCreateReview)
+Router.post(
+  "/create-review",
+  verifyToken,
+  transactionController.onCreateReview
+);
 
 module.exports = Router;
