@@ -167,7 +167,7 @@ const CheckoutContent = () => {
     });
 
     const calculateStay = (start, end) => {
-        if (!start && !end) return
+        if (!start && !end) return setStay(0)
         
         let checkInDate = new Date(start)
         let checkOutDate = new Date(end)
@@ -212,6 +212,12 @@ const CheckoutContent = () => {
         let formattedDate = `${startYear}-${startMonth.padStart(2, '0')}-${startDay.padStart(2, '0')}`
 
         return formattedDate
+    }
+
+    const onClearDate = () => {
+        setStartDate(null)
+        setEndDate(null)
+        calculateStay()
     }
       
     const handleClick = (e) => {
@@ -275,17 +281,24 @@ const CheckoutContent = () => {
                                 Edit Booking Date
                             </button>
                             {isOpen && (
-                                <DatePicker
-                                    selectsRange={true}
-                                    startDate={startDate}
-                                    endDate={endDate}
-                                    minDate={currentDate}
-                                    onChange={onChange}
-                                    withPortal
-                                    className='border p-2 w-[250px]'
-                                    placeholderText='Click here to add booking date'
-                                    excludeDates={unavailable.map((date) => new Date(date))}
-                                />
+                                <div className="flex flex-col justify-end items-end gap-2">
+                                    <DatePicker
+                                        selectsRange={true}
+                                        startDate={startDate}
+                                        endDate={endDate}
+                                        minDate={currentDate}
+                                        onChange={onChange}
+                                        withPortal
+                                        className='border p-2 w-[250px]'
+                                        placeholderText='Click here to add booking date'
+                                        excludeDates={unavailable.map((date) => new Date(date))}
+                                    />
+                                    <Button 
+                                        onClick={() => onClearDate()}
+                                    >
+                                        Clear Date
+                                    </Button>
+                                </div>
                             )}
                         </div>
                         

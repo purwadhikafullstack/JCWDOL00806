@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import axios from "axios"
 import toast, { Toaster } from 'react-hot-toast'
 import { useParams, Link, useNavigate } from 'react-router-dom'
@@ -11,7 +11,15 @@ import {
     Th,
     Td,
     TableContainer,
-    Flex
+    Flex,
+    AlertDialog, 
+    AlertDialogBody, 
+    AlertDialogFooter, 
+    AlertDialogHeader, 
+    AlertDialogContent, 
+    AlertDialogCloseButton, 
+    AlertDialogOverlay, 
+    useDisclosure
 } from '@chakra-ui/react'
 import ReactPaginate from 'react-paginate'
 import TenantNavbar from '../components/TenantNavbar'
@@ -24,6 +32,9 @@ const TenantRoom = () => {
     const [pageCount, setPageCount] = useState()
     const [roomData, setRoomData] = useState([])
     const [tenantToken, setTenantToken] = useState("")
+
+    const { isOpen, onOpen, onClose } = useDisclosure()
+    const cancelRef = React.useRef()
 
     const formatter = new Intl.NumberFormat('id-ID', {
         style: 'currency',
@@ -79,6 +90,7 @@ const TenantRoom = () => {
                 headers: { 'Authorization': tenantToken }
             })
 
+            onClose()
             toast.success("Delete room success")
 
             // get room data
@@ -118,97 +130,120 @@ const TenantRoom = () => {
     
     return (
         <>
-        <Flex flexDir='row' >
-        <TenantNavbar />
+            <Flex flexDir='row' >
+                <TenantNavbar />
                 <Flex flexDir='column' className="ml-16 w-4/5 mt-3">
-                    
-        <div
-            className='flex flex-col
-            py-10 px-3'
-        >
-            <Toaster />
-            <div className='mb-5 flex sm:flex-row flex-col gap-2'>
-                <Link 
-                    to={`/tenant/room/${propertyID}/create`}
-                >
-                    <Button colorScheme="green">
-                        Create new room
-                    </Button>
-                </Link>
-                <Link to={`/tenant/calendar-view/${propertyID}`}>
-                    <Button colorScheme="blue">
-                        See Calendar View
-                    </Button>
-                </Link>
-            </div>
+                    <div
+                        className='flex flex-col
+                        py-10 px-3'
+                    >
+                        <Toaster />
+                        <div className='mb-5 flex sm:flex-row flex-col gap-2'>
+                            <Link 
+                                to={`/tenant/room/${propertyID}/create`}
+                            >
+                                <Button colorScheme="green">
+                                    Create new room
+                                </Button>
+                            </Link>
+                            <Link to={`/tenant/calendar-view/${propertyID}`}>
+                                <Button colorScheme="blue">
+                                    See Calendar View
+                                </Button>
+                            </Link>
+                        </div>
 
-            <TableContainer className='rounded-lg border border-slate-500'>
-                <Table className='table-tiny' variant="striped" colorScheme="gray">
-                    <Thead>
-                        <Tr>
-                            <Th>No.</Th>
-                            <Th>Name</Th>
-                            <Th>Price</Th>
-                            <Th>Description</Th>
-                            <Th>Rules</Th>
-                            <Th>Action</Th>
-                        </Tr>
-                    </Thead>
-                    <Tbody>
-                        {roomData?.map((val, idx) => (
-                            <Tr key={val.id}>
-                                <Td>{(page - 1) * roomData?.length + idx + 1}</Td>
-                                <Td>{val?.name}</Td>
-                                <Td>{formatter.format(val?.price)}</Td>
-                                <Td>{formatText(val?.description)}</Td>
-                                <Td>{formatText(val?.rules)}</Td>
-                                <Td className='flex gap-2'>
-                                    <Link to={`/tenant/room/${propertyID}/edit/${val?.id}`}>
-                                        <Button colorScheme="yellow">Edit</Button>
-                                    </Link>
-                                    
-                                    <Button 
-                                        colorScheme="red"
-                                        onClick={() => onDeleteRoom(val?.id)}
-                                    >
-                                        Delete
-                                    </Button>
-                                    
-                                    <Link to={`/tenant/room/${propertyID}/unavailable/${val?.id}`}>
-                                        <Button colorScheme="blue">Set Unavailable</Button>
-                                    </Link>
-                                    
-                                    <Link to={`/tenant/room/${propertyID}/special-price/${val?.id}`}>
-                                        <Button colorScheme="blue">Set Special Price</Button>
-                                    </Link>
-                                </Td>
-                            </Tr>
-                        ))}
-                    </Tbody>
-                </Table>
-            </TableContainer>
+                        <TableContainer className='rounded-lg border border-slate-500'>
+                            <Table className='table-tiny' variant="striped" colorScheme="gray">
+                                <Thead>
+                                    <Tr>
+                                        <Th>No.</Th>
+                                        <Th>Name</Th>
+                                        <Th>Price</Th>
+                                        <Th>Description</Th>
+                                        <Th>Rules</Th>
+                                        <Th>Action</Th>
+                                    </Tr>
+                                </Thead>
+                                <Tbody>
+                                    {roomData?.map((val, idx) => (
+                                        <Tr key={val.id}>
+                                            <Td>{(page - 1) * roomData?.length + idx + 1}</Td>
+                                            <Td>{val?.name}</Td>
+                                            <Td>{formatter.format(val?.price)}</Td>
+                                            <Td>{formatText(val?.description)}</Td>
+                                            <Td>{formatText(val?.rules)}</Td>
+                                            <Td className='flex gap-2'>
+                                                <Link to={`/tenant/room/${propertyID}/edit/${val?.id}`}>
+                                                    <Button colorScheme="yellow">Edit</Button>
+                                                </Link>
+                                            
+                                                <Button colorScheme='red' onClick={onOpen}>
+                                                    Delete
+                                                </Button>
+                                                <AlertDialog
+                                                    motionPreset='slideInBottom'
+                                                    leastDestructiveRef={cancelRef}
+                                                    onClose={onClose}
+                                                    isOpen={isOpen}
+                                                    isCentered
+                                                >
+                                                    <AlertDialogOverlay />
 
-            <div className='overflow-x-auto'>
-                <ReactPaginate 
-                    breakLabel="..."
-                    previousLabel={"Previous"}
-                    nextLabel={"Next"}
-                    pageRangeDisplayed={1}
-                    pageCount={pageCount}
-                    containerClassName="flex justify-end items-center mt-4"
-                    pageClassName="px-4 py-2 cursor-pointer border"
-                    previousClassName='border px-4 py-2'
-                    nextClassName='border px-4 py-2'
-                    activeClassName="bg-blue-500 text-white"
-                    marginPagesDisplayed={1}
-                    breakClassName="border px-4 py-2"
-                    onPageChange={handlePageChange}
-                    disabledClassName="text-slate-400"
-                />
-            </div>
-        </div>
+                                                    <AlertDialogContent>
+                                                        <AlertDialogHeader>
+                                                            Delete Room
+                                                        </AlertDialogHeader>
+                                                        <AlertDialogCloseButton />
+                                                        <AlertDialogBody>
+                                                            Are you sure you want to delete {val?.name} ?
+                                                        </AlertDialogBody>
+                                                        <AlertDialogFooter>
+                                                            <Button ref={cancelRef} onClick={onClose}>
+                                                                No
+                                                            </Button>
+                                                            <Button colorScheme='red' ml={3} onClick={() => onDeleteRoom(val?.id)}>
+                                                                Yes
+                                                            </Button>
+                                                        </AlertDialogFooter>
+                                                    </AlertDialogContent>
+                                                </AlertDialog>
+                                                
+                                                <Link to={`/tenant/room/${propertyID}/unavailable/${val?.id}`}>
+                                                    <Button colorScheme="blue">Set Unavailable</Button>
+                                                </Link>
+                                                
+                                                <Link to={`/tenant/room/${propertyID}/special-price/${val?.id}`}>
+                                                    <Button colorScheme="blue">Set Special Price</Button>
+                                                </Link>
+                                            </Td>
+                                        </Tr>
+                                    ))}
+                                </Tbody>
+                            </Table>
+                        </TableContainer>
+
+                        <div className='overflow-x-auto'>
+                            <ReactPaginate 
+                                breakLabel="..."
+                                previousLabel={"Previous"}
+                                nextLabel={"Next"}
+                                pageRangeDisplayed={1}
+                                pageCount={pageCount}
+                                containerClassName="flex justify-end items-center mt-4"
+                                pageClassName="px-4 py-2 cursor-pointer border"
+                                previousClassName='border px-4 py-2'
+                                nextClassName='border px-4 py-2'
+                                activeClassName="bg-blue-500 text-white"
+                                marginPagesDisplayed={1}
+                                breakClassName="border px-4 py-2"
+                                onPageChange={handlePageChange}
+                                disabledClassName="text-slate-400"
+                            />
+                        </div>
+                    </div>
                 </Flex>
-        </Flex>
+            </Flex>
         </>
     )
 }

@@ -126,7 +126,7 @@ const Navbar = () => {
               justify-between items-center gap-5"
             >
               <div className="flex gap-2 items-center">
-                <Avatar bg="teal.500" size={"sm"} />
+                <Avatar bg="gray" size={"sm"} />
                 <div>{userData}</div>
               </div>
               <Menu>
@@ -219,7 +219,7 @@ const Navbar = () => {
             {userData ? (
               <div>
                 <div className="flex gap-2 font-bold">
-                  <Avatar bg="teal.500" size={"sm"} />
+                  <Avatar bg="gray" size={"sm"} />
                   <div>{userData}</div>
                 </div>
 
@@ -281,8 +281,8 @@ const Navbar = () => {
                 <Divider orientation="horizontal" className="my-5" />
 
                 <div className="flex gap-2">
-                  <LoginModal />
-                  <RegisterModal />
+                  <LoginModal handleSidebar={handleSidebar} />
+                  <RegisterModal handleSidebar={handleSidebar} />
                 </div>
               </div>
             )}

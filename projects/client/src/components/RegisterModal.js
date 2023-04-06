@@ -11,7 +11,7 @@ import {
     useDisclosure 
 } from '@chakra-ui/react'
 
-const RegisterModal = () => {
+const RegisterModal = ({ handleSidebar }) => {
     const { isOpen, onOpen, onClose } = useDisclosure()
 
     return (
@@ -37,7 +37,10 @@ const RegisterModal = () => {
                             <Button 
                                 colorScheme='blue'
                                 width='100%'
-                                onClick={onClose}
+                                onClick={() => {
+                                    onClose()
+                                    handleSidebar()
+                                }}
                             >
                                 Register as User
                             </Button>
@@ -47,7 +50,10 @@ const RegisterModal = () => {
                             <Button 
                                 colorScheme='blue'
                                 width='100%'
-                                onClick={onClose}
+                                onClick={() => {
+                                    onClose()
+                                    handleSidebar()
+                                }}
                             >
                                 Register as Tenant
                             </Button>
