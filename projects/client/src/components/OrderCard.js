@@ -4,7 +4,7 @@ import ConfirmAlert from './ConfirmAlert'
 import axios from 'axios'
 import toast, {Toaster} from 'react-hot-toast'
 
-const OrderCard = ({ id, invoice, start, end, status, name, tenantToken, image, onClose, notes,property, price, users_id, rules }) => {
+const OrderCard = ({ id, invoice, start, end, status, name, tenantToken, image, onClose, notes,property, price, users_id, rules, refresh }) => {
   
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [detailModal, setDetailModal] = useState(false)
@@ -27,9 +27,7 @@ const OrderCard = ({ id, invoice, start, end, status, name, tenantToken, image, 
       notes
     }, { headers: { authorization: tenantToken } })
     toast.success("Order Cancelled")
-    setTimeout(() => {
-      window.location.reload()
-    }, 1500);
+    refresh()
 
   }
 
@@ -40,9 +38,7 @@ const OrderCard = ({ id, invoice, start, end, status, name, tenantToken, image, 
       notes
     }, { headers: { authorization: tenantToken } })
     toast.success("Order Rejected")
-    setTimeout(() => {
-      window.location.reload()
-    }, 1500);
+    refresh()
   }
 
   const handleAccept = async (orderID, notes) => {
@@ -56,9 +52,7 @@ const OrderCard = ({ id, invoice, start, end, status, name, tenantToken, image, 
       rules
     } , { headers: { authorization: tenantToken } })
     toast.success("Order Accepted")
-    setTimeout(() => {
-      window.location.reload()
-    }, 1500);
+    refresh()
   }
 
   return (

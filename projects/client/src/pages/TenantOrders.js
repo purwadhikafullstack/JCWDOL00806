@@ -52,7 +52,6 @@ const TenantOrders = () => {
                 response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/transaction/order-list?status=${searchParams.get('status')}&page=1`,
                 { headers: { authorization: token } })
         }
-        console.log(response.data.data)
         if (!response.data.data.length) setNoTransaction(true)
         else setNoTransaction(false)
 
@@ -87,6 +86,7 @@ const TenantOrders = () => {
                     price={order.total_price}
                     users_id={order.users_id}
                     rules={order.rules}
+                    refresh={getOrderList}
                 />
             )
         })
