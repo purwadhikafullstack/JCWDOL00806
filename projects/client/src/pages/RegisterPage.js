@@ -157,13 +157,13 @@ const RegisterPage = () => {
           </div>
           <div className='flex justify-center flex-col align-middle text-center'>
 
-            <Link>
+            <Link to={`${process.env.REACT_APP_API_BASE_URL}/auth/google/`}>
               <Button className='mb-4' width='70%' colorScheme='red'>
                 <FontAwesomeIcon className='mx-2' icon={faGoogle} />Continue using Google
               </Button>
             </Link>
 
-            <Link to='http://localhost:8000/auth/facebook/callback'>
+            <Link to={`${process.env.REACT_APP_API_BASE_URL}/auth/facebook/callback`}>
               <Button className='mb-4' width='70%' colorScheme='facebook'>
                 <FontAwesomeIcon className='mx-2' icon={faFacebook} />Continue using Facebook
               </Button>
