@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import * as Yup from 'yup'
-import { Button } from '@chakra-ui/react'
+import { Button, Flex } from '@chakra-ui/react'
 import toast, { Toaster } from 'react-hot-toast'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams, Link } from 'react-router-dom'
 import { Formik, Form, Field, ErrorMessage } from 'formik'
+
+import TenantNavbar from '../components/TenantNavbar'
 
 const EditRoom = () => {
     const { propertyID, roomID } = useParams()
@@ -127,7 +129,16 @@ const EditRoom = () => {
                         />
                     </div>
 
-                    <div className='flex justify-end items-end w-full mt-5'>
+                    <div className='flex justify-end items-end w-full mt-5 gap-2'>
+                        <Link to={`/tenant/room/${propertyID}`}>
+                            <Button
+                                type='button'
+                                colorScheme='yellow'
+                            >
+                                Cancel
+                            </Button>
+                        </Link>
+                        
                         <Button
                             type='submit'
                             colorScheme='green'
@@ -187,21 +198,28 @@ const EditRoom = () => {
     }
 
     return (
-        <div
-            className='flex flex-col justify-center
-            items-center py-10 px-3'
-        >
-            <Toaster />
-            <div
-                className='sm:w-[500px] w-full rounded-lg
-                p-10 shadow-lg border-2 border-slate-200'
-            >
-                <h1 className='text-2xl font-semibold mb-5'>
-                    Update Room
-                </h1>
+        <div>
+            <Flex flexDir='row'>
+                <TenantNavbar />
+                <Flex flexDir='column' className="ml-16 w-4/5">
+                    <div
+                        className='flex flex-col justify-center
+                        items-center py-10 px-3'
+                    >
+                        <Toaster />
+                        <div
+                            className='sm:w-[500px] w-full rounded-lg
+                            p-10 shadow-lg border-2 border-slate-200'
+                        >
+                            <h1 className='text-2xl font-semibold mb-5'>
+                                Update Room
+                            </h1>
 
-                { roomForm() }
-            </div>
+                            { roomForm() }
+                        </div>
+                    </div>
+                </Flex>
+            </Flex>
         </div>
     )
 }

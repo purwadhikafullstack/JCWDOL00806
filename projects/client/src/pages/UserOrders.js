@@ -76,7 +76,6 @@ const UserOrders = () => {
 
       setOrderList(response.data.data);
       setPageCount(response.data.total_pages);
-      toast(response.data.message);
       setUserToken(token);
     } catch (error) {
       console.log(error);
@@ -109,6 +108,7 @@ const UserOrders = () => {
           room_id={order.room_id}
           room_rating={order.rating}
           room_review={order.review}
+          onOrderUpdate={getOrderList}
         />
       );
     });
@@ -151,9 +151,9 @@ const UserOrders = () => {
         <Navbar />
       </div>
 
-      <>
+      <div className="flex-1">
         {noTransaction ? (
-          <>
+          <div className="py-6">
             <Toaster />
             <Flex flexDir="row">
               <Flex flexDir="column" className="ml-16 mt-3">
@@ -259,9 +259,9 @@ const UserOrders = () => {
                 </Flex>
               </Flex>
             </Flex>
-          </>
+          </div>
         ) : !orderList.length ? (
-          <>
+          <div className="py-6">
             <Toaster />
             <Flex flexDir="row">
               <Flex flexDir="column" className="ml-16 mt-3">
@@ -356,9 +356,9 @@ const UserOrders = () => {
                 </Flex>
               </Flex>
             </Flex>
-          </>
+          </div>
         ) : (
-          <>
+          <div className="py-6">
             <Toaster />
             <Flex flexDir="row" className="mb-2">
               <Flex flexDir="column" className="ml-16 mt-3">
@@ -474,9 +474,9 @@ const UserOrders = () => {
                 />
               </Flex>
             </Flex>
-          </>
+          </div>
         )}
-      </>
+      </div>
       <div className="flex-shrink">
         <Footer />
       </div>

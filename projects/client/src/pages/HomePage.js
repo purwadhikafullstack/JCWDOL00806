@@ -9,14 +9,20 @@ import PromotionalBanner from '../components/PromotionalBanner'
 const HomePage = () => {
   
   return (
-    <div className='overflow-hidden'>
+    <div className='flex flex-col min-h-screen overflow-hidden'>
       <div className='relative z-10 border shadow-md'>
         <Navbar />
       </div>
-      <SearchForm />
-      <PromotionalBanner />
-      <PropertyContent />
-      <Footer />
+
+      <div className='flex-1'>
+        <SearchForm />
+        <PromotionalBanner />
+        <PropertyContent />
+      </div>
+
+      <div className='flex-shrink'>
+        <Footer />
+      </div>
     </div>
   )
 }
