@@ -3,6 +3,8 @@ const { sequelize } = require("../../models");
 const { Op, where } = require("sequelize");
 const { QueryTypes } = require("sequelize");
 const fs = require("fs").promises;
+const handlebars = require('handlebars')
+const transporter = require('../helpers/transporter')
 
 //Import models
 const db = require("../../models/index");
@@ -54,7 +56,13 @@ module.exports = {
         data: data,
       });
     } catch (error) {
-      console.log(error);
+      console.log(error)
+      next({
+        isError: true,
+        message: error.message,
+        data: null,
+        status: 400
+      })
     }
   },
   roomListFromHomepage: async (req, res) => {
@@ -74,7 +82,13 @@ module.exports = {
         data: data,
       });
     } catch (error) {
-      console.log(error);
+      console.log(error)
+      next({
+        isError: true,
+        message: error.message,
+        data: null,
+        status: 400
+      })
     }
   },
   getRoomList: async (req, res) => {
@@ -124,7 +138,13 @@ module.exports = {
         data: data,
       });
     } catch (error) {
-      console.log(error);
+      console.log(error)
+      next({
+        isError: true,
+        message: error.message,
+        data: null,
+        status: 400
+      })
     }
   },
   getOrderList: async (req, res) => {
@@ -171,7 +191,7 @@ module.exports = {
 
       if (status === "in progress") {
         getData = await sequelize.query(`
-        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes
+        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes, o.users_id, r.rules
         FROM orders o
         INNER JOIN rooms r ON r.id = o.room_id
         JOIN properties p ON p.id = r.property_id
@@ -184,7 +204,7 @@ module.exports = {
         `);
       } else if (status === "all") {
         getData = await sequelize.query(`
-        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes
+        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes, o.users_id, r.rules
         FROM orders o
         INNER JOIN rooms r ON r.id = o.room_id
         JOIN properties p ON p.id = r.property_id
@@ -197,7 +217,7 @@ module.exports = {
         `);
       } else {
         getData = await sequelize.query(`
-        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes
+        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes, o.users_id, r.rules
         FROM orders o
         INNER JOIN rooms r ON r.id = o.room_id
         JOIN properties p ON p.id = r.property_id
@@ -217,12 +237,13 @@ module.exports = {
         total_pages,
       });
     } catch (error) {
-      console.log(error);
-      return res.status(404).send({
+      console.log(error)
+      next({
         isError: true,
         message: error.message,
         data: null,
-      });
+        status: 400
+      })
     }
   },
   getUserOrderList: async (req, res) => {
@@ -314,12 +335,13 @@ module.exports = {
         total_pages,
       });
     } catch (error) {
-      console.log(error);
-      return res.status(404).send({
+      console.log(error)
+      next({
         isError: true,
         message: error.message,
         data: null,
-      });
+        status: 400
+      })
     }
   },
   checkout: async (req, res) => {
@@ -369,11 +391,13 @@ module.exports = {
         data: getRoom,
       });
     } catch (error) {
-      return res.status(400).send({
+      console.log(error)
+      next({
         isError: true,
         message: error.message,
         data: null,
-      });
+        status: 400
+      })
     }
   },
   onBookRoom: async (req, res) => {
@@ -534,12 +558,13 @@ module.exports = {
       });
     } catch (error) {
       t.rollback();
-
-      return res.status(400).send({
+      console.log(error)
+      next({
         isError: true,
         message: error.message,
         data: null,
-      });
+        status: 400
+      })
     }
   },
   userUpdateOrderStatus: async (req, res) => {
@@ -563,21 +588,21 @@ module.exports = {
       });
     } catch (error) {
       t.rollback();
-      console.log(error);
-      return res.status(404).send({
+      console.log(error)
+      next({
         isError: true,
         message: error.message,
-      });
+        data: null,
+        status: 400
+      })
     }
   },
-  tenantUpdateOrderStatus: async (req, res) => {
+  tenantUpdateOrderStatus: async (req, res,next) => {
     const t = await sequelize.transaction();
     try {
       let { notes } = req.body;
       let { id } = req.params;
       let { status } = req.query;
-      console.log(status);
-      console.log(notes);
       if (status === "cancel") {
         await order.update(
           {
@@ -604,21 +629,7 @@ module.exports = {
             transaction: t,
           }
         );
-      } else {
-        await order.update(
-          {
-            status: "Completed",
-            notes: "Order Accepted",
-          },
-          {
-            where: { id },
-          },
-          {
-            transaction: t,
-          }
-        );
       }
-
       t.commit();
       return res.status(201).send({
         isError: false,
@@ -626,11 +637,81 @@ module.exports = {
       });
     } catch (error) {
       t.rollback();
-      console.log(error);
-      return res.status(404).send({
+      console.log(error)
+      next({
         isError: true,
-        message: error,
-      });
+        message: error.message,
+        data: null,
+        status: 400
+      })
+    }
+  },
+  tenantAcceptOrder: async (req, res, next) => {
+    const t = await sequelize.transaction();
+    const formatter = new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      minimumFractionDigits: 0,
+  });
+    try {
+      let {id} = req.params
+      let { users_id } = req.query
+      let {invoice, property, room, start, end, price, rules} = req.body
+    let getData = await users.findOne({ where: { id: users_id } });
+
+    await order.update(
+      {
+        status: "Completed",
+        notes: "Order Accepted",
+      },
+      {
+        where: { id },
+      },
+      {
+        transaction: t,
+      }
+      );
+
+      let template = await fs.readFile("./src/template/invoice.html", "utf-8")
+      let compiledTemplate = await handlebars.compile(template)
+      let newTemplate = compiledTemplate({
+      invoice,
+      property,
+      room,
+      start,
+      end,
+      price : formatter.format(price),
+      rules
+      })
+      await transporter.sendMail(
+        {
+          from: "Admin",
+          to: `"${getData.dataValues.email}`,
+          subject: "Your room order invoice",
+          html: newTemplate
+        },
+        function (error, info) {
+          if (error) {
+            console.log(error)
+          } else {
+            console.log("Email sent : " + info.response)
+          }
+        }
+      )
+      t.commit()
+      return res.status(201).send({
+        isError: false,
+        message: "Order accepted"
+      })
+    } catch (error) {
+      t.rollback()
+      console.log(error)
+      next({
+        isError: true,
+        message: error.message,
+        data: null,
+        status: 400
+      })
     }
   },
   getTenantOrderFilter: async (req, res) => {
@@ -677,7 +758,7 @@ module.exports = {
 
       if (status === "in progress") {
         getData = await sequelize.query(`
-        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes
+        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes, o.users_id, r.rules
         FROM orders o
         INNER JOIN rooms r ON r.id = o.room_id
         JOIN properties p ON p.id = r.property_id
@@ -690,7 +771,7 @@ module.exports = {
         `);
       } else if (status === "all") {
         getData = await sequelize.query(`
-        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes
+        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes, o.users_id, r.rules
         FROM orders o
         INNER JOIN rooms r ON r.id = o.room_id
         JOIN properties p ON p.id = r.property_id
@@ -703,7 +784,7 @@ module.exports = {
         `);
       } else {
         getData = await sequelize.query(`
-        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes
+        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes, o.users_id, r.rules
         FROM orders o
         INNER JOIN rooms r ON r.id = o.room_id
         JOIN properties p ON p.id = r.property_id
@@ -723,12 +804,13 @@ module.exports = {
         total_pages,
       });
     } catch (error) {
-      console.log(error);
-      return res.status(404).send({
+      console.log(error)
+      next({
         isError: true,
         message: error.message,
         data: null,
-      });
+        status: 400
+      })
     }
   },
   getUserOrderFilter: async (req, res) => {
@@ -821,12 +903,13 @@ module.exports = {
         total_pages,
       });
     } catch (error) {
-      console.log(error);
-      return res.status(404).send({
+      console.log(error)
+      next({
         isError: true,
         message: error.message,
         data: null,
-      });
+        status: 400
+      })
     }
   },
   onUploadPaymentProof: async (req, res) => {
@@ -896,11 +979,13 @@ module.exports = {
       // if something eror, delete image file
       deleteFiles(req.files.payment_proof);
 
-      return res.status(400).send({
+      console.log(error)
+      next({
         isError: true,
         message: error.message,
         data: null,
-      });
+        status: 400
+      })
     }
   },
   onCreateReview: async (req, res) => {
@@ -939,11 +1024,13 @@ module.exports = {
         data: null,
       });
     } catch (error) {
-      return res.status(400).send({
+      console.log(error)
+      next({
         isError: true,
         message: error.message,
         data: null,
-      });
+        status: 400
+      })
     }
   },
 };

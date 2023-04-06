@@ -6,6 +6,8 @@ const { join } = require("path");
 const passport = require("passport");
 const passportGoogle = require("./auth/passportGoogle");
 const passportFacebook = require("./auth/passportFacebook");
+const cron = require('node-cron')
+const { bookingReminder } = require('./middleware/bookingReminder')
 
 const PORT = process.env.PORT || 8000;
 const app = express();
@@ -42,6 +44,10 @@ passport.serializeUser(function (user, cb) {
 passport.deserializeUser(function (user, cb) {
   cb(null, user);
 });
+
+//setup cron scheduler to send email reminder and run bookingReminder everyday at 00:00am
+cron.schedule("0 0 * * *", bookingReminder)
+
 
 // Sequelize DB Sync
 

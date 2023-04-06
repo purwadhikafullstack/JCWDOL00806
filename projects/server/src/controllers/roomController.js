@@ -49,11 +49,13 @@ module.exports ={
                 data: null
             })
         } catch (error) {
-            return res.status(400).send({
-                isError: true,
-                message: error.message,
-                data: null
-            })
+        console.log(error)
+        next({
+            isError: true,
+            message: error.message,
+            data: null,
+            status: 400
+        })
         }
     },
     updateRoom: async (req, res) => {
@@ -99,10 +101,12 @@ module.exports ={
                 data: null
             })
         } catch (error) {
-            return res.status(400).send({
-                isError: true,
-                message: error.message,
-                data: null
+            console.log(error)
+            next({
+              isError: true,
+              message: error.message,
+              data: null,
+              status: 400
             })
         }
     },
@@ -140,11 +144,13 @@ module.exports ={
                 data: null
             })
         } catch (error) {
-            return res.status(400).send({
-                isError: true,
-                message: error.message,
-                data: null
-            })
+        console.log(error)
+        next({
+            isError: true,
+            message: error.message,
+            data: null,
+            status: 400
+        })
         }
     },
     getRoomData: async (req, res) => {
@@ -215,10 +221,12 @@ module.exports ={
                 }
             })
         } catch (error) {
-            return res.status(400).send({
-                isError: true,
-                message: error.message,
-                data: null
+            console.log(error)
+            next({
+              isError: true,
+              message: error.message,
+              data: null,
+              status: 400
             })
         }
     },
@@ -249,10 +257,12 @@ module.exports ={
                 data: checkRoom[0][0]
             })
         } catch (error) {
-            return res.status(404).send({
-                isError: true,
-                message: error.message,
-                data: null
+            console.log(error)
+            next({
+              isError: true,
+              message: error.message,
+              data: null,
+              status: 400
             })
         }
     },
@@ -276,10 +286,11 @@ module.exports ={
         } catch (error) {
             t.rollback()
             console.log(error)
-            return res.send(404).send({
-                isError: true,
-                message: error.message,
-                data: null
+            next({
+              isError: true,
+              message: error.message,
+              data: null,
+              status: 400
             })
         }
     },
@@ -303,10 +314,11 @@ module.exports ={
         } catch (error) {
             t.rollback()
             console.log(error)
-            return res.send(404).send({
-                isError: true,
-                message: error.message,
-                data: null
+            next({
+              isError: true,
+              message: error.message,
+              data: null,
+              status: 400
             })
         }
     },
@@ -346,10 +358,12 @@ module.exports ={
                 }
             })
         } catch (error) {
-            return res.status(400).send({
-                isError: true,
-                message: error.message,
-                data: null
+            console.log(error)
+            next({
+              isError: true,
+              message: error.message,
+              data: null,
+              status: 400
             })
         }
     }
