@@ -29,7 +29,7 @@ const PropertyCard = ({ data, onClick }) => {
     <div className="flex flex-col w-full" onClick={onClick}>
       <div
         className="overflow-hidden rounded-lg 
-        sm:h-[250px] border shadow-lg"
+        h-[250px] border shadow-lg"
       >
         <Image
           boxSize="100%"

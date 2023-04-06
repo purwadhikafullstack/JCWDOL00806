@@ -11,7 +11,7 @@ import {
     useDisclosure 
 } from '@chakra-ui/react'
 
-const LoginModal = () => {
+const LoginModal = ({ handleSidebar }) => {
     const { isOpen, onOpen, onClose } = useDisclosure()
 
     return (
@@ -38,7 +38,10 @@ const LoginModal = () => {
                             <Button 
                                 colorScheme='blue'
                                 width='100%'
-                                onClick={onClose}
+                                onClick={() => {
+                                    onClose()
+                                    handleSidebar()
+                                }}
                             >
                                 Login as User
                             </Button>
@@ -48,7 +51,10 @@ const LoginModal = () => {
                             <Button 
                                 colorScheme='blue'
                                 width='100%'
-                                onClick={onClose}
+                                onClick={() => {
+                                    onClose()
+                                    handleSidebar()
+                                }}
                             >
                                 Login as Tenant
                             </Button>

@@ -36,6 +36,7 @@ const UserOrderCard = ({
   room_id,
   room_rating,
   room_review,
+  onOrderUpdate
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [detailModal, setDetailModal] = useState(false);
@@ -127,9 +128,10 @@ const UserOrderCard = ({
       setIsLoading(false);
       setUploadModal(false);
       toast.success("Upload Payment Proof Success");
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+      onOrderUpdate()
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 1000);
     } catch (error) {
       setIsLoading(false);
       console.log(error.message);
@@ -143,9 +145,7 @@ const UserOrderCard = ({
 
   const onSendReview = async () => {
     try {
-      await axios.post(
-        `${process.env.REACT_APP_SERVER_URL}/transaction/create-review`,
-        {
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/transaction/create-review`, {
           rating,
           review,
           room_id,
@@ -158,9 +158,10 @@ const UserOrderCard = ({
 
       toast.success("Create Review Success");
       setReviewFormModal(false);
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+      onOrderUpdate()
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 1000);
     } catch (error) {
       console.log(error.response.data.message);
     }
@@ -211,7 +212,6 @@ const UserOrderCard = ({
 
   return (
     <>
-      <Toaster />
       <Flex
         className="py-2 px-3 mx-auto w-full mb-1 mt-1 border rounded-md"
         flexDir="column"
