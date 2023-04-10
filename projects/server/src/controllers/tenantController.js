@@ -14,7 +14,7 @@ const { hashPassword, hashMatch } = require("../lib/hash");
 const { createToken } = require("../lib/jwt");
 
 module.exports = {
-  register: async (req, res) => {
+  register: async (req, res, next) => {
     const t = await sequelize.transaction();
     try {
       let { username, email, phone_number, password } = req.body;
@@ -79,7 +79,7 @@ module.exports = {
       })
     }
   },
-  checkUsername: async (req, res) => {
+  checkUsername: async (req, res, next) => {
     try {
       let { username } = req.query;
     let getData = await tenant.findAll({
@@ -96,7 +96,7 @@ module.exports = {
       })
     }
   },
-  checkEmail: async (req, res) => {
+  checkEmail: async (req, res, next) => {
     try {
       let { email } = req.query;
     let getData = await tenant.findAll({
@@ -113,7 +113,7 @@ module.exports = {
       })
     }
   },
-  checkPhone: async (req, res) => {
+  checkPhone: async (req, res, next) => {
     try {
     let { phone_number } = req.query;
     let getData = await tenant.findAll({
@@ -130,7 +130,7 @@ module.exports = {
       })
     }
   },
-  verifyTenant: async (req, res) => {
+  verifyTenant: async (req, res, next) => {
     const t = await sequelize.transaction();
     try {
       let { username } = req.query;
@@ -164,7 +164,7 @@ module.exports = {
     }
   },
 
-  login: async (req, res) => {
+  login: async (req, res, next) => {
     try {
       let { usernameOrEmail, password } = req.query;
       let findUsernameOrEmail = await tenant.findOne({
@@ -212,7 +212,7 @@ module.exports = {
       })
     }
   },
-  checkTenant: async (req, res) => {
+  checkTenant: async (req, res, next) => {
     try {
       const userId = req.params.id;
       const authorizedUserId = req.dataToken.id;
@@ -237,7 +237,7 @@ module.exports = {
       })
     }
   },
-  getCategory: async (req, res) => {
+  getCategory: async (req, res, next) => {
     try {
       let { id } = req.query;
       let getData = await propertyCategory.findAll({
@@ -265,7 +265,7 @@ module.exports = {
     }
   },
 
-  createCategory: async (req, res) => {
+  createCategory: async (req, res, next) => {
     const t = await sequelize.transaction();
     try {
       let { type, city } = req.body;
@@ -310,7 +310,7 @@ module.exports = {
       })
     }
   },
-  updateCategory: async (req, res) => {
+  updateCategory: async (req, res, next) => {
     const t = await sequelize.transaction();
     try {
       let { newType, newCity } = req.body;
@@ -355,7 +355,7 @@ module.exports = {
     }
   },
 
-  deleteCategory: async (req, res) => {
+  deleteCategory: async (req, res, next) => {
     try {
       let { id } = req.query;
       await propertyCategory.destroy({
@@ -378,7 +378,7 @@ module.exports = {
       })
     }
   },
-  getRoomStatus: async (req, res) => {
+  getRoomStatus: async (req, res, next) => {
     try {
       let { id } = req.params;
       let getData = await sequelize.query(`
@@ -410,7 +410,7 @@ module.exports = {
       })
     }
   },
-  getTenantData: async (req, res) => {
+  getTenantData: async (req, res, next) => {
     try {
       let { id } = req.dataToken;
 

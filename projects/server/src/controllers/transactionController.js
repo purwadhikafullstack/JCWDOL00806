@@ -19,7 +19,7 @@ const reviews = db.review;
 const deleteFiles = require("./../helpers/deleteFiles");
 
 module.exports = {
-  list: async (req, res) => {
+  list: async (req, res, next) => {
     try {
       let { city, start, end } = req.query;
 
@@ -65,7 +65,7 @@ module.exports = {
       })
     }
   },
-  roomListFromHomepage: async (req, res) => {
+  roomListFromHomepage: async (req, res, next) => {
     try {
       let { property_id } = req.query;
       let data = await sequelize.query(
@@ -91,7 +91,7 @@ module.exports = {
       })
     }
   },
-  getRoomList: async (req, res) => {
+  getRoomList: async (req, res, next) => {
     try {
       let { city, start, end, property_id } = req.query;
 
@@ -147,7 +147,7 @@ module.exports = {
       })
     }
   },
-  getOrderList: async (req, res) => {
+  getOrderList: async (req, res, next) => {
     try {
       let { id } = req.dataToken;
       let { status, page } = req.query;
@@ -246,7 +246,7 @@ module.exports = {
       })
     }
   },
-  getUserOrderList: async (req, res) => {
+  getUserOrderList: async (req, res, next) => {
     try {
       let { id } = req.dataToken;
       let { status, page } = req.query;
@@ -344,7 +344,7 @@ module.exports = {
       })
     }
   },
-  checkout: async (req, res) => {
+  checkout: async (req, res, next) => {
     try {
       // get data from client
       let { id } = req.dataToken;
@@ -400,7 +400,7 @@ module.exports = {
       })
     }
   },
-  onBookRoom: async (req, res) => {
+  onBookRoom: async (req, res, next) => {
     const t = await sequelize.transaction();
     try {
       // get data from client
@@ -567,7 +567,7 @@ module.exports = {
       })
     }
   },
-  userUpdateOrderStatus: async (req, res) => {
+  userUpdateOrderStatus: async (req, res, next) => {
     const t = await sequelize.transaction();
     try {
       let { notes } = req.body;
@@ -597,7 +597,7 @@ module.exports = {
       })
     }
   },
-  tenantUpdateOrderStatus: async (req, res,next) => {
+  tenantUpdateOrderStatus: async (req, res, next) => {
     const t = await sequelize.transaction();
     try {
       let { notes } = req.body;
@@ -714,7 +714,7 @@ module.exports = {
       })
     }
   },
-  getTenantOrderFilter: async (req, res) => {
+  getTenantOrderFilter: async (req, res, next) => {
     try {
       let { id } = req.dataToken;
       let { status, page, search } = req.query;
@@ -813,7 +813,7 @@ module.exports = {
       })
     }
   },
-  getUserOrderFilter: async (req, res) => {
+  getUserOrderFilter: async (req, res, next) => {
     try {
       let { id } = req.dataToken;
       let { status, page, search } = req.query;
@@ -912,7 +912,7 @@ module.exports = {
       })
     }
   },
-  onUploadPaymentProof: async (req, res) => {
+  onUploadPaymentProof: async (req, res, next) => {
     const t = await sequelize.transaction();
     try {
       // get data from client
@@ -988,7 +988,7 @@ module.exports = {
       })
     }
   },
-  onCreateReview: async (req, res) => {
+  onCreateReview: async (req, res, next) => {
     try {
       // get data from client
       let { id } = req.dataToken;

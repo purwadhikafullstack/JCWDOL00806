@@ -9,7 +9,7 @@ const room_status = db.room_status
 const room_special_price = db.room_special_price
 const order = db.order
 module.exports ={
-    createRoom: async (req, res) => {
+    createRoom: async (req, res, next) => {
         try {
             // get data from client
             let { id } = req.dataToken
@@ -58,7 +58,7 @@ module.exports ={
         })
         }
     },
-    updateRoom: async (req, res) => {
+    updateRoom: async (req, res, next) => {
         try {
             // get data from client
             let { id } = req.dataToken
@@ -110,7 +110,7 @@ module.exports ={
             })
         }
     },
-    deleteRoom: async (req, res) => {
+    deleteRoom: async (req, res, next) => {
         try {
             // get data from client
             let { id } = req.dataToken
@@ -153,7 +153,7 @@ module.exports ={
         })
         }
     },
-    getRoomData: async (req, res) => {
+    getRoomData: async (req, res, next) => {
         try {
             // get data from client
             let { id } = req.dataToken
@@ -230,7 +230,7 @@ module.exports ={
             })
         }
     },
-    getRoomDetail: async (req, res) => {
+    getRoomDetail: async (req, res, next) => {
         try {
             const {id} = req.dataToken
             const { room_id } = req.params
@@ -266,7 +266,7 @@ module.exports ={
             })
         }
     },
-    addUnavailable: async (req, res) => {
+    addUnavailable: async (req, res, next) => {
         const t = await sequelize.transaction()
         try {
             const {start_date, end_date, room_id} = req.body
@@ -294,7 +294,7 @@ module.exports ={
             })
         }
     },
-    addSpecialPrice: async (req, res) => {
+    addSpecialPrice: async (req, res, next) => {
         const t = await sequelize.transaction()
         try {
             const {start_date, end_date, room_id, price} = req.body
@@ -322,7 +322,7 @@ module.exports ={
             })
         }
     },
-    getUnavailableRoom: async (req, res) => {
+    getUnavailableRoom: async (req, res, next) => {
         try {
             // get data from client
             let { room_id } = req.params
