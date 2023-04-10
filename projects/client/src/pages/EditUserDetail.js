@@ -7,6 +7,7 @@ import * as Yup from 'yup'
 import axios from 'axios'
 import toast, {Toaster} from 'react-hot-toast'
 import Navbar from "../components/Navbar";
+import { useNavigate } from "react-router-dom";
 
 const EditUserDetail = () => {
 
@@ -16,6 +17,7 @@ const EditUserDetail = () => {
     const [startDate, setStartDate] = useState(new Date())
     const [newAccount, setNewAccount] = useState(false)
 
+    const navigate = useNavigate()
     useEffect(() => {
         getUserDetail()
     }, [])
@@ -61,6 +63,9 @@ const EditUserDetail = () => {
             })
             }
             toast.success('Profile edited successfully')
+            setTimeout(() => {
+                navigate('/users/my-profile')
+            }, 1500);
         } catch (error) {
             console.log(error)
         }

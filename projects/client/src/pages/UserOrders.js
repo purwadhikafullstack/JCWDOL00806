@@ -146,7 +146,7 @@ const UserOrders = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen overflow-hidden">
+    <div className="flex flex-col min-h-screen overflow-scroll md:overflow-hidden">
       <div className="relative z-10 border shadow-md">
         <Navbar />
       </div>

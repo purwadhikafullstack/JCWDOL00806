@@ -40,6 +40,9 @@ module.exports = {
       otp_generate: {
         type: Sequelize.DATE
       },
+      reset_pass: {
+        type: Sequelize.STRING
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

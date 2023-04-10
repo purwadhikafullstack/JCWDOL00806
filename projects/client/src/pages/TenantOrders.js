@@ -125,12 +125,12 @@ const TenantOrders = () => {
                 <Toaster />
                 <Flex flexDir="row">
                 <TenantNavbar />
-                    <Flex flexDir='column' className="ml-16 mt-3">
+                    <Flex flexDir='column' className="ml-16 mt-3 overflow-hidden">
                         <Heading>Your orders</Heading>
-                        <Flex flexDir="column" className='border rounded-md p-3 w-[49em] mt-2'>
+                        <Flex flexDir="column" className='border rounded-md p-3 lg:w-[49em] sm:w-[35em]  mt-2'>
                             <Flex flexDir="column">
-                            <Flex flexDir='row' alignItems='center' justifyContent='space-between'>
-                                <Flex gap={1.5}>              
+                            <Flex flexDir={{base : 'column', md : "row"}} alignItems='center' justifyContent='space-between'>
+                                <Flex gap={1.5} flexDir={{base : 'column', md : "row"}}>              
                                     <Text as='b' className='mr-2' >Status :</Text>
                                     <Button colorScheme={statusFilter === "all" ? "green" : null} onClick={handleFilterClick} name="all" size='sm' variant='outline' >All</Button>
                                     <Button colorScheme={statusFilter === "in progress" ? "green" : null} onClick={handleFilterClick} name="in progress" size='sm' variant='outline' >In Progress</Button>
@@ -138,7 +138,7 @@ const TenantOrders = () => {
                                     <Button colorScheme={statusFilter === "completed" ? "green" : null} onClick={handleFilterClick} name="completed" size='sm' variant='outline' >Completed</Button>
                                     <Button colorScheme={statusFilter === "cancelled" ? "green" : null} onClick={handleFilterClick} name="cancelled" size='sm' variant='outline' >Cancelled</Button>
                                 </Flex>
-                                <Flex gap={2} alignItems='center'>
+                                <Flex gap={2} alignItems='center' flexDir={{base : 'column', md : "row"}}>
                                     <Input name='search' value={invoiceFilter ? invoiceFilter : ""}  onChange={(e) => {setInvoiceFilter(e.target.value)}} className="search-filter" size='sm'  placeholder='Search invoice' />
                                     <Button onClick={handleSearch} size='sm' colorScheme='blue'>Search</Button>
                                 </Flex>
@@ -160,9 +160,9 @@ const TenantOrders = () => {
                 <Flex flexDir='column' className="ml-16 mt-3">
                     <Heading>Your orders</Heading>
                     <Flex flexDir="column" className='border rounded-md p-3 w-[49em] mt-2'>
-                        <Flex flexDir="column">
+                        <Flex flexDir={{base : 'column', md : "row"}}>
                         <Flex flexDir='row' alignItems='center' justifyContent='space-between'>
-                                <Flex gap={1.5}>              
+                                <Flex gap={1.5} flexDir={{base : 'column', md : "row"}}>              
                                     <Text as='b' className='mr-2' >Status :</Text>
                                     <Button colorScheme={statusFilter === "all" ? "green" : null} onClick={handleFilterClick} name="all" size='sm' variant='outline' >All</Button>
                                     <Button colorScheme={statusFilter === "in progress" ? "green" : null} onClick={handleFilterClick} name="in progress" size='sm' variant='outline' >In Progress</Button>
@@ -187,14 +187,14 @@ const TenantOrders = () => {
           ) : (
         <>
          <Toaster />
-         <Flex flexDir="row" className='mb-2'>
+         <Flex flexDir="row" className='mb-2 overflow-hidden'>
             <TenantNavbar />
                 <Flex flexDir='column' className="ml-16 mt-3">
                     <Heading>Your orders</Heading>
                     <Flex flexDir="column" className='border rounded-md p-3 w-[49em] mt-2'>
                         <Flex flexDir="column">
-                            <Flex flexDir='row' alignItems='center' justifyContent='space-between'>
-                                <Flex gap={1.5}>              
+                            <Flex flexDir="row" alignItems='center' justifyContent='space-between'>
+                                <Flex gap={1.5}flexDir={{base : 'column', md : "row"}}>              
                                     <Text as='b' className='mr-2' >Status :</Text>
                                     <Button colorScheme={statusFilter === "all" ? "green" : null} onClick={handleFilterClick} name="all" size='sm' variant='outline' >All</Button>
                                     <Button colorScheme={statusFilter === "in progress" ? "green" : null} onClick={handleFilterClick} name="in progress" size='sm' variant='outline' >In Progress</Button>
