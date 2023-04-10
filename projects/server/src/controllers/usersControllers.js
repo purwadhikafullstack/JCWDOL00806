@@ -11,7 +11,7 @@ const transporter = require("../helpers/transporter");
 const { genereateOTP, checkOtpExpired } = require("../helpers/otp");
 
 module.exports = {
-  register: async (req, res) => {
+  register: async (req, res, next) => {
     const t = await sequelize.transaction();
     try {
       let { username, email, phone_number, password, provider } = req.body;
@@ -59,7 +59,7 @@ module.exports = {
       })
     }
   },
-  checkUsername: async (req, res) => {
+  checkUsername: async (req, res, next) => {
     try {
     let username = req.query.username;
     let getData = await users.findAll({
@@ -76,7 +76,7 @@ module.exports = {
       })
     }
   },
-  checkEmail: async (req, res) => {
+  checkEmail: async (req, res, next) => {
     try {
     let email = req.query.email;
     let getData = await users.findAll({
@@ -93,7 +93,7 @@ module.exports = {
       })
     }
   },
-  login: async (req, res) => {
+  login: async (req, res, next) => {
     try {
       // get data from client
       let { email, password } = req.query;
@@ -146,7 +146,7 @@ module.exports = {
       })
     }
   },
-  userDetail: async (req, res) => {
+  userDetail: async (req, res, next) => {
     try {
       let email = req.query.email;
       let getData = await users.findAll({
@@ -166,7 +166,7 @@ module.exports = {
       })
     }
   },
-  resetConfirm: async (req, res) => {
+  resetConfirm: async (req, res, next) => {
     const t = await sequelize.transaction();
     try {
       let { email, id } = req.query;
@@ -210,7 +210,7 @@ module.exports = {
       })
     }
   },
-  newPassword: async (req, res) => {
+  newPassword: async (req, res, next) => {
     const t = await sequelize.transaction();
     try {
       let userId = req.params.id;
@@ -241,7 +241,7 @@ module.exports = {
       })
     }
   },
-  onSendOTP: async (req, res) => {
+  onSendOTP: async (req, res, next) => {
     try {
       // get data from client
       let { id } = req.dataToken;
@@ -317,7 +317,7 @@ module.exports = {
       })
     }
   },
-  onVerifyAccount: async (req, res) => {
+  onVerifyAccount: async (req, res, next) => {
     try {
       // get data from client
       let { id } = req.dataToken;
@@ -371,7 +371,7 @@ module.exports = {
       })
     }
   },
-  onGetUserData: async (req, res) => {
+  onGetUserData: async (req, res, next) => {
     try {
       // get data from client
       let { id } = req.dataToken;
@@ -402,7 +402,7 @@ module.exports = {
       })
     }
   },
-  userProfile: async (req, res) => {
+  userProfile: async (req, res, next) => {
     try {
       const users_id = req.dataToken.id;
       let getData = await user_details.findAll({
@@ -424,7 +424,7 @@ module.exports = {
       })
     }
   },
-  changeNewPassword: async (req, res) => {
+  changeNewPassword: async (req, res, next) => {
     try {
       // get data from client
       let { id } = req.dataToken;
@@ -486,7 +486,7 @@ module.exports = {
       })
     }
   },
-  newProfile: async (req, res) => {
+  newProfile: async (req, res, next) => {
     const t = await sequelize.transaction();
     try {
       let newData = req.body;
@@ -517,7 +517,7 @@ module.exports = {
       })
     }
   },
-  editProfile: async (req, res) => {
+  editProfile: async (req, res, next) => {
     const t = await sequelize.transaction();
     try {
       let newData = req.body;
@@ -548,7 +548,7 @@ module.exports = {
       })
     }
   },
-  updateProfilePicture: async (req, res) => {
+  updateProfilePicture: async (req, res, next) => {
     const t = await sequelize.transaction();
     try {
       let { id } = req.params;
@@ -576,7 +576,7 @@ module.exports = {
       })
     }
   },
-  changeEmail: async (req, res) => {
+  changeEmail: async (req, res, next) => {
     const t = await sequelize.transaction();
     try {
       let { email } = req.body;
@@ -608,7 +608,7 @@ module.exports = {
       })
     }
   },
-  getUser: async (req, res) => {
+  getUser: async (req, res, next) => {
     try {
       const id = req.dataToken.id;
       console.log(id);

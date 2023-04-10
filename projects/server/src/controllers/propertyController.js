@@ -12,7 +12,7 @@ const property = db.property;
 //Import lib
 
 module.exports = {
-  createProperty: async (req, res) => {
+  createProperty: async (req, res, next) => {
     const t = await sequelize.transaction();
     try {
       let { id } = req.query;
@@ -61,7 +61,7 @@ module.exports = {
     }
   },
 
-  createPropertyImage: async (req, res) => {
+  createPropertyImage: async (req, res, next) => {
     const t = await sequelize.transaction();
     try {
       let { id, name, address } = req.query;
@@ -90,7 +90,7 @@ module.exports = {
     }
   },
 
-  getType: async (req, res) => {
+  getType: async (req, res, next) => {
     try {
       let { id } = req.query;
       let getCategory = await propertyCategory.findOne({
@@ -111,7 +111,7 @@ module.exports = {
       })
     }
   },
-  getAllProperty: async (req, res) => {
+  getAllProperty: async (req, res, next) => {
     try {
       let { id } = req.query;
       let getData = await property.findAll({
@@ -134,7 +134,7 @@ module.exports = {
     }
   },
 
-  deleteProperty: async (req, res) => {
+  deleteProperty: async (req, res, next) => {
     try {
       let { id } = req.query;
       await property.destroy({
@@ -155,7 +155,7 @@ module.exports = {
       })
     }
   },
-  updateProperty: async (req, res) => {
+  updateProperty: async (req, res, next) => {
     const t = await sequelize.transaction();
     try {
       let { newName, newAddress, newDescription } = req.body;
@@ -197,7 +197,7 @@ module.exports = {
       })
     }
   },
-  updatePropertyImage: async (req, res) => {
+  updatePropertyImage: async (req, res, next) => {
     const t = await sequelize.transaction();
     try {
       let { id, name, address } = req.query;
@@ -253,7 +253,7 @@ module.exports = {
         })
     }
   },
-  propertyDetail: async (req, res) => {
+  propertyDetail: async (req, res, next) => {
     try {
       let {id} = req.params
       let getData = await property.findOne({
@@ -277,7 +277,7 @@ module.exports = {
       })
     }
   },
-  getAllPropertyAndRoom: async (req, res) => {
+  getAllPropertyAndRoom: async (req, res, next) => {
     try {
       // get data from client
       let { id } = req.dataToken
