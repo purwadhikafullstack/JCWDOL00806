@@ -59,9 +59,9 @@ const TenantNavbar = () => {
         marginTop="2.5vh"
         boxShadow="0 4px 12px 0 rgba(0, 0, 0, 0.15)"
         borderRadius="8px"
-        w={navOpened ? "10em" : "3.2em"}
         flexDir="column"
-        justifyContent="space-between"
+              justifyContent="space-between"
+              minW={navOpened ? "12em" : "3.2em"}
         >
             <Flex
             p='5%'

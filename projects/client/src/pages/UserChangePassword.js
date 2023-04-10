@@ -15,7 +15,7 @@ const UserChangePassword = () => {
 
     const onChangePassword = async (value) => {
         try {
-            await axios.patch(`http://localhost:8000/users/change-new-password`, {
+            await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/users/change-new-password`, {
                 old_password: value.oldPassword,
                 new_password: value.newPassword,
                 confirm_password: value.confirmPassword
@@ -140,7 +140,7 @@ const UserChangePassword = () => {
             if (!token) throw { message: 'Token is missing' }
 
             // get users data
-            await axios.get(`http://localhost:8000/users/user-data`, {
+            await axios.get(`${process.env.REACT_APP_API_BASE_URL}/users/user-data`, {
                 headers: {
                     'Authorization': token
                 }

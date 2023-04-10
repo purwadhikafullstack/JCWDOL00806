@@ -166,18 +166,63 @@ module.exports = {
       })
     }
   },
+  checkToken: async (req, res, next) => {
+    try {
+      const { token } = req.params
+      console.log(token)
+      let getData = await users.findOne({
+        where: {
+          reset_pass : token
+        },
+      })
+      return res.status(200).send({
+        isError: false,
+        message: "token checked",
+        data: getData
+      })
+    } catch (error) {
+      console.log(error)
+      next({
+        isError: true,
+        message: error.message,
+        data: null,
+        status: 400
+      })
+    }
+  },
   resetConfirm: async (req, res, next) => {
     const t = await sequelize.transaction();
     try {
       let { email, id } = req.query;
+      let token = createToken({ id })
+      let unique = token.slice(0, 10)
       let template = await fs.readFile(
         "./src/template/resetPassword.html",
         "utf-8"
       );
       let compiledTemplate = await handlebars.compile(template);
       let newTemplate = compiledTemplate({
-        resetURL: `${process.env.WEBSITE_URL}/new-password/${id}`,
+        resetURL: `${process.env.WEBSITE_URL}/new-password/${token}`,
       });
+      
+      await users.update(
+        {
+        reset_pass : token
+      },
+        {
+          where: { email }
+        },
+        {
+          transaction: t
+        }
+      )
+      await sequelize.query(`
+      CREATE EVENT reset_pass_token_${unique}
+      ON SCHEDULE AT DATE_ADD(NOW(), INTERVAL 1 MINUTE)
+      DO
+      UPDATE users SET reset_pass = NULL
+      WHERE id = "${id}"
+      `)
 
       await transporter.sendMail(
         {
@@ -192,7 +237,7 @@ module.exports = {
           } else {
             console.log("email sent: " + info.response);
           }
-        }
+        }, {transaction : t}
       );
       t.commit();
       return res.status(201).send({
@@ -225,6 +270,11 @@ module.exports = {
         },
         { transaction: t }
       );
+      await users.update({
+        reset_pass : null
+      }, { where: { id: userId } },
+        {transaction : t}
+      )
       t.commit();
       return res.status(201).send({
         isError: false,

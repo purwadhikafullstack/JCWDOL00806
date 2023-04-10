@@ -10,6 +10,7 @@ Router.get("/checkusername", usersControllers.checkUsername);
 Router.get("/checkemail", usersControllers.checkEmail);
 Router.get("/login", usersControllers.login);
 Router.get("/userdetail", usersControllers.userDetail);
+Router.get("/check-token/:token", usersControllers.checkToken)
 Router.get("/reset-confirm", usersControllers.resetConfirm);
 Router.patch("/change-password/:id", usersControllers.newPassword);
 Router.post("/verify-otp", verifyToken, usersControllers.onVerifyAccount);

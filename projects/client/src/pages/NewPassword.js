@@ -1,4 +1,4 @@
-import {useState} from 'react'
+import {useState, useEffect} from 'react'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import {Button, FormControl, FormLabel, Input, FormErrorMessage, VStack} from '@chakra-ui/react'
@@ -11,10 +11,24 @@ const NewPassword = () => {
     const navigate = useNavigate()
 
     const [complete, setComplete] =useState(false)
+    const [checked, setChecked] = useState(false)
+    const [userData, setUserData] = useState()
+    const { id } = useParams()
+    
+    useEffect(() => {
+        checkToken()
+    }, [])
 
-    const {id} = useParams()
+    const checkToken = async () => {
+        let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/users/check-token/${id}`)
+        if (response.data.data !== null) {
+            setUserData(response.data.data)
+            setChecked(true)
+        }
+    }
+
     const onSubmit = async (values) => {
-        await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/users/change-password/${id}`, { password: values.password })
+        await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/users/change-password/${userData?.id}`, { password: values.password })
         setComplete(true)
         setTimeout(() => {
             navigate('/users/login')
@@ -42,13 +56,21 @@ const NewPassword = () => {
       <>
           {complete ? (
               <>
-              <div className='mx-2 my-4 flex flex-col text-center align-middle p-4 border rounded-lg border-gray-300 drop-shadow-lg'>
+              <div className='sm:w-[500px] sm:mx-auto mx-2 my-4 flex flex-col text-center align-middle p-4 border rounded-lg border-gray-300 drop-shadow-lg'>
                      <p> Reset password successfull !!</p>
                       <p>Please proceed to login page with your new password</p>
               </div>
               </>
-          ): (       
-        <div className='mx-2 my-4 flex flex-col text-center align-middle p-4 border rounded-lg border-gray-300 drop-shadow-lg'>
+          ) : !checked ? (
+                  <>
+                    <div className='sm:w-[500px] sm:mx-auto mx-2 my-4 flex flex-col text-center align-middle p-4 border rounded-lg border-gray-300 drop-shadow-lg'>
+                     <p>The link you've submitted is invalid</p>
+                     <p>Please check the link again or resubmit reset password</p>
+              </div>
+                  </>
+              ): (
+            <>
+            <div className='sm:w-[500px] sm:mx-auto mx-2 my-4 flex flex-col text-center align-middle p-4 border rounded-lg border-gray-300 drop-shadow-lg'>
             <VStack spacing={1} mt={2}>
                 <FormControl isInvalid={formik.touched.password && formik.errors.password}>
                     <FormLabel htmlFor="password">Enter your new password</FormLabel>
@@ -80,6 +102,8 @@ const NewPassword = () => {
                 </Button>
             </VStack>
         </div>
+            </>          
+        
           )}
     </>
   )
