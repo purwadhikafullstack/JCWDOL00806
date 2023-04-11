@@ -153,7 +153,7 @@ const TenantOrders = () => {
                 <TenantNavbar />
                     <Flex flexDir='column' className="pl-2 pr-1 sm:pl-6 sm:pr-5 mt-3 overflow-scroll md:overflow-hidden">
                         <Heading>Your orders</Heading>
-                        <Flex flexDir="column" className='border rounded-md p-3 lg:w-[49em] sm:w-[35em] w-[310px]  mt-2'>
+                        <Flex flexDir="column" className='border rounded-md p-3 lg:w-[49em] md:w-[42em] sm:w-[35em] w-[310px]  mt-2'>
                             <Flex flexDir="column">
                                 <Flex flexDir="row" alignItems='center' justifyContent='space-between'>
                                       {smallScreen ? (
@@ -221,7 +221,7 @@ const TenantOrders = () => {
             <TenantNavbar />
                 <Flex flexDir='column' className="pl-2 pr-1 sm:pl-6 sm:pr-5 mt-3 overflow-scroll md:overflow-hidden">
                     <Heading>Your orders</Heading>
-                    <Flex flexDir="column" className='border rounded-md p-3 lg:w-[49em] sm:w-[35em] w-[310px] mt-2'>
+                    <Flex flexDir="column" className='border rounded-md p-3 lg:w-[49em] md:w-[42em] sm:w-[35em] w-[310px] mt-2'>
                         <Flex flexDir={{base : 'column', md : "row"}}>
                         <Flex flexDir='row' alignItems='center' justifyContent='space-between'>
                         {smallScreen ? (
@@ -287,7 +287,7 @@ const TenantOrders = () => {
             <TenantNavbar />
                 <Flex flexDir='column' className="pl-2 pr-1 sm:pl-6 sm:pr-5 mt-3 overflow-scroll md:overflow-hidden">
                     <Heading>Your orders</Heading>
-                    <Flex flexDir="column" className='border rounded-md p-3 lg:w-[49em] sm:w-[35em] w-[310px] mt-2'>
+                    <Flex flexDir="column" className='border rounded-md p-3 lg:w-[49em] md:w-[42em] sm:w-[35em] w-[310px] mt-2'>
                         <Flex flexDir="column">
                             <Flex flexDir="row" alignItems='center' justifyContent='space-between'>
                             {smallScreen ? (
