@@ -11,5 +11,5 @@ Router.get(
   verifyToken,
   salesController.reportByProperty
 );
-
+Router.get("/get-property-list", verifyToken, salesController.getPropertyList);
 module.exports = Router;
