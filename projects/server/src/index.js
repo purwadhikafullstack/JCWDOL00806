@@ -6,8 +6,8 @@ const { join } = require("path");
 const passport = require("passport");
 const passportGoogle = require("./auth/passportGoogle");
 const passportFacebook = require("./auth/passportFacebook");
-const cron = require('node-cron')
-const { bookingReminder } = require('./middleware/bookingReminder')
+const cron = require("node-cron");
+const { bookingReminder } = require("./middleware/bookingReminder");
 
 const PORT = process.env.PORT || 8000;
 const app = express();
@@ -46,8 +46,7 @@ passport.deserializeUser(function (user, cb) {
 });
 
 //setup cron scheduler to send email reminder and run bookingReminder everyday at 00:00am
-cron.schedule("0 0 * * *", bookingReminder)
-
+cron.schedule("0 0 * * *", bookingReminder);
 
 // Sequelize DB Sync
 
@@ -86,6 +85,7 @@ const {
   propertyRouter,
   roomRouter,
   transactionRouter,
+  salesRouter,
 } = require("./routes");
 app.use("/api/tenant", tenantRouter);
 app.use("/api/users", usersRouters);
@@ -94,6 +94,7 @@ app.use("/api/auth/facebook", authFacebookRouter);
 app.use("/api/property", propertyRouter);
 app.use("/api/room", roomRouter);
 app.use("/api/transaction", transactionRouter);
+app.use("/api/sales", salesRouter);
 
 // ===========================
 
