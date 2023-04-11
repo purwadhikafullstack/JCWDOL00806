@@ -5,6 +5,7 @@ const authGoogleRouters = require("./authGoogleRouters");
 const propertyRouter = require("./propertyRouter");
 const roomRouter = require("./roomRouter");
 const transactionRouter = require("./transactionRouter");
+const salesRouter = require("./salesRouter");
 
 module.exports = {
   usersRouters,
@@ -14,4 +15,5 @@ module.exports = {
   propertyRouter,
   roomRouter,
   transactionRouter,
+  salesRouter,
 };
