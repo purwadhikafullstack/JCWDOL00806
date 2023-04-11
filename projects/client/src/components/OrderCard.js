@@ -61,13 +61,13 @@ const OrderCard = ({ id, invoice, start, end, status, name, tenantToken, image, 
       {screen ? (
         // smaller screen
         <>
-        <Flex className='py-2 px-3 mx-auto w-full mb-1 mt-1 border rounded-md' flexDir='column'>
+        <Flex className='py-2 px-1 mx-auto w-full mb-1 mt-1 border rounded-md' flexDir='column'>
             <Flex flexDir='row' className=''>
                   <Text className='w-full font-bold italic' fontSize='sm'> {invoice} </Text>
             </Flex>
             <Divider className='my-2' />
-            <Flex flexDir='row' alignItems='center' justifyContent="space-between">
-              <Flex flexDir='column' className='w-3/5'>
+            <Flex className='flex-col sm:flex-row' alignItems='left' justifyContent="space-between">
+              <Flex flexDir='column' className='w-full'>
                 <Flex flexDir='column' className='mb-3'>
                   <Flex className='mt-1' flexDir="row">
                     <Text as="b" fontSize='sm'>Start Date</Text>
@@ -95,7 +95,7 @@ const OrderCard = ({ id, invoice, start, end, status, name, tenantToken, image, 
                   <Text className='font-bold' fontSize='sm'>: {formatter.format(price)}</Text>
                 </Flex>
               </Flex>
-              <Flex className='w-1/4' flexDir='column' alignItems='center'>
+              <Flex className='w-full mt-3 sm:ml-20' flexDir='row' alignItems='center'>
                 <Image
                   boxSize='48px'
                   objectFit='cover'
@@ -143,19 +143,19 @@ const OrderCard = ({ id, invoice, start, end, status, name, tenantToken, image, 
                         <ModalBody>
                           <Flex flexDir='column' gap={1}>
                             <Flex flexDir='row'>
-                              <Text>Status : </Text>
+                              <Text as="b" >Status : </Text>
                               <Text className='ml-2 italic font-bold' >{status }</Text>
                             </Flex>
                             <Flex flexDir='row'>
-                              <Text>Start date : </Text>
+                              <Text as="b" >Start date : </Text>
                               <Text className='ml-2' >{start}</Text>
                             </Flex>
                             <Flex flexDir='row'>
-                              <Text>End date : </Text>
+                              <Text as="b" >End date : </Text>
                               <Text className='ml-2' >{end}</Text>
                             </Flex> 
                             <Box className='mb-2 mt-2 px-3 py-2 h-28' maxW='sm' borderWidth='1px' borderRadius='lg' overflow='hidden'>
-                              <Text className='' color='gray'>Notes : </Text>
+                              <Text as="b" className='' color='gray'>Notes : </Text>
                               {notes}
                             </Box>
                           </Flex>
@@ -179,19 +179,19 @@ const OrderCard = ({ id, invoice, start, end, status, name, tenantToken, image, 
             <Flex flexDir='row' alignItems='center'>
           <Flex flexDir='column' className='w-2/6'>
             <Flex className=' mt-[2px]'  flexDir='row'>
-              <Text className='mr-3' fontSize='sm'>Property name</Text>
+              <Text as="b"  className='mr-3' fontSize='sm'>Property name</Text>
               <Text fontSize='sm'>: {property}</Text>
             </Flex>
             <Flex className=' mt-[2px]' flexDir='row'>
-              <Text className='mr-7' fontSize='sm'>Room name</Text>
+              <Text as="b"  className='mr-[30px]' fontSize='sm'>Room name</Text>
               <Text fontSize='sm'>: {name}</Text>
             </Flex>
             <Flex className='border-b-2 pb-2 mt-[2px]'  flexDir='row'>
-              <Text className='mr-16' fontSize='sm'>Status</Text>
-              <Text fontSize='sm'>: {status} </Text>
+              <Text as="b"  className='mr-16' fontSize='sm'>Status</Text>
+              <Text className="ml-1" fontSize='sm'>: {status} </Text>
             </Flex>
             <Flex flexDir='row' className='mt-1'>
-              <Text className='mr-9 font-semibold' fontSize='sm'>Total Price</Text>
+              <Text as="b"  className='mr-9' fontSize='sm'>Total Price</Text>
               <Text className='font-bold' fontSize='sm'>: {formatter.format(price)}</Text>
             </Flex>
                 </Flex>
@@ -216,10 +216,16 @@ const OrderCard = ({ id, invoice, start, end, status, name, tenantToken, image, 
                         </ModalOverlay>
                       </Modal>
                 </Flex>
-                <Flex flexDir='column' className=''>
-                    <Text fontSize='sm'>Start Date : {start}</Text>
-                    <Text fontSize='sm'>End Date : {end} </Text>
+                <Flex flexDir='column' className='mb-3'>
+                  <Flex className='mt-1' flexDir="row">
+                    <Text as="b" fontSize='sm'>Start Date</Text>
+                    <Text className='ml-4'>: {start}</Text>
                   </Flex>
+                  <Flex flexDir="row">
+                    <Text as="b" fontSize='sm' className='mr-1'>End Date</Text>
+                    <Text className='ml-5'>: {end}</Text>
+                  </Flex>
+                </Flex>
             </Flex>  
         <Divider className='mt-2' />
         {status === 'Waiting for Confirmation' ? (

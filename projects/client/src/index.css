@@ -47,5 +47,6 @@ code {
 
 .tenant-nav-close {
   width: 3.2em !important;
+  min-width: 3.2em;
   transition: width 0.4s ease;
 }

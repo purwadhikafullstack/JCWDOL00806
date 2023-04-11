@@ -71,7 +71,6 @@ const TenantNavbar = () => {
 
   return (
       <>
-          
             <Toaster /> 
             <Flex
               pos="sticky"
@@ -84,7 +83,7 @@ const TenantNavbar = () => {
               justifyContent="space-between"
                 transition={{ all: "1.5s" }}
               className={navOpened ? "tenant-nav-open bg-slate-50" : "tenant-nav-close bg-slate-50"}
-
+              zIndex={10}
             >
                 <Flex
                 p='5%'
