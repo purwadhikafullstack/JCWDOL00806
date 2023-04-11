@@ -97,4 +97,27 @@ module.exports = {
       });
     }
   },
+
+  getPropertyList: async (req, res, next) => {
+    try {
+      let { id } = req.dataToken;
+      let getData = await sequelize.query(`
+      SELECT p.name, p.id FROM properties p
+      INNER JOIN property_categories pc ON pc.id = p.category_id
+      WHERE pc.tenant_id = "${id}"
+      `);
+      return res.status(201).send({
+        isError: false,
+        message: "Data Acquired",
+        data: getData[0],
+      });
+    } catch (error) {
+      next({
+        isError: true,
+        message: error.message,
+        data: null,
+        status: 400,
+      });
+    }
+  },
 };
