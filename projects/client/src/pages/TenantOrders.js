@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import {useSearchParams, useNavigate} from 'react-router-dom'
-import {Flex, Heading, Button, Text, Divider, Skeleton, Input, useDisclosure} from '@chakra-ui/react'
+import {Flex, Heading, Button, Text, Divider, Skeleton, Input, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody} from '@chakra-ui/react'
 import TenantNavbar from '../components/TenantNavbar'
 import OrderCard from '../components/OrderCard'
 import axios from 'axios'
@@ -20,6 +20,8 @@ const TenantOrders = () => {
     const [page, setPage] = useState(1)
     const [pageCount, setPageCount] = useState()
     const [invoiceFilter, setInvoiceFilter] = useState("")
+    const [smallScreen, setSmallScreen] = useState(false)
+    const [filterModal, setFilterModal] = useState(false)
 
     useEffect(() => {
         setStatusFilter(searchParams.get('status'))
@@ -27,10 +29,32 @@ const TenantOrders = () => {
         getOrderList()
     }, [statusFilter])
 
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth < 1030) {
+                setSmallScreen(true)
+            } else {
+                setSmallScreen(false)
+            }
+        }
+
+        handleResize()
+        
+        window.addEventListener("resize", handleResize)
+
+        return () => window.removeEventListener('resize', handleResize)
+    }, [])
+
+    
+
+    const handleOpenModal = () => {
+        setFilterModal(true)
+    }
 
     const handleFilterClick = (event) => {
         setStatusFilter(event.target.name)
         setPage(1)
+        setFilterModal(false)
         if (invoiceFilter) {
             navigate(`/tenant/orders?status=${event.target.name}&search=${invoiceFilter}`)
         } else {
@@ -87,6 +111,7 @@ const TenantOrders = () => {
                     users_id={order.users_id}
                     rules={order.rules}
                     refresh={getOrderList}
+                    screen={smallScreen}
                 />
             )
         })
@@ -121,27 +146,61 @@ const TenantOrders = () => {
   return (
       <>
           {noTransaction ? (
+    // no transaction in selected filter
               <>
                 <Toaster />
                 <Flex flexDir="row">
                 <TenantNavbar />
                     <Flex flexDir='column' className="ml-16 mt-3 overflow-hidden">
                         <Heading>Your orders</Heading>
-                        <Flex flexDir="column" className='border rounded-md p-3 lg:w-[49em] sm:w-[35em]  mt-2'>
+                        <Flex flexDir="column" className='border rounded-md p-3 lg:w-[49em] sm:w-[35em] w-[25em]  mt-2'>
                             <Flex flexDir="column">
-                            <Flex flexDir={{base : 'column', md : "row"}} alignItems='center' justifyContent='space-between'>
-                                <Flex gap={1.5} flexDir={{base : 'column', md : "row"}}>              
-                                    <Text as='b' className='mr-2' >Status :</Text>
-                                    <Button colorScheme={statusFilter === "all" ? "green" : null} onClick={handleFilterClick} name="all" size='sm' variant='outline' >All</Button>
-                                    <Button colorScheme={statusFilter === "in progress" ? "green" : null} onClick={handleFilterClick} name="in progress" size='sm' variant='outline' >In Progress</Button>
-                                    <Button colorScheme={statusFilter === "rejected" ? "green" : null} onClick={handleFilterClick} name="rejected" size='sm' variant='outline' >Rejected</Button>
-                                    <Button colorScheme={statusFilter === "completed" ? "green" : null} onClick={handleFilterClick} name="completed" size='sm' variant='outline' >Completed</Button>
-                                    <Button colorScheme={statusFilter === "cancelled" ? "green" : null} onClick={handleFilterClick} name="cancelled" size='sm' variant='outline' >Cancelled</Button>
-                                </Flex>
-                                <Flex gap={2} alignItems='center' flexDir={{base : 'column', md : "row"}}>
-                                    <Input name='search' value={invoiceFilter ? invoiceFilter : ""}  onChange={(e) => {setInvoiceFilter(e.target.value)}} className="search-filter" size='sm'  placeholder='Search invoice' />
-                                    <Button onClick={handleSearch} size='sm' colorScheme='blue'>Search</Button>
-                                </Flex>
+                                <Flex flexDir="row" alignItems='center' justifyContent='space-between'>
+                                      {smallScreen ? (
+                                        <>
+                                            <Flex flexDir="column">
+                                                <Flex mb={4} gap={2} alignItems='center' flexDir="row">
+                                                    <Input name='search' value={invoiceFilter ? invoiceFilter : ""}  onChange={(e) => {setInvoiceFilter(e.target.value)}} className="search-filter" size='sm'  placeholder='Search invoice' />
+                                                    <Button onClick={handleSearch} size='sm' colorScheme='blue'>Search</Button>
+                                                </Flex>
+                                                <Flex alignItems="center">
+                                                    <Text fontSize="xl" as='b' className='mr-2' >Status :</Text>
+                                                    <Button onClick={handleOpenModal} variant="outline" className='mx-3'>{statusFilter}</Button>
+                                                    <Modal isOpen={filterModal} onClose={onClose}>
+                                                    <ModalOverlay>
+                                                        <ModalContent width='350px'>
+                                                        <ModalCloseButton onClick={() => setFilterModal(false)} />
+                                                            <ModalBody width="300px">
+                                                                <Flex flexDir="column" gap={4} justifyContent='center'>
+                                                                    <Button colorScheme={statusFilter === "all" ? "green" : null} onClick={handleFilterClick} name="all" size='sm' variant='outline' >All</Button>
+                                                                    <Button colorScheme={statusFilter === "in progress" ? "green" : null} onClick={handleFilterClick} name="in progress" size='sm' variant='outline' >In Progress</Button>
+                                                                    <Button colorScheme={statusFilter === "rejected" ? "green" : null} onClick={handleFilterClick} name="rejected" size='sm' variant='outline' >Rejected</Button>
+                                                                    <Button colorScheme={statusFilter === "completed" ? "green" : null} onClick={handleFilterClick} name="completed" size='sm' variant='outline' >Completed</Button>
+                                                                    <Button colorScheme={statusFilter === "cancelled" ? "green" : null} onClick={handleFilterClick} name="cancelled" size='sm' variant='outline' >Cancelled</Button>              
+                                                                </Flex>
+                                                        </ModalBody>
+                                                        </ModalContent>
+                                                    </ModalOverlay>
+                                                    </Modal>
+                                                </Flex>
+                                            </Flex>
+                                        </>  
+                                      ): (
+                                        <>
+                                        <Flex gap={1.5} flexDir={{base : 'column', md : "row"}}>              
+                                            <Text as='b' className='mr-2' >Status :</Text>
+                                            <Button colorScheme={statusFilter === "all" ? "green" : null} onClick={handleFilterClick} name="all" size='sm' variant='outline' >All</Button>
+                                            <Button colorScheme={statusFilter === "in progress" ? "green" : null} onClick={handleFilterClick} name="in progress" size='sm' variant='outline' >In Progress</Button>
+                                            <Button colorScheme={statusFilter === "rejected" ? "green" : null} onClick={handleFilterClick} name="rejected" size='sm' variant='outline' >Rejected</Button>
+                                            <Button colorScheme={statusFilter === "completed" ? "green" : null} onClick={handleFilterClick} name="completed" size='sm' variant='outline' >Completed</Button>
+                                            <Button colorScheme={statusFilter === "cancelled" ? "green" : null} onClick={handleFilterClick} name="cancelled" size='sm' variant='outline' >Cancelled</Button>
+                                        </Flex>
+                                        <Flex gap={2} alignItems='center' flexDir="row">
+                                            <Input name='search' value={invoiceFilter ? invoiceFilter : ""}  onChange={(e) => {setInvoiceFilter(e.target.value)}} className="search-filter" size='sm'  placeholder='Search invoice' />
+                                            <Button onClick={handleSearch} size='sm' colorScheme='blue'>Search</Button>
+                                        </Flex>
+                                        </>       
+                                    )}      
                             </Flex>
                                 <Divider className='my-2' />
                                 <Flex className='justify-center align-middle h-44 text-center m-auto p-10 mb-10 mt-10 border rounded-md' flexDir='column'>
@@ -153,59 +212,129 @@ const TenantOrders = () => {
                 </Flex>  
               </>
           ) : !orderList.length ? (
+            
+    //use skeleton for getting data from API
+
             <>
             <Toaster />
             <Flex flexDir="row">
             <TenantNavbar />
                 <Flex flexDir='column' className="ml-16 mt-3">
                     <Heading>Your orders</Heading>
-                    <Flex flexDir="column" className='border rounded-md p-3 w-[49em] mt-2'>
+                    <Flex flexDir="column" className='border rounded-md p-3 lg:w-[49em] sm:w-[35em] w-[25em] mt-2'>
                         <Flex flexDir={{base : 'column', md : "row"}}>
                         <Flex flexDir='row' alignItems='center' justifyContent='space-between'>
-                                <Flex gap={1.5} flexDir={{base : 'column', md : "row"}}>              
-                                    <Text as='b' className='mr-2' >Status :</Text>
-                                    <Button colorScheme={statusFilter === "all" ? "green" : null} onClick={handleFilterClick} name="all" size='sm' variant='outline' >All</Button>
-                                    <Button colorScheme={statusFilter === "in progress" ? "green" : null} onClick={handleFilterClick} name="in progress" size='sm' variant='outline' >In Progress</Button>
-                                    <Button colorScheme={statusFilter === "rejected" ? "green" : null} onClick={handleFilterClick} name="rejected" size='sm' variant='outline' >Rejected</Button>
-                                    <Button colorScheme={statusFilter === "completed" ? "green" : null} onClick={handleFilterClick} name="completed" size='sm' variant='outline' >Completed</Button>
-                                    <Button colorScheme={statusFilter === "cancelled" ? "green" : null} onClick={handleFilterClick} name="cancelled" size='sm' variant='outline' >Cancelled</Button>
-                                </Flex>
-                                <Flex gap={2} alignItems='center'>
-                                    <Input name='search' value={invoiceFilter ? invoiceFilter : ""}  onChange={(e) => {setInvoiceFilter(e.target.value)}} className="search-filter" size='sm'  placeholder='Search invoice' />
-                                    <Button size='sm' colorScheme='blue'>Search</Button>
-                                </Flex>
+                        {smallScreen ? (
+                                        <>
+                                            <Flex flexDir="column">
+                                                <Flex mb={4} gap={2} alignItems='center' flexDir="row">
+                                                    <Input name='search' value={invoiceFilter ? invoiceFilter : ""}  onChange={(e) => {setInvoiceFilter(e.target.value)}} className="search-filter" size='sm'  placeholder='Search invoice' />
+                                                    <Button onClick={handleSearch} size='sm' colorScheme='blue'>Search</Button>
+                                                </Flex>
+                                                <Flex alignItems="center">
+                                                    <Text fontSize="xl" as='b' className='mr-2' >Status :</Text>
+                                                    <Button onClick={handleOpenModal} variant="outline" className='mx-3'>{statusFilter}</Button>
+                                                    <Modal isOpen={filterModal} onClose={onClose}>
+                                                    <ModalOverlay>
+                                                        <ModalContent width='350px'>
+                                                        <ModalCloseButton onClick={() => setFilterModal(false)} />
+                                                            <ModalBody width="300px">
+                                                                <Flex flexDir="column" gap={4} justifyContent='center'>
+                                                                    <Button colorScheme={statusFilter === "all" ? "green" : null} onClick={handleFilterClick} name="all" size='sm' variant='outline' >All</Button>
+                                                                    <Button colorScheme={statusFilter === "in progress" ? "green" : null} onClick={handleFilterClick} name="in progress" size='sm' variant='outline' >In Progress</Button>
+                                                                    <Button colorScheme={statusFilter === "rejected" ? "green" : null} onClick={handleFilterClick} name="rejected" size='sm' variant='outline' >Rejected</Button>
+                                                                    <Button colorScheme={statusFilter === "completed" ? "green" : null} onClick={handleFilterClick} name="completed" size='sm' variant='outline' >Completed</Button>
+                                                                    <Button colorScheme={statusFilter === "cancelled" ? "green" : null} onClick={handleFilterClick} name="cancelled" size='sm' variant='outline' >Cancelled</Button>              
+                                                                </Flex>
+                                                        </ModalBody>
+                                                        </ModalContent>
+                                                    </ModalOverlay>
+                                                    </Modal>
+                                                </Flex>
+                                            </Flex>
+                                        </>  
+                                      ): (
+                                        <>
+                                        <Flex gap={1.5} flexDir={{base : 'column', md : "row"}}>              
+                                            <Text as='b' className='mr-2' >Status :</Text>
+                                            <Button colorScheme={statusFilter === "all" ? "green" : null} onClick={handleFilterClick} name="all" size='sm' variant='outline' >All</Button>
+                                            <Button colorScheme={statusFilter === "in progress" ? "green" : null} onClick={handleFilterClick} name="in progress" size='sm' variant='outline' >In Progress</Button>
+                                            <Button colorScheme={statusFilter === "rejected" ? "green" : null} onClick={handleFilterClick} name="rejected" size='sm' variant='outline' >Rejected</Button>
+                                            <Button colorScheme={statusFilter === "completed" ? "green" : null} onClick={handleFilterClick} name="completed" size='sm' variant='outline' >Completed</Button>
+                                            <Button colorScheme={statusFilter === "cancelled" ? "green" : null} onClick={handleFilterClick} name="cancelled" size='sm' variant='outline' >Cancelled</Button>
+                                        </Flex>
+                                        <Flex gap={2} alignItems='center' flexDir="row">
+                                            <Input name='search' value={invoiceFilter ? invoiceFilter : ""}  onChange={(e) => {setInvoiceFilter(e.target.value)}} className="search-filter" size='sm'  placeholder='Search invoice' />
+                                            <Button onClick={handleSearch} size='sm' colorScheme='blue'>Search</Button>
+                                        </Flex>
+                                        </>       
+                                    )} 
                             </Flex>
                             <Divider className='my-2' />
                               <Skeleton>
-                                  test
                             </Skeleton>
                                   </Flex>
                     </Flex>
                 </Flex>
             </Flex>  
           </>
-          ) : (
+              ) : (
+                      
+    // data loaded on selected filter
         <>
          <Toaster />
          <Flex flexDir="row" className='mb-2 overflow-hidden'>
             <TenantNavbar />
                 <Flex flexDir='column' className="ml-16 mt-3">
                     <Heading>Your orders</Heading>
-                    <Flex flexDir="column" className='border rounded-md p-3 w-[49em] mt-2'>
+                    <Flex flexDir="column" className='border rounded-md p-3 lg:w-[49em] sm:w-[35em] w-[25em] mt-2'>
                         <Flex flexDir="column">
                             <Flex flexDir="row" alignItems='center' justifyContent='space-between'>
-                                <Flex gap={1.5}flexDir={{base : 'column', md : "row"}}>              
-                                    <Text as='b' className='mr-2' >Status :</Text>
-                                    <Button colorScheme={statusFilter === "all" ? "green" : null} onClick={handleFilterClick} name="all" size='sm' variant='outline' >All</Button>
-                                    <Button colorScheme={statusFilter === "in progress" ? "green" : null} onClick={handleFilterClick} name="in progress" size='sm' variant='outline' >In Progress</Button>
-                                    <Button colorScheme={statusFilter === "rejected" ? "green" : null} onClick={handleFilterClick} name="rejected" size='sm' variant='outline' >Rejected</Button>
-                                    <Button colorScheme={statusFilter === "completed" ? "green" : null} onClick={handleFilterClick} name="completed" size='sm' variant='outline' >Completed</Button>
-                                    <Button colorScheme={statusFilter === "cancelled" ? "green" : null} onClick={handleFilterClick} name="cancelled" size='sm' variant='outline' >Cancelled</Button>
-                                </Flex>
-                                <Flex gap={2} alignItems='center'>
-                                    <Input name='search' value={invoiceFilter ? invoiceFilter : ""} onChange={(e) => {setInvoiceFilter(e.target.value)}} className="search-filter" size='sm'  placeholder='Search invoice' />
-                                    <Button onClick={handleSearch} size='sm' colorScheme='blue'>Search</Button>
-                                </Flex>
+                            {smallScreen ? (
+                                        <>
+                                            <Flex flexDir="column">
+                                                <Flex mb={4} gap={2} alignItems='center' flexDir="row">
+                                                    <Input name='search' value={invoiceFilter ? invoiceFilter : ""}  onChange={(e) => {setInvoiceFilter(e.target.value)}} className="search-filter" size='sm'  placeholder='Search invoice' />
+                                                    <Button onClick={handleSearch} size='sm' colorScheme='blue'>Search</Button>
+                                                </Flex>
+                                                <Flex alignItems="center">
+                                                    <Text fontSize="xl" as='b' className='mr-2' >Status :</Text>
+                                                    <Button onClick={handleOpenModal} variant="outline" className='mx-3'>{statusFilter}</Button>
+                                                    <Modal isOpen={filterModal} onClose={onClose}>
+                                                    <ModalOverlay>
+                                                        <ModalContent width='350px'>
+                                                        <ModalCloseButton onClick={() => setFilterModal(false)} />
+                                                            <ModalBody width="300px">
+                                                                <Flex flexDir="column" gap={4} justifyContent='center'>
+                                                                    <Button colorScheme={statusFilter === "all" ? "green" : null} onClick={handleFilterClick} name="all" size='sm' variant='outline' >All</Button>
+                                                                    <Button colorScheme={statusFilter === "in progress" ? "green" : null} onClick={handleFilterClick} name="in progress" size='sm' variant='outline' >In Progress</Button>
+                                                                    <Button colorScheme={statusFilter === "rejected" ? "green" : null} onClick={handleFilterClick} name="rejected" size='sm' variant='outline' >Rejected</Button>
+                                                                    <Button colorScheme={statusFilter === "completed" ? "green" : null} onClick={handleFilterClick} name="completed" size='sm' variant='outline' >Completed</Button>
+                                                                    <Button colorScheme={statusFilter === "cancelled" ? "green" : null} onClick={handleFilterClick} name="cancelled" size='sm' variant='outline' >Cancelled</Button>              
+                                                                </Flex>
+                                                        </ModalBody>
+                                                        </ModalContent>
+                                                    </ModalOverlay>
+                                                    </Modal>
+                                                </Flex>
+                                            </Flex>
+                                        </>  
+                                      ): (
+                                        <>
+                                        <Flex gap={1.5} flexDir={{base : 'column', md : "row"}}>              
+                                            <Text as='b' className='mr-2' >Status :</Text>
+                                            <Button colorScheme={statusFilter === "all" ? "green" : null} onClick={handleFilterClick} name="all" size='sm' variant='outline' >All</Button>
+                                            <Button colorScheme={statusFilter === "in progress" ? "green" : null} onClick={handleFilterClick} name="in progress" size='sm' variant='outline' >In Progress</Button>
+                                            <Button colorScheme={statusFilter === "rejected" ? "green" : null} onClick={handleFilterClick} name="rejected" size='sm' variant='outline' >Rejected</Button>
+                                            <Button colorScheme={statusFilter === "completed" ? "green" : null} onClick={handleFilterClick} name="completed" size='sm' variant='outline' >Completed</Button>
+                                            <Button colorScheme={statusFilter === "cancelled" ? "green" : null} onClick={handleFilterClick} name="cancelled" size='sm' variant='outline' >Cancelled</Button>
+                                        </Flex>
+                                        <Flex gap={2} alignItems='center' flexDir="row">
+                                            <Input name='search' value={invoiceFilter ? invoiceFilter : ""}  onChange={(e) => {setInvoiceFilter(e.target.value)}} className="search-filter" size='sm'  placeholder='Search invoice' />
+                                            <Button onClick={handleSearch} size='sm' colorScheme='blue'>Search</Button>
+                                        </Flex>
+                                        </>       
+                                    )} 
                             </Flex>
                             <Divider className='my-2' />
                             <OrderList />

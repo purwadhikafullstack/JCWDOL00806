@@ -218,7 +218,7 @@ module.exports = {
       )
       await sequelize.query(`
       CREATE EVENT reset_pass_token_${unique}
-      ON SCHEDULE AT DATE_ADD(NOW(), INTERVAL 1 MINUTE)
+      ON SCHEDULE AT DATE_ADD(NOW(), INTERVAL 1 HOUR)
       DO
       UPDATE users SET reset_pass = NULL
       WHERE id = "${id}"
