@@ -4,6 +4,7 @@ const { Op } = require("sequelize");
 
 // import modals
 const db = require("../../models/index");
+const tenant = db.tenant;
 
 module.exports = {
   reportByUser: async (req, res, next) => {
@@ -120,4 +121,120 @@ module.exports = {
       });
     }
   },
+  getTotalProfit: async (req, res, next) => {
+    try {
+      // get data from client
+      let { id } = req.dataToken;
+
+      // get tenant data
+      let checkTenants = await tenant.findOne({ where: { id } });
+
+      // check if tenant exist or not
+      if (checkTenants === null)
+        return next({
+          isError: true,
+          message: "Tenants Not Found",
+          data: null,
+          status: 400
+        })
+
+      // get total profit data
+      let getData = await sequelize.query(`
+        WITH RECURSIVE dates AS (
+          SELECT CURDATE() - INTERVAL 6 DAY AS date
+          UNION ALL
+          SELECT date + INTERVAL 1 DAY
+          FROM dates
+          WHERE date < CURDATE()
+        )
+        SELECT d.date, COALESCE(SUM(od.total_price), 0) AS total_profit
+        FROM dates d
+        LEFT JOIN (
+            SELECT o.id, o.createdAt, o.status, od.total_price
+            FROM orders o
+            JOIN order_details od ON o.id = od.order_id
+            JOIN rooms r ON o.room_id = r.id
+            JOIN properties p ON r.property_id = p.id
+            JOIN property_categories pc ON p.category_id = pc.id
+            WHERE pc.tenant_id = ?
+            AND o.status = "Completed"
+        ) od ON DATE(od.createdAt) = d.date
+        GROUP BY d.date
+        ORDER BY d.date ASC;
+      `, {
+        replacements: [id]
+      })
+
+      return res.status(200).send({
+        isError: false,
+        message: "Get Total Profit Success",
+        data: getData[0]
+      })
+    } catch (error) {
+      next({
+        isError: true,
+        message: error.message,
+        data: null,
+        status: 400
+      })
+    }
+  },
+  getTotalTransaction: async (req, res, next) => {
+    try {
+      // get data from client
+      let { id } = req.dataToken;
+
+      // get tenant data
+      let checkTenants = await tenant.findOne({ where: { id } });
+
+      // check if tenant exist or not
+      if (checkTenants === null)
+        return next({
+          isError: true,
+          message: "Tenants Not Found",
+          data: null,
+          status: 400
+        })
+
+      // get total transaction data
+      let getData = await sequelize.query(`
+        WITH RECURSIVE dates AS (
+          SELECT CURDATE() - INTERVAL 6 DAY AS date
+          UNION ALL
+          SELECT date + INTERVAL 1 DAY
+          FROM dates
+          WHERE date < CURDATE()
+        )
+        SELECT d.date, COALESCE(COUNT(o.id), 0) AS total_transaction
+        FROM dates d
+        LEFT JOIN (
+            SELECT o.id, o.createdAt, o.status
+            FROM orders o
+            JOIN order_details od ON o.id = od.order_id
+            JOIN rooms r ON o.room_id = r.id
+            JOIN properties p ON r.property_id = p.id
+            JOIN property_categories pc ON p.category_id = pc.id
+            WHERE pc.tenant_id = ?
+            AND o.status = "Completed"
+        ) o ON DATE(o.createdAt) = d.date
+        GROUP BY d.date
+        ORDER BY d.date ASC;
+      `, {
+        replacements: [id]
+      })
+
+      return res.status(200).send({
+        isError: false,
+        message: "Get Total Transaction Success",
+        data: getData[0]
+      })
+    } catch (error) {
+      next({
+        isError: true,
+        message: error.message,
+        data: null,
+        status: 400
+      })
+    }
+  }
 };

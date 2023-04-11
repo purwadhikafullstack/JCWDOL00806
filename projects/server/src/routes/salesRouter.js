@@ -12,4 +12,7 @@ Router.get(
   salesController.reportByProperty
 );
 Router.get("/get-property-list", verifyToken, salesController.getPropertyList);
+Router.get("/get-total-profit", verifyToken, salesController.getTotalProfit)
+Router.get("/get-total-transaction", verifyToken, salesController.getTotalTransaction)
+
 module.exports = Router;
