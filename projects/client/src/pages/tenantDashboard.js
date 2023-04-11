@@ -144,7 +144,7 @@ export default function TenantDashboard() {
       <Flex flexDir="row" className="md:overflow-hidden overflow-scroll" >
       <TenantNavbar />
       <Toaster />
-        <Flex flexDir='column' className="ml-16 mt-3">
+        <Flex flexDir='column' className="pl-6 pr-5  mt-3">
         <Heading>Dashboard</Heading>
         <Link to="/tenant/all-property-room-list">
           <Button
