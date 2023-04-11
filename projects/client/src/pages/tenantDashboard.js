@@ -141,7 +141,7 @@ export default function TenantDashboard() {
   }, [verified]);
   return (
     <> 
-      <Flex flexDir="row">
+      <Flex flexDir="row" className="md:overflow-hidden overflow-scroll" >
       <TenantNavbar />
       <Toaster />
         <Flex flexDir='column' className="ml-16 mt-3">

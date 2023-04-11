@@ -39,3 +39,13 @@ code {
 .search-filter {
   width: 160px !important;
 }
+
+.tenant-nav-open {
+  width: 12em !important;
+  transition: width 0.4s ease;
+}
+
+.tenant-nav-close {
+  width: 3.2em !important;
+  transition: width 0.4s ease;
+}
