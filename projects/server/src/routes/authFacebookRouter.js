@@ -8,7 +8,6 @@ Router.get('/callback',
     passport.authenticate('facebook',
         {
             failureRedirect: `http://localhost:3000/users/register?error=true`,
-            failureFlash: "Email Already Registered",
         }),
     function (req, res) {
         const token = createToken({ id: req.user.id })

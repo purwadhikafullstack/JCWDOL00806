@@ -36,29 +36,29 @@ passport.use(new FacebookStrategy({
             }
         })
         
-        // if (checkUser) {
-        //     cb(null, checkUser)
-        // } else {
-        //     if (profile.emails === undefined) {
-        //         const newUser = await users.create({
-        //         username: profile.displayName,
-        //         provider: 'facebook',
-        //         provider_id: profile.id,
-        //         is_verified: true
-        //         })
-        //         return cb(null, newUser)
-        //     } else {
+        if (checkUser) {
+            cb(null, checkUser)
+        } else {
+            if (profile.emails === undefined) {
+                const newUser = await users.create({
+                username: profile.displayName,
+                provider: 'facebook',
+                provider_id: profile.id,
+                is_verified: true
+                })
+                return cb(null, newUser)
+            } else {
 
-        //         const newUser = await users.create({
-        //             username: profile.displayName,
-        //             email: profile.emails[0]?.value || "",
-        //             provider: 'facebook',
-        //             provider_id: profile.id,
-        //             is_verified: true
-        //         })
-        //         return cb(null, newUser)
-        //     }
-        // }
+                const newUser = await users.create({
+                    username: profile.displayName,
+                    email: profile.emails[0]?.value || "",
+                    provider: 'facebook',
+                    provider_id: profile.id,
+                    is_verified: true
+                })
+                return cb(null, newUser)
+            }
+        }
 
     } catch (error) {
         console.log(error)
