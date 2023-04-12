@@ -3,12 +3,24 @@ import { Flex, Heading } from "@chakra-ui/react";
 import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
 import TenantNavbar from "../components/TenantNavbar";
+import { Line } from "react-chartjs-2";
 
 const SalesReport = () => {
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
-  const [dataByUser, setDataByUser] = useState([]);
-  const [dataByProperty, setDataByProperty] = useState([]);
+  let today = new Date();
+  let weekAgo = new Date();
+  weekAgo.setDate(weekAgo.getDate() - 7);
+  const [startDate, setStartDate] = useState(
+    weekAgo.toISOString().slice(0, 10)
+  );
+  const [endDate, setEndDate] = useState(today.toISOString().slice(0, 10));
+  const [chartDataUser, setChartDataUser] = useState({
+    labels: [],
+    datasets: [],
+  });
+  const [chartDataProperty, setChartDataProperty] = useState({
+    labels: [],
+    datasets: [],
+  });
   const [propertyId, setPropertyId] = useState(null);
   const [propertyList, setPropertyList] = useState([]);
 
@@ -18,6 +30,7 @@ const SalesReport = () => {
     const end = new Date();
     setStartDate(start.toISOString().slice(0, 10));
     setEndDate(end.toISOString().slice(0, 10));
+    console.log(startDate);
   };
   let onOpenByUser = async () => {
     try {
@@ -30,7 +43,25 @@ const SalesReport = () => {
           },
         }
       );
-      setDataByUser(response.data.data);
+
+      console.log(response.data.data);
+      let label = response.data.data.map((d) => d.date);
+      let dataset = response.data.data.map((d) => d.order_count);
+      console.log(label);
+      console.log(dataset);
+      const chartData = {
+        labels: label,
+        datasets: [
+          {
+            label: "Quantity",
+            data: dataset,
+            fill: false,
+            borderColor: "rgb(75, 192, 192)",
+            tension: 0.1,
+          },
+        ],
+      };
+      setChartDataUser(chartData);
     } catch (error) {
       console.log(error);
     }
@@ -47,9 +78,25 @@ const SalesReport = () => {
           },
         }
       );
-      setDataByProperty(response.data.data);
-      console.log();
-    } catch (error) {}
+      let label = response.data.data.map((d) => d.date);
+      let dataset = response.data.data.map((d) => d.total);
+
+      const chartData = {
+        labels: label,
+        datasets: [
+          {
+            label: "Income",
+            data: dataset,
+            fill: false,
+            borderColor: "rgb(75, 192, 192)",
+            tension: 0.1,
+          },
+        ],
+      };
+      setChartDataProperty(chartData);
+    } catch (error) {
+      console.log(error);
+    }
   };
   let getPropertyList = async () => {
     try {
@@ -64,14 +111,13 @@ const SalesReport = () => {
       );
       setPropertyList(response.data.data);
       setPropertyId(response.data.data[0].id);
+
       onOpenByProperty();
     } catch (error) {}
   };
 
   useEffect(() => {
-    onOpen();
     getPropertyList();
-    console.log(startDate);
   }, []);
 
   useEffect(() => {
@@ -86,7 +132,12 @@ const SalesReport = () => {
         <Flex flexDir="column" className="ml-16 mt-3">
           <Heading>Your Sales Report</Heading>
           <Flex flexDir="column" className="border rounded-md p-3">
-            <Flex flexDir="column"></Flex>
+            <Flex flexDir="column">
+              <Heading>Report By User Quantity</Heading>
+              <Line data={chartDataUser} />
+              <Heading>Report By Property Income</Heading>
+              <Line data={chartDataProperty} />
+            </Flex>
           </Flex>
         </Flex>
       </Flex>

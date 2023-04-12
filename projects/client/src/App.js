@@ -33,6 +33,26 @@ import TenantOrders from "./pages/TenantOrders";
 import SalesReport from "./pages/SalesReport";
 import Checkout from "./pages/Checkout";
 import UserOrders from "./pages/UserOrders";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 function App() {
   const [message, setMessage] = useState("");

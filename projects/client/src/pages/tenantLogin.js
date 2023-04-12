@@ -5,8 +5,8 @@ import { useNavigate, Link } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 
-import Navbar from '../components/Navbar'
-import Footer from '../components/Footer'
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 export default function TenantLogin() {
   const navigate = useNavigate();
@@ -18,7 +18,7 @@ export default function TenantLogin() {
 
   let loginHandler = async (value) => {
     try {
-      let encodedMail = encodeURIComponent(value.usernameOrEmail)
+      let encodedMail = encodeURIComponent(value.usernameOrEmail);
       let result = await axios.get(
         `${process.env.REACT_APP_API_BASE_URL}/tenant/login?usernameOrEmail=${encodedMail}&password=${value.password}`
       );
@@ -76,10 +76,6 @@ export default function TenantLogin() {
               name="password"
               className="text-red-500"
             />
-          </div>
-
-          <div className="flex justify-end w-full">
-            <Link to="/reset-password">Forgot Password?</Link>
           </div>
 
           <div className="flex justify-end items-end w-full mt-5">
