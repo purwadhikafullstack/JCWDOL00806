@@ -5,9 +5,9 @@ const { createToken } = require('../lib/jwt')
 
 Router.get('/', passport.authenticate("google", { scope: ["profile", "email"] }))
 Router.get('/callback', passport.authenticate("google", {
-    failureMessage: 'Cannot login to Google, please try again later!',
-    failureRedirect: 'http://localhost:3000/users/login',
-    failureFlash: true
+    // failureMessage: 'Cannot login to Google, please try again later!',
+    failureRedirect: 'http://localhost:3000/users/register?error=true',
+    // failureFlash: true
 }),
     function (req, res) {
         const token = createToken({id: req.user.id})
