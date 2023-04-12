@@ -7,10 +7,11 @@ Router.get('/', passport.authenticate('facebook', {scope: 'email'}))
 Router.get('/callback',
     passport.authenticate('facebook',
         {
-            failureRedirect: '/users/login',
+            failureRedirect: `http://localhost:3000/users/register?error=true`,
         }),
     function (req, res) {
         const token = createToken({ id: req.user.id })
+        req.flash('test', 'testagain')
         res.cookie('jwt', token)
         res.redirect('http://localhost:3000/passport-login')
     });
