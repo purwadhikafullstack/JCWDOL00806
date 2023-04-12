@@ -80,9 +80,7 @@ const SalesReport = () => {
       );
       let label = response.data.data.map((d) => d.date);
       let dataset = response.data.data.map((d) => d.total);
-      console.log(label);
-      console.log("baru kesini");
-      console.log(dataset);
+
       const chartData = {
         labels: label,
         datasets: [
@@ -113,7 +111,7 @@ const SalesReport = () => {
       );
       setPropertyList(response.data.data);
       setPropertyId(response.data.data[0].id);
-      console.log("kesini dulu");
+
       onOpenByProperty();
     } catch (error) {}
   };
