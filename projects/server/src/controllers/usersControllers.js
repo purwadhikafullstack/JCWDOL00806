@@ -539,14 +539,10 @@ module.exports = {
   newProfile: async (req, res, next) => {
     const t = await sequelize.transaction();
     try {
-      let newData = req.body;
       let id = req.params.id;
 
       await user_details.create(
         {
-          full_name: newData.full_name,
-          gender: newData.gender,
-          birthdate: newData.birthdate,
           users_id: id,
         },
         { transaction: t }
@@ -570,18 +566,36 @@ module.exports = {
   editProfile: async (req, res, next) => {
     const t = await sequelize.transaction();
     try {
-      let newData = req.body;
-      let id = req.params.id;
+      let {data} = req.body;
+      let users_id = req.params.id;
+      let { title } = req.query
 
-      await user_details.update(
-        {
-          full_name: newData.full_name,
-          gender: newData.gender,
-          birthdate: newData.birthdate,
-        },
-        { where: { users_id: id } },
-        { transaction: t }
-      );
+      console.log(data)
+      console.log(users_id)
+      console.log(title)
+
+      if (title === "Full Name") {
+        await user_details.update(
+          {
+            full_name : data
+          },
+          {where : {users_id}}
+        ), {transaction : t}
+      } else if (title === "Gender") {
+        await user_details.update(
+          {
+            gender : data
+          },
+          {where : {users_id}}
+        ), {transaction : t}
+      } else {
+        await user_details.update(
+          {
+            birthdate : data
+          },
+          {where : {users_id}}
+        ), {transaction : t}
+      }
       t.commit();
       return res.status(201).send({
         isError: false,
