@@ -8,7 +8,6 @@ const tenant = db.tenant;
 
 module.exports = {
   reportByUser: async (req, res, next) => {
-    // const t = await sequelize.transaction();
     try {
       let { id } = req.dataToken;
       let { startDate, endDate } = req.query;
@@ -56,7 +55,6 @@ module.exports = {
   },
 
   reportByProperty: async (req, res, next) => {
-    // const t = await sequelize.transaction();
     try {
       let { id } = req.dataToken;
       let { startDate, endDate, property_id } = req.query;
@@ -135,11 +133,12 @@ module.exports = {
           isError: true,
           message: "Tenants Not Found",
           data: null,
-          status: 400
-        })
+          status: 400,
+        });
 
       // get total profit data
-      let getData = await sequelize.query(`
+      let getData = await sequelize.query(
+        `
         WITH RECURSIVE dates AS (
           SELECT CURDATE() - INTERVAL 6 DAY AS date
           UNION ALL
@@ -161,22 +160,24 @@ module.exports = {
         ) od ON DATE(od.createdAt) = d.date
         GROUP BY d.date
         ORDER BY d.date ASC;
-      `, {
-        replacements: [id]
-      })
+      `,
+        {
+          replacements: [id],
+        }
+      );
 
       return res.status(200).send({
         isError: false,
         message: "Get Total Profit Success",
-        data: getData[0]
-      })
+        data: getData[0],
+      });
     } catch (error) {
       next({
         isError: true,
         message: error.message,
         data: null,
-        status: 400
-      })
+        status: 400,
+      });
     }
   },
   getTotalTransaction: async (req, res, next) => {
@@ -193,11 +194,12 @@ module.exports = {
           isError: true,
           message: "Tenants Not Found",
           data: null,
-          status: 400
-        })
+          status: 400,
+        });
 
       // get total transaction data
-      let getData = await sequelize.query(`
+      let getData = await sequelize.query(
+        `
         WITH RECURSIVE dates AS (
           SELECT CURDATE() - INTERVAL 6 DAY AS date
           UNION ALL
@@ -219,22 +221,24 @@ module.exports = {
         ) o ON DATE(o.createdAt) = d.date
         GROUP BY d.date
         ORDER BY d.date ASC;
-      `, {
-        replacements: [id]
-      })
+      `,
+        {
+          replacements: [id],
+        }
+      );
 
       return res.status(200).send({
         isError: false,
         message: "Get Total Transaction Success",
-        data: getData[0]
-      })
+        data: getData[0],
+      });
     } catch (error) {
       next({
         isError: true,
         message: error.message,
         data: null,
-        status: 400
-      })
+        status: 400,
+      });
     }
-  }
+  },
 };

@@ -114,8 +114,6 @@ const SalesReport = () => {
       console.log(response.data);
       setPropertyList(response.data.data);
       setPropertyId(response.data.data[0].id);
-
-      // onOpenByProperty();
     } catch (error) {
       console.log(error);
     }
