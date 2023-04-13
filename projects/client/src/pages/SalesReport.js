@@ -47,11 +47,9 @@ const SalesReport = () => {
         }
       );
 
-      console.log(response.data.data);
       let label = response.data.data.map((d) => d.date);
       let dataset = response.data.data.map((d) => d.order_count);
-      console.log(label);
-      console.log(dataset);
+
       const chartData = {
         labels: label,
         datasets: [
@@ -112,17 +110,21 @@ const SalesReport = () => {
           },
         }
       );
+
       setPropertyList(response.data.data);
       setPropertyId(response.data.data[0].id);
-
-      onOpenByProperty();
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
     getPropertyList();
   }, []);
 
+  useEffect(() => {
+    onOpenByProperty();
+  }, [propertyId]);
   useEffect(() => {
     onOpenByUser();
   }, [startDate, endDate]);
