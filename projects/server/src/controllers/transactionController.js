@@ -443,15 +443,19 @@ module.exports = {
             },
           ],
         },
+        lock: true,
+        transaction: t,
       });
 
-      if (existingBooking.length > 0)
+      if (existingBooking.length > 0)  {
+        t.rollback();
         return res.status(400).send({
           isError: true,
           message: "Room Already Booked",
           data: null,
         });
-
+      }
+        
       // check if the room is unavailable for the specified dates
       let unavailableRoom = await room_status.findAll({
         where: {
@@ -477,14 +481,18 @@ module.exports = {
             },
           ],
         },
+        lock: true,
+        transaction: t,
       });
 
-      if (unavailableRoom.length > 0)
+      if (unavailableRoom.length > 0) {
+        t.rollback();
         return res.status(400).send({
           isError: true,
           message: "Room Unavailable",
           data: null,
         });
+      }
 
       // get room data
       let getRoom = await room.findOne({
@@ -546,6 +554,7 @@ module.exports = {
       `,
         {
           replacements: [insertId],
+          transaction: t,
         }
       );
 
