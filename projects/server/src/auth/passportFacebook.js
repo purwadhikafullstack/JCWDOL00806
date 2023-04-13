@@ -1,6 +1,7 @@
 const passport = require('passport')
 const FacebookStrategy = require('passport-facebook').Strategy
 const {sequelize} = require('../../models')
+const {Op} = require('sequelize')
 
 require('dotenv').config()
 
@@ -11,14 +12,30 @@ passport.use(new FacebookStrategy({
     clientID: process.env.FACEBOOK_APP_ID,
     clientSecret: process.env.FACEBOOK_APP_SECRET,
     callbackURL: `${process.env.SERVER_URL}/api/auth/facebook/callback`,
-    profileFields:['displayName', 'email']
+    profileFields: ['displayName', 'email']
 }, async function (accessToken, refreshToken, profile, cb) {
     try {
+        console.log(profile, 'profile')
+        const checkEmail = await users.findOne({
+            where: {
+                [Op.and]: [
+                    { email: profile?.emails[0].value },
+                    {
+                        [Op.or]: [
+                        { provider: 'website' },
+                        {provider: "google"}       
+                    ]}
+               ]
+            }
+        })
+        if (checkEmail) return cb(null, false, { message: 'Email already registered' })
+        
         const checkUser = await users.findOne({
             where: {
                 provider_id: profile.id
             }
         })
+        
         if (checkUser) {
             cb(null, checkUser)
         } else {
@@ -39,7 +56,6 @@ passport.use(new FacebookStrategy({
                     provider_id: profile.id,
                     is_verified: true
                 })
-
                 return cb(null, newUser)
             }
         }

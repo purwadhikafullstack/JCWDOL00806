@@ -5,6 +5,9 @@ import axios from "axios";
 import TenantNavbar from "../components/TenantNavbar";
 import { Line } from "react-chartjs-2";
 
+import TransactionChart from "../components/TransactionChart";
+import TotalOrderChart from "../components/TotalOrderChart";
+
 const SalesReport = () => {
   let today = new Date();
   let weekAgo = new Date();
@@ -132,13 +135,24 @@ const SalesReport = () => {
   }, [startDate, endDate]);
 
   return (
-    <>
+    <div>
       <Toaster />
       <Flex flexDir="row">
         <TenantNavbar />
-        <Flex flexDir="column" className="ml-16 mt-3">
+        <Flex flexDir="column" className="ml-16 mt-3 w-4/5">
           <Heading>Your Sales Report</Heading>
-          <Flex flexDir="column" className="border rounded-md p-3">
+
+          <div className="mt-5 flex xl:flex-row flex-col gap-5">
+            <div className="xl:w-3/5 w-full">
+              <TransactionChart />
+            </div>
+
+            <div className="xl:w-2/5 w-full">
+              <TotalOrderChart />
+            </div>
+          </div>
+
+          <Flex flexDir="column" className="border rounded-md p-3 mt-5">
             <Flex flexDir="column">
               <Heading>Report By User Quantity</Heading>
               <Line data={chartDataUser} />
@@ -148,7 +162,7 @@ const SalesReport = () => {
           </Flex>
         </Flex>
       </Flex>
-    </>
+    </div>
   );
 };
 

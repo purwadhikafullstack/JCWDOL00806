@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import {useSearchParams, useNavigate} from 'react-router-dom'
-import {Flex, Heading, Button, Text, Divider, Skeleton, Input, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody} from '@chakra-ui/react'
+import {Flex, Heading, Button, Text, Divider, Skeleton, Input, useDisclosure, Modal, ModalOverlay, ModalContent, ModalCloseButton, ModalBody} from '@chakra-ui/react'
 import TenantNavbar from '../components/TenantNavbar'
 import OrderCard from '../components/OrderCard'
 import axios from 'axios'
@@ -149,11 +149,11 @@ const TenantOrders = () => {
     // no transaction in selected filter
               <>
                 <Toaster />
-                <Flex flexDir="row">
+                <Flex flexDir="row" className='overflow-hidden'>
                 <TenantNavbar />
                     <Flex flexDir='column' className="pl-2 pr-1 sm:pl-6 sm:pr-5 mt-3 overflow-scroll md:overflow-hidden">
                         <Heading>Your orders</Heading>
-                        <Flex flexDir="column" className='border rounded-md p-3 lg:w-[49em] md:w-[42em] sm:w-[35em] w-[310px]  mt-2'>
+                        <Flex flexDir="column" className='border max-h-[81vh] overflow-auto rounded-md p-3 lg:w-[49em] md:w-[42em] sm:w-[35em] w-[310px]  mt-2'>
                             <Flex flexDir="column">
                                 <Flex flexDir="row" alignItems='center' justifyContent='space-between'>
                                       {smallScreen ? (
@@ -217,11 +217,11 @@ const TenantOrders = () => {
 
             <>
             <Toaster />
-            <Flex flexDir="row">
+            <Flex flexDir="row" className='overflow-hidden'>
             <TenantNavbar />
                 <Flex flexDir='column' className="pl-2 pr-1 sm:pl-6 sm:pr-5 mt-3 overflow-scroll md:overflow-hidden">
                     <Heading>Your orders</Heading>
-                    <Flex flexDir="column" className='border rounded-md p-3 lg:w-[49em] md:w-[42em] sm:w-[35em] w-[310px] mt-2'>
+                    <Flex flexDir="column" className='border max-h-[81vh] overflow-auto rounded-md p-3 lg:w-[49em] md:w-[42em] sm:w-[35em] w-[310px] mt-2'>
                         <Flex flexDir={{base : 'column', md : "row"}}>
                         <Flex flexDir='row' alignItems='center' justifyContent='space-between'>
                         {smallScreen ? (
@@ -283,11 +283,11 @@ const TenantOrders = () => {
     // data loaded on selected filter
         <>
          <Toaster />
-         <Flex flexDir="row" className='mb-2 overflow-hidden'>
+         <Flex flexDir="row" className='overflow-hidden'>
             <TenantNavbar />
-                <Flex flexDir='column' className="pl-2 pr-1 sm:pl-6 sm:pr-5 mt-3 overflow-scroll md:overflow-hidden">
+                <Flex flexDir='column' className="pl-2 pr-1 sm:pl-6 sm:pr-5 mt-3 overflow-hidden md:overflow-hidden">
                     <Heading>Your orders</Heading>
-                    <Flex flexDir="column" className='border rounded-md p-3 lg:w-[49em] md:w-[42em] sm:w-[35em] w-[310px] mt-2'>
+                    <Flex flexDir="column" className='border max-h-[81vh] overflow-auto rounded-md p-3 lg:w-[49em] md:w-[42em] sm:w-[35em] w-[310px] mt-2'>
                         <Flex flexDir="column">
                             <Flex flexDir="row" alignItems='center' justifyContent='space-between'>
                             {smallScreen ? (

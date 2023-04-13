@@ -18,7 +18,7 @@ const UserVerify = () => {
     const onVerify = async () => {
         try {
             // validate token
-            await axios.post(`http://localhost:8000/users/verify-otp`, {
+            await axios.post(`${process.env.REACT_APP_API_BASE_URL}/users/verify-otp`, {
                 otp_number: otp
             }, {
                 headers: {
@@ -48,7 +48,7 @@ const UserVerify = () => {
     const onResendOtp = async () => {
         try {
             // resend otp to users email
-            await axios.get(`http://localhost:8000/users/send-otp`, {
+            await axios.get(`${process.env.REACT_APP_API_BASE_URL}/users/send-otp`, {
                 headers: {
                     'Authorization': userToken
                 }
@@ -80,7 +80,7 @@ const UserVerify = () => {
             if (!token) throw { message: 'Token is missing' }
 
             // get users data
-            let response = await axios.get(`http://localhost:8000/users/user-data`, {
+            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/users/user-data`, {
                 headers: {
                     'Authorization': token
                 }
@@ -96,7 +96,7 @@ const UserVerify = () => {
 
             // send first otp after register new user
             if (response.data.data.otp_count === 0)
-                await axios.get(`http://localhost:8000/users/send-otp`, {
+                await axios.get(`${process.env.REACT_APP_API_BASE_URL}/users/send-otp`, {
                     headers: {
                         'Authorization': token
                     }

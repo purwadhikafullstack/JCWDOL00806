@@ -4,6 +4,7 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy
 
 // import sequelize
 const { sequelize } = require('../../models')
+const {Op} = require('sequelize')
 
 // import modals
 const db = require('../../models/index')
@@ -17,6 +18,21 @@ passport.use(new GoogleStrategy(
         passReqToCallback: true
     }, async (req, accessToken, refreshToken, profile, cb) => {
         try {
+
+            const checkEmail = await users.findOne({
+                where: {
+                    [Op.and]: [
+                        { email: profile.emails[0]?.value },
+                        {
+                            [Op.or]: [
+                            { provider: 'website' },
+                            {provider: "facebook"}       
+                        ]}
+                   ]
+                }
+            })
+            if (checkEmail) return cb(null, false, { message: 'Email already registered' })
+
             // get users data
             const checkUser = await users.findOne({ where: { 
                 provider_id: profile.id

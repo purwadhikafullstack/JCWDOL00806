@@ -1,6 +1,6 @@
-import {useState} from 'react'
+import {useState, useEffect} from 'react'
 import toast, {Toaster} from 'react-hot-toast'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { Button, FormControl, FormLabel, Input, FormErrorMessage, VStack } from '@chakra-ui/react'
@@ -12,8 +12,17 @@ import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 
 const RegisterPage = () => {
+  
+  const [searchParam, setSearchParam] = useSearchParams()
+  const [query, setQuery] = useState("")
 
-  // const [data, setData] = useState({})
+  useEffect(() => {
+    setQuery(searchParam.get('error'))
+    if (query) {
+      toast.error('Invalid or Email address is already registered')
+    }
+  }, [query])
+
   const navigate = useNavigate()
   const onSubmit = async (values) => {
     try {

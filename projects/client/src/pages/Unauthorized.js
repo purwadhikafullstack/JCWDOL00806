@@ -1,7 +1,10 @@
 import React from 'react'
+import Navbar from '../components/Navbar'
 
 const Unauthorized = () => {
     return (
+        <>
+        <Navbar />
         <div
             className='flex flex-col justify-center 
             items-center h-screen px-3'
@@ -21,6 +24,7 @@ const Unauthorized = () => {
                 </p>
             </div>
         </div>
+        </>
     )
 }
 
