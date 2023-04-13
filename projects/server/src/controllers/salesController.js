@@ -8,7 +8,7 @@ const tenant = db.tenant;
 
 module.exports = {
   reportByUser: async (req, res, next) => {
-    const t = await sequelize.transaction();
+    // const t = await sequelize.transaction();
     try {
       let { id } = req.dataToken;
       let { startDate, endDate } = req.query;
@@ -56,7 +56,7 @@ module.exports = {
   },
 
   reportByProperty: async (req, res, next) => {
-    const t = await sequelize.transaction();
+    // const t = await sequelize.transaction();
     try {
       let { id } = req.dataToken;
       let { startDate, endDate, property_id } = req.query;

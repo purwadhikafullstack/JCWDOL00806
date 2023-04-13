@@ -44,11 +44,9 @@ const SalesReport = () => {
         }
       );
 
-      console.log(response.data.data);
       let label = response.data.data.map((d) => d.date);
       let dataset = response.data.data.map((d) => d.order_count);
-      console.log(label);
-      console.log(dataset);
+
       const chartData = {
         labels: label,
         datasets: [
@@ -100,6 +98,7 @@ const SalesReport = () => {
   };
   let getPropertyList = async () => {
     try {
+      console.log("test");
       let token = localStorage.getItem("tenantToken".replace(/"/g, ""));
       let response = await axios.get(
         `${process.env.REACT_APP_API_BASE_URL}/sales/get-property-list`,
@@ -109,17 +108,25 @@ const SalesReport = () => {
           },
         }
       );
+      console.log(response.data);
       setPropertyList(response.data.data);
       setPropertyId(response.data.data[0].id);
 
-      onOpenByProperty();
-    } catch (error) {}
+      // onOpenByProperty();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
+  console.log(propertyId);
+  console.log(propertyList);
   useEffect(() => {
     getPropertyList();
   }, []);
 
+  useEffect(() => {
+    onOpenByProperty();
+  }, [propertyId]);
   useEffect(() => {
     onOpenByUser();
   }, [startDate, endDate]);
