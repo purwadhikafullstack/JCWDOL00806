@@ -101,7 +101,6 @@ const SalesReport = () => {
   };
   let getPropertyList = async () => {
     try {
-      console.log("test");
       let token = localStorage.getItem("tenantToken".replace(/"/g, ""));
       let response = await axios.get(
         `${process.env.REACT_APP_API_BASE_URL}/sales/get-property-list`,
@@ -111,7 +110,7 @@ const SalesReport = () => {
           },
         }
       );
-      console.log(response.data);
+
       setPropertyList(response.data.data);
       setPropertyId(response.data.data[0].id);
     } catch (error) {
@@ -119,8 +118,6 @@ const SalesReport = () => {
     }
   };
 
-  console.log(propertyId);
-  console.log(propertyList);
   useEffect(() => {
     getPropertyList();
   }, []);
