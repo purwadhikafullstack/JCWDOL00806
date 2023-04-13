@@ -15,43 +15,61 @@ import {
   CardBody,
   Divider,
   Center,
+  InputGroup,
+  InputRightElement,
+  useDisclosure
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
+import EditProfileModal from "../components/EditProfileModal";
 
 const UserDetail = () => {
   const navigate = useNavigate();
+  const {onClose} = useDisclosure()
 
   const [profile, setProfile] = useState(null);
   const [userData, setUserData] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [images, setImages] = useState(null);
+  const [usersId, setUsersId] = useState("")
 
   useEffect(() => {
     getUserDetail();
   }, []);
 
   const getUserDetail = async () => {
-    let token = localStorage.getItem("userToken".replace(/"/g, ""));
-    let response = await axios.post(
-      `${process.env.REACT_APP_API_BASE_URL}/users/user-profile`,
-      null,
-      { headers: { authorization: token } }
-    );
-    let userData = await axios.post(
-      `${process.env.REACT_APP_API_BASE_URL}/users/getuser`,
-      null,
-      { headers: { authorization: token } }
-    );
-    if (!response.data.data.length) setProfile([]);
-    else {
-      setProfile(response.data.data[0]);
-      console.log(profile);
+    try {
+      let token = localStorage.getItem("userToken".replace(/"/g, ""));
+      let response = await axios.post(
+        `${process.env.REACT_APP_API_BASE_URL}/users/user-profile`,
+        null,
+        { headers: { authorization: token } }
+      );
+      setUsersId(response.data.users_id)
+      let userData = await axios.post(
+        `${process.env.REACT_APP_API_BASE_URL}/users/getuser`,
+        null,
+        { headers: { authorization: token } }
+      );
+      if (!response.data.data.length) {
+        await axios.post(`${process.env.REACT_APP_API_BASE_URL}/users/new-profile/${response.data.users_id}`, null)
+        setProfile([]);
+      } else {
+        setProfile(response.data.data[0]);
+      }
+      setUserData(userData.data.data[0]); 
+    } catch (error) {
+      if (error.response.data.message === 'jwt expired') {
+        toast.error("Please login first")
+        setTimeout(() => {
+            navigate('/users/login')
+        }, 1500);
     }
-    setUserData(userData.data.data[0]);
+    console.log(error.response.data.message)
+    }
   };
 
   const profilePicHandler = async () => {
@@ -90,7 +108,6 @@ const UserDetail = () => {
           <div className='relative z-10 border shadow-md'>
             <Navbar />
           </div>
-        
           <div className="flex-1">
             <Card className="sm:w-[45%] mx-auto my-5">
               <CardHeader>
@@ -143,27 +160,35 @@ const UserDetail = () => {
                     <Heading size="xs" textTransform="uppercase">
                       Full Name
                     </Heading>
-                    <Input marginTop={2} disabled value={profile?.full_name} />
+                    <InputGroup >
+                      <Input marginTop={2} disabled value={profile?.full_name} />
+                      <InputRightElement width='4rem' >
+                        <EditProfileModal refresh={getUserDetail} title='Full Name' onClose={onClose} profile={profile} usersId={usersId} />
+                      </InputRightElement>
+                    </InputGroup>
                   </Box>
                   <Box>
                     <Heading size="xs" textTransform="uppercase">
                       Gender
                     </Heading>
-                    <Input marginTop={2} disabled value={profile?.gender} />
+                    <InputGroup >
+                      <Input marginTop={2} disabled value={profile?.gender} />
+                      <InputRightElement width='4rem' >
+                        <EditProfileModal refresh={getUserDetail} title='Gender' onClose={onClose} profile={profile} usersId={usersId} />
+                      </InputRightElement>
+                    </InputGroup>
                   </Box>
                   <Box>
                     <Heading size="xs" textTransform="uppercase">
                       Date of Birth
                     </Heading>
-                    <Input marginTop={2} disabled value={profile?.birthdate} />
+                    <InputGroup >
+                      <Input marginTop={2} disabled value={profile?.birthdate} />
+                      <InputRightElement width='4rem' >
+                        <EditProfileModal refresh={getUserDetail} title='Date of Birth' onClose={onClose} profile={profile} usersId={usersId} />
+                      </InputRightElement>
+                    </InputGroup>
                   </Box>
-                  <Button
-                    onClick={() => navigate("/users/edit-detail")}
-                    colorScheme="messenger"
-                    type="submit"
-                  >
-                    Edit your profile
-                  </Button>
                 </Stack>
               </CardBody>
               <Center>
