@@ -9,6 +9,7 @@ Router.post("/register", usersControllers.register);
 Router.get("/checkusername", usersControllers.checkUsername);
 Router.get("/checkemail", usersControllers.checkEmail);
 Router.get("/login", usersControllers.login);
+Router.post("/keep-login", verifyToken, usersControllers.keepLogin)
 Router.get("/userdetail", usersControllers.userDetail);
 Router.get("/check-token/:token", usersControllers.checkToken)
 Router.get("/reset-confirm", usersControllers.resetConfirm);

@@ -146,6 +146,26 @@ module.exports = {
       })
     }
   },
+  keepLogin: async (req, res, next) => {
+    try {
+      let {id} = req.dataToken
+
+      if (id)
+        return res.status(201).send({
+          isError: false,
+          message: "User is logged in",
+          data: null
+        })
+    } catch (error) {
+      console.log(error)
+      next({
+        isError: true,
+        message: error.message,
+        data: null,
+        status: 400
+      })
+    }
+  },
   userDetail: async (req, res, next) => {
     try {
       let email = req.query.email;

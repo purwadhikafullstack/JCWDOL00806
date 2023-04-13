@@ -55,7 +55,8 @@ ChartJS.register(
 
 function App() {
   const [message, setMessage] = useState("");
-
+  const [isAuthUser, setIsAuthUser] = useState(false)
+  const [isAuthTenant, setIsAuthTenant] = useState(false)
   useEffect(() => {
     (async () => {
       const { data } = await axios.get(
@@ -64,16 +65,53 @@ function App() {
       setMessage(data?.message || "");
     })();
   }, []);
+
+  useEffect(() => {
+    checkLoginUser()
+    checkLoginTenant()
+  }, [])
+
+  const checkLoginUser = async () => {
+    try {
+      let token = localStorage.getItem("userToken")
+      let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/users/keep-login`, null,
+        { headers: {Authorization : token}}
+      )
+      if (response) {
+        setIsAuthUser(true)
+      } else {
+        setIsAuthUser(false)
+      }
+    } catch (error) {
+    }
+  }
+
+  const checkLoginTenant = async () => {
+    try {
+      let tenantToken = localStorage.getItem('tenantToken')
+      let tenantResponse = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/tenant/keep-login`, null,
+      { headers: {Authorization : tenantToken}}
+      )
+      if (tenantResponse) {
+        setIsAuthTenant(true)
+      } else {
+        setIsAuthTenant(false)
+      }
+    } catch (error) {
+      
+    }
+  }
+
   return (
     <>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/users/register" element={<RegisterPage />} />
+        <Route path="/users/register" element={ isAuthUser ? <Navigate to="/" /> : <RegisterPage />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/new-password/:id" element={<NewPassword />} />
-        <Route path="/tenant/register" element={<TenantRegister />} />
-        <Route path="/tenant/login" element={<TenantLogin />} />
-        <Route path="/users/login" element={<Login />} />
+        <Route path="/tenant/register" element={ isAuthTenant ? <Navigate to="/tenant/dashboard" /> : <TenantRegister />} />
+        <Route path="/tenant/login" element={ isAuthTenant ? <Navigate to="/tenant/dashboard" /> : <TenantLogin />} />
+        <Route path="/users/login" element={ isAuthUser ? <Navigate to="/" /> : <Login />} />
         <Route path="/tenant/dashboard" element={<TenantDashboard />} />
         <Route path="/tenant/property" element={<TenantProperty />} />
         <Route path="/users/verify" element={<UserVerify />} />
