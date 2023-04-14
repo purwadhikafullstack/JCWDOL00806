@@ -11,7 +11,7 @@ import TotalOrderChart from "../components/TotalOrderChart";
 const SalesReport = () => {
   let today = new Date();
   let weekAgo = new Date();
-  weekAgo.setDate(weekAgo.getDate() - 7);
+  weekAgo.setDate(weekAgo.getDate() - 6);
   const [startDate, setStartDate] = useState(
     weekAgo.toISOString().slice(0, 10)
   );
@@ -27,14 +27,6 @@ const SalesReport = () => {
   const [propertyId, setPropertyId] = useState(null);
   const [propertyList, setPropertyList] = useState([]);
 
-  let onOpen = async () => {
-    const start = new Date();
-    start.setDate(start.getDate() - 7);
-    const end = new Date();
-    setStartDate(start.toISOString().slice(0, 10));
-    setEndDate(end.toISOString().slice(0, 10));
-    console.log(startDate);
-  };
   let onOpenByUser = async () => {
     try {
       let token = localStorage.getItem("tenantToken".replace(/"/g, ""));
@@ -57,7 +49,12 @@ const SalesReport = () => {
             label: "Quantity",
             data: dataset,
             fill: false,
-            borderColor: "rgb(75, 192, 192)",
+            borderColor: "#207BF2",
+            backgroundColor: "#ADD8E6",
+            pointBackgroundColor: "#ADD8E6",
+            pointBorderColor: "#ADD8E6",
+            pointHoverBackgroundColor: "#ADD8E6",
+            pointHoverBorderColor: "#ADD8E6",
             tension: 0.1,
           },
         ],
@@ -86,11 +83,16 @@ const SalesReport = () => {
         labels: label,
         datasets: [
           {
-            label: "Income",
+            label: "Income (Rp)",
             data: dataset,
             fill: false,
-            borderColor: "rgb(75, 192, 192)",
             tension: 0.1,
+            borderColor: "#207BF2",
+            backgroundColor: "#ADD8E6",
+            pointBackgroundColor: "#ADD8E6",
+            pointBorderColor: "#ADD8E6",
+            pointHoverBackgroundColor: "#ADD8E6",
+            pointHoverBorderColor: "#ADD8E6",
           },
         ],
       };
@@ -99,6 +101,7 @@ const SalesReport = () => {
       console.log(error);
     }
   };
+
   let getPropertyList = async () => {
     try {
       let token = localStorage.getItem("tenantToken".replace(/"/g, ""));
@@ -111,11 +114,93 @@ const SalesReport = () => {
         }
       );
 
+      console.log(response.data.data);
       setPropertyList(response.data.data);
       setPropertyId(response.data.data[0].id);
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const options = {
+    maintainAspectRatio: false,
+    responsive: true,
+    plugins: {
+      legend: {
+        display: false,
+      },
+    },
+    scales: {
+      x: {
+        grid: {
+          display: false,
+        },
+        ticks: {
+          color: "rgba(255,255,255,0.6)",
+          font: {
+            family: "Arial",
+            size: 12,
+          },
+          padding: 20,
+        },
+      },
+      y: {
+        ticks: {
+          color: "rgba(255,255,255,0.6)",
+          font: {
+            family: "Arial",
+            size: 12,
+          },
+        },
+        grid: {
+          color: "rgba(255,255,255,0.1)",
+        },
+      },
+    },
+  };
+
+  const optionsForMoney = {
+    maintainAspectRatio: false,
+    responsive: true,
+    plugins: {
+      legend: {
+        display: false,
+      },
+    },
+    scales: {
+      x: {
+        grid: {
+          display: false,
+        },
+        ticks: {
+          color: "rgba(255,255,255,0.6)",
+          font: {
+            family: "Arial",
+            size: 12,
+          },
+          padding: 20,
+        },
+      },
+      y: {
+        ticks: {
+          color: "rgba(255,255,255,0.6)",
+          font: {
+            family: "Arial",
+            size: 12,
+          },
+          callback: function (value, index, values) {
+            if (value == 0) return "Rp. " + value;
+            else if (value < 1000000) return "Rp. " + value / 1000 + " K";
+            else if (value < 1000000000)
+              return "Rp. " + value / 1000000 + " Jt";
+            else return "Rp. " + value / 1000000000 + " M";
+          },
+        },
+        grid: {
+          color: "rgba(255,255,255,0.1)",
+        },
+      },
+    },
   };
 
   useEffect(() => {
@@ -147,14 +232,37 @@ const SalesReport = () => {
             </div>
           </div>
 
-          <Flex flexDir="column" className="border rounded-md p-3 mt-5">
-            <Flex flexDir="column">
-              <Heading>Report By User Quantity</Heading>
-              <Line data={chartDataUser} />
-              <Heading>Report By Property Income</Heading>
-              <Line data={chartDataProperty} />
-            </Flex>
-          </Flex>
+          <div className="bg-[#19204D] p-5 text-white rounded-lg h-[100%] border shadow-lg mt-5">
+            <h3 className="font-semibold text-2xl">User Quantity</h3>
+            <div className="mt-5 min-h-[400px]">
+              <Line data={chartDataUser} options={options} />
+            </div>
+          </div>
+          <div className="flex flex-col sm:flex-row align-middle justify-center mt-5 text-center items-center">
+            <h3>Select Your Desired Property</h3>
+            <select
+              className="w-2/5 text-center border border-gray-400 mx-4 sm:my-2"
+              onChange={(event) => setPropertyId(event.target.value)}
+            >
+              {propertyList?.map((val, i) => {
+                return (
+                  <option
+                    key={i}
+                    className="font-semibold text-red-600"
+                    value={val.id}
+                  >
+                    {val.name}
+                  </option>
+                );
+              })}
+            </select>
+          </div>
+          <div className="bg-[#19204D] p-5 text-white rounded-lg h-[100%] border mt-5 shadow-lg">
+            <h3 className="font-semibold text-2xl">Property Profit</h3>
+            <div className="mt-5 min-h-[400px]">
+              <Line data={chartDataProperty} options={optionsForMoney} />
+            </div>
+          </div>
         </Flex>
       </Flex>
     </div>
