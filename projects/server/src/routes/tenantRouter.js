@@ -12,6 +12,7 @@ Router.get("/checkEmail", tenantController.checkEmail);
 Router.get("/checkPhone", tenantController.checkPhone);
 Router.post("/verify", uploadImages, tenantController.verifyTenant);
 Router.get("/login", tenantController.login);
+Router.post('/keep-login',verifyToken, tenantController.keepLogin)
 Router.get("/category", tenantController.getCategory);
 Router.post("/category", tenantController.createCategory);
 Router.patch("/category", tenantController.updateCategory);
