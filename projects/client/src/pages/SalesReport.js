@@ -5,8 +5,8 @@ import axios from "axios";
 import TenantNavbar from "../components/TenantNavbar";
 import { Line } from "react-chartjs-2";
 
-import TransactionChart from "../components/TransactionChart";
 import TotalOrderChart from "../components/TotalOrderChart";
+import TotalProfitChart from "../components/TotalProfitChart";
 
 const SalesReport = () => {
   let today = new Date();
@@ -224,7 +224,7 @@ const SalesReport = () => {
 
           <div className="mt-5 flex xl:flex-row flex-col gap-5">
             <div className="xl:w-3/5 w-full">
-              <TransactionChart />
+              <TotalProfitChart />
             </div>
 
             <div className="xl:w-2/5 w-full">

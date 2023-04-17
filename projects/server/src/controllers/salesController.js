@@ -123,6 +123,50 @@ module.exports = {
     try {
       // get data from client
       let { id } = req.dataToken;
+      let { sort_by, order_by, start_date, end_date } = req.query
+
+      // check start and end date value
+      start_date = start_date === "null" ? null : start_date
+      end_date = end_date === "null" ? null : end_date
+
+      // set reqursive query
+      if (!start_date || !end_date)
+        reqursiveQuery = `
+          SELECT CURDATE() - INTERVAL 6 DAY AS date
+          UNION ALL
+          SELECT date + INTERVAL 1 DAY
+          FROM dates
+          WHERE date < CURDATE()
+        `
+      else
+        reqursiveQuery = `
+          SELECT DATE("${start_date}") AS date
+          UNION ALL
+          SELECT date + INTERVAL 1 DAY
+          FROM dates
+          WHERE date < DATE("${end_date}")
+        `
+
+      // check sort by value
+      switch (sort_by) {
+        case "total_profit":
+          // sort by total profit
+          sort_by = "total_profit"
+          break;
+        case "date":
+          // sort by date
+          sort_by = "d.date"
+          break;
+        default:
+          // sort by default
+          sort_by= "d.date"
+      }
+
+      // check order by value
+      if (order_by === "desc")
+        order_by = "DESC"
+      else
+        order_by = "ASC"
 
       // get tenant data
       let checkTenants = await tenant.findOne({ where: { id } });
@@ -139,13 +183,7 @@ module.exports = {
       // get total profit data
       let getData = await sequelize.query(
         `
-        WITH RECURSIVE dates AS (
-          SELECT CURDATE() - INTERVAL 6 DAY AS date
-          UNION ALL
-          SELECT date + INTERVAL 1 DAY
-          FROM dates
-          WHERE date < CURDATE()
-        )
+        WITH RECURSIVE dates AS (${reqursiveQuery})
         SELECT d.date, COALESCE(SUM(od.total_price), 0) AS total_profit
         FROM dates d
         LEFT JOIN (
@@ -159,17 +197,18 @@ module.exports = {
             AND o.status = "Completed"
         ) od ON DATE(od.createdAt) = d.date
         GROUP BY d.date
-        ORDER BY d.date ASC;
+        ORDER BY ${sort_by} ${order_by};
       `,
         {
           replacements: [id],
+          type: sequelize.QueryTypes.SELECT,
         }
       );
 
       return res.status(200).send({
         isError: false,
         message: "Get Total Profit Success",
-        data: getData[0],
+        data: getData,
       });
     } catch (error) {
       next({
@@ -184,6 +223,50 @@ module.exports = {
     try {
       // get data from client
       let { id } = req.dataToken;
+      let { sort_by, order_by, start_date, end_date } = req.query
+
+      // check start and end date value
+      start_date = start_date === "null" ? null : start_date
+      end_date = end_date === "null" ? null : end_date
+
+      // set reqursive query
+      if (!start_date || !end_date)
+        reqursiveQuery = `
+          SELECT CURDATE() - INTERVAL 6 DAY AS date
+          UNION ALL
+          SELECT date + INTERVAL 1 DAY
+          FROM dates
+          WHERE date < CURDATE()
+        `
+      else
+        reqursiveQuery = `
+          SELECT DATE("${start_date}") AS date
+          UNION ALL
+          SELECT date + INTERVAL 1 DAY
+          FROM dates
+          WHERE date < DATE("${end_date}")
+        `
+
+      // check sort by value
+      switch (sort_by) {
+        case "total_transaction":
+          // sort by total transaction
+          sort_by = "total_transaction"
+          break;
+        case "date":
+          // sort by date
+          sort_by = "d.date"
+          break;
+        default:
+          // sort by default
+          sort_by= "d.date"
+      }
+
+      // check order by value
+      if (order_by === "desc")
+        order_by = "DESC"
+      else
+        order_by = "ASC"
 
       // get tenant data
       let checkTenants = await tenant.findOne({ where: { id } });
@@ -200,13 +283,7 @@ module.exports = {
       // get total transaction data
       let getData = await sequelize.query(
         `
-        WITH RECURSIVE dates AS (
-          SELECT CURDATE() - INTERVAL 6 DAY AS date
-          UNION ALL
-          SELECT date + INTERVAL 1 DAY
-          FROM dates
-          WHERE date < CURDATE()
-        )
+        WITH RECURSIVE dates AS (${reqursiveQuery})
         SELECT d.date, COALESCE(COUNT(o.id), 0) AS total_transaction
         FROM dates d
         LEFT JOIN (
@@ -220,17 +297,18 @@ module.exports = {
             AND o.status = "Completed"
         ) o ON DATE(o.createdAt) = d.date
         GROUP BY d.date
-        ORDER BY d.date ASC;
+        ORDER BY ${sort_by} ${order_by};
       `,
         {
           replacements: [id],
+          type: sequelize.QueryTypes.SELECT,
         }
       );
 
       return res.status(200).send({
         isError: false,
         message: "Get Total Transaction Success",
-        data: getData[0],
+        data: getData,
       });
     } catch (error) {
       next({
