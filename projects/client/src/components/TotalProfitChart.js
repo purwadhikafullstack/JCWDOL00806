@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
-import { Bar } from 'react-chartjs-2';
-import { Chart, BarElement, BarController } from 'chart.js';
+import { Line } from "react-chartjs-2";
 import DatePicker from "react-datepicker"
 import { Select, Button } from '@chakra-ui/react'
 
-const TotalOrderChart = () => {
-    const [orderDate, setOrderDate] = useState()
-    const [totalOrder, setTotalOrder] = useState()
+const TotalProfitChart = () => {
+    const [profitDate, setProfitDate] = useState()
+    const [totalProfit, setTotalProfit] = useState()
     const [startDate, setStartDate] = useState(null)
     const [endDate, setEndDate] = useState(null)
     const [orderBy, setOrderBy] = useState("date")
@@ -15,22 +14,22 @@ const TotalOrderChart = () => {
     const [maxDate, setMaxDate] = useState(null)
     const [minDate, setMinDate] = useState(null)
 
-    const onGetTotalOrderData = async () => {
+    const onGetTransactionReportData = async () => {
         try {
             // get user token in local storage
-            let token = localStorage.getItem("tenantToken")
+            let token = localStorage.getItem("tenantToken") 
 
             // change start date and end date format
             let formated_start_date = startDate ? onConvertFormatDate(startDate) : null
             let formated_end_date = endDate ? onConvertFormatDate(endDate) : null
-
-            // get total order on transaction
-            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/sales/get-total-transaction?start_date=${formated_start_date}&end_date=${formated_end_date}&order_by=${orderBy}&sort_by=${sortBy}`, {
+            
+            // get total profit on transaction
+            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/sales/get-total-profit?start_date=${formated_start_date}&end_date=${formated_end_date}&order_by=${orderBy}&sort_by=${sortBy}`, {
                 headers: { Authorization: token }
             })
 
             let dateArr = []
-            let totalArr = []
+            let profitArr = []
 
             response?.data?.data?.map((val) => {
                 let currDate = new Date(val?.date)
@@ -42,11 +41,11 @@ const TotalOrderChart = () => {
                 let newDate = `${day} ${month} ${year}`
 
                 dateArr.push(newDate)
-                totalArr.push(val?.total_transaction)
+                profitArr.push(val?.total_profit)
             })
 
-            setOrderDate(dateArr)
-            setTotalOrder(totalArr)
+            setProfitDate(dateArr)
+            setTotalProfit(profitArr)
         } catch (error) {
             console.log(error.response.data.message)
         }
@@ -88,69 +87,86 @@ const TotalOrderChart = () => {
         setEndDate(null)
     }
 
-    const orderChart = () => {
-        let barThickness = 200 / 7
-        if (totalOrder?.length > 0) 
-            barThickness = 200 / totalOrder?.length
-
+    const totalProfitChart = () => {
         const data = {
-            labels: orderDate,
+            labels: profitDate,
             datasets: [
                 {
-                    label: "Total Transaction",
-                    data: totalOrder,
-                    backgroundColor: '#207BF2',
-                    borderColor: '#19204D',
-                    borderWidth: 1,
-                    hoverBackgroundColor: '#007bff',
-                    hoverBorderColor: '#007bff',
-                }
-            ]
+                    label: "Sales Profit",
+                    data: totalProfit,
+                    borderColor: "#207BF2",
+                    backgroundColor: "#fff",
+                    pointBackgroundColor: "#fff",
+                    pointBorderColor: "#fff",
+                    pointHoverBackgroundColor: "#fff",
+                    pointHoverBorderColor: "#fff",
+                },
+            ],
         }
 
         const options = {
+            maintainAspectRatio: false,
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false,
+                }
+            },
             scales: {
                 x: {
                     grid: {
                         display: false,
                     },
+                    ticks: {
+                        color: 'rgba(255,255,255,0.6)',
+                        font: {
+                            family: 'Arial',
+                            size: 12,
+                        },
+                        padding: 20
+                    },
                 },
                 y: {
-                  ticks: {
-                    beginAtZero: true,
-                    precision: 0
-                  },
+                    ticks: {
+                        color: 'rgba(255,255,255,0.6)',
+                        font: {
+                            family: 'Arial',
+                            size: 12,
+                        },
+                        beginAtZero: true,
+                        min: 0,
+                        callback: function (value, index, values) {
+                        if (value == 0)
+                            return "Rp. " + value;
+                        else if (value < 1000000)
+                            return "Rp. " + value / 1000 + " K";
+                        else if (value < 1000000000)
+                            return "Rp. " + value / 1000000 + " Jt";
+                        else
+                            return "Rp. " + value / 1000000000 + " M";
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(255,255,255,0.1)'
+                    },
                 },
-            },
-            indexAxis: 'x',
-            plugins: {
-                legend: {
-                    display: false,
-                },
-            },
-            responsive: true,
-            maintainAspectRatio: false,
-            barThickness: barThickness,
-            maxBarThickness: 50,
-            minBarThickness: 10
+            }
         }
 
-        Chart.register(BarController, BarElement);
-
         return (
-            <div className="w-[100%] h-[400px]">
-                <Bar data={data} options={options}  />
+            <div className="w-[100%] min-h-[400px]">
+                <Line data={data} options={options} />
             </div>
         )
     }
 
     useEffect(() => {
-        onGetTotalOrderData()
+        onGetTransactionReportData()
     }, [sortBy, orderBy, startDate, endDate])
 
     return (
         <div 
-            className="bg-white p-5 
+            className="bg-[#19204D] p-5 
             rounded-lg h-[100%] border shadow-lg"
         >
             <div 
@@ -158,16 +174,18 @@ const TotalOrderChart = () => {
                 justify-between items-center 
                 font-semibold text-2xl"
             >
-                <div>Total Transaction</div>
+                <div className='text-white'>
+                    Sales Profit
+                </div>
                 <div className='flex gap-2'>
                     <Select 
                         bg="white" 
                         color='black' 
-                        width="180px"
+                        width="150px"
                         onChange={(event) => setSortBy(event.target.value)}
                     >
                         <option value='date'>Date</option>
-                        <option value='total_transaction'>Total Transaction</option>
+                        <option value='total_profit'>Total Profit</option>
                     </Select>
                     <Select 
                         bg="white" 
@@ -205,11 +223,11 @@ const TotalOrderChart = () => {
             </div>
             <div className="mt-5">
                 {
-                    orderChart()
+                    totalProfitChart()
                 }
             </div>
         </div>
     )
 }
 
-export default TotalOrderChart
+export default TotalProfitChart
