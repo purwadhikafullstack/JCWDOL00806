@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import {
   Table,
@@ -14,6 +14,14 @@ import {
   Progress,
   Flex,
   Heading,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogCloseButton,
+  AlertDialogOverlay,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { Link, useNavigate } from "react-router-dom";
 import TenantNavbar from "../components/TenantNavbar";
@@ -29,6 +37,8 @@ export default function TenantDashboard() {
   const [newCity, setNewCity] = useState("");
   const id = localStorage.getItem("idTenant".replace(/"/g, ""));
   const navigate = useNavigate();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const cancelRef = React.useRef();
 
   let toProperties = async (value) => {
     try {
@@ -38,7 +48,7 @@ export default function TenantDashboard() {
     }
   };
 
-  let onOpen = async () => {
+  let onOpenPage = async () => {
     try {
       let token = localStorage.getItem("tenantToken".replace(/"/g, ""));
       console.log(token);
@@ -82,6 +92,8 @@ export default function TenantDashboard() {
       let response = await axios.delete(
         `${process.env.REACT_APP_API_BASE_URL}/tenant/category?id=${id}`
       );
+
+      onClose();
       toast(response.data.message);
       onGetData();
     } catch (error) {
@@ -127,7 +139,7 @@ export default function TenantDashboard() {
     setIsEditing(false);
   };
   useEffect(() => {
-    onOpen();
+    onOpenPage();
   }, []);
   useEffect(() => {
     if (verified) {
@@ -170,12 +182,41 @@ export default function TenantDashboard() {
                         >
                           Update
                         </Button>
-                        <Button
-                          colorScheme="red"
-                          onClick={() => deleteHandler(value.id)}
-                        >
+                        <Button colorScheme="red" onClick={onOpen}>
                           Delete
                         </Button>
+                        <AlertDialog
+                          motionPreset="slideInBottom"
+                          leastDestructiveRef={cancelRef}
+                          onClose={onClose}
+                          isOpen={isOpen}
+                          isCentered
+                        >
+                          <AlertDialogOverlay />
+
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              Delete Category
+                            </AlertDialogHeader>
+                            <AlertDialogCloseButton />
+                            <AlertDialogBody>
+                              Are you sure you want to delete {value?.type},{" "}
+                              {value?.city} ?
+                            </AlertDialogBody>
+                            <AlertDialogFooter>
+                              <Button ref={cancelRef} onClick={() => onClose()}>
+                                No
+                              </Button>
+                              <Button
+                                colorScheme="red"
+                                ml={3}
+                                onClick={() => deleteHandler(value.id)}
+                              >
+                                Yes
+                              </Button>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                       </Td>
                       <Td>
                         <Button onClick={() => toProperties(value)}>
@@ -222,7 +263,7 @@ export default function TenantDashboard() {
                     Cancel
                   </button>
                   <button
-                    type="submit"
+                    type="button"
                     className="border w-24 h-8 bg-green-700 hover:bg-green-500 active:bg-green-400 text-white rounded-md"
                     onClick={() => editHandler()}
                   >
