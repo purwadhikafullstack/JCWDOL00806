@@ -74,31 +74,36 @@ function App() {
   const checkLoginUser = async () => {
     try {
       let token = localStorage.getItem("userToken")
-      let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/users/keep-login`, null,
-        { headers: {Authorization : token}}
-      )
-      if (response) {
-        setIsAuthUser(true)
-      } else {
-        setIsAuthUser(false)
+      if (token) {
+        let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/users/keep-login`, null,
+          { headers: {Authorization : token}}
+        )
+        if (response) {
+          setIsAuthUser(true)
+        } else {
+          setIsAuthUser(false)
+        } 
       }
     } catch (error) {
+      localStorage.removeItem('userToken')
     }
   }
 
   const checkLoginTenant = async () => {
     try {
       let tenantToken = localStorage.getItem('tenantToken')
-      let tenantResponse = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/tenant/keep-login`, null,
-      { headers: {Authorization : tenantToken}}
-      )
-      if (tenantResponse) {
-        setIsAuthTenant(true)
-      } else {
-        setIsAuthTenant(false)
+      if (tenantToken) {
+        let tenantResponse = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/tenant/keep-login`, null,
+        { headers: {Authorization : tenantToken}}
+        )
+        if (tenantResponse) {
+          setIsAuthTenant(true)
+        } else {
+          setIsAuthTenant(false)
+        }
       }
     } catch (error) {
-      
+      localStorage.removeItem('tenantToken')
     }
   }
 
