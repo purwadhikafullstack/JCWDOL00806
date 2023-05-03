@@ -25,12 +25,13 @@ module.exports = {
 
       let limit = 10;
       let offset = (page - 1) * limit;
+      console.log(page);
 
       let totalData = null;
 
       totalData = await sequelize.query(
         `
-      SELECT COUNT(*) AS total
+      SELECT COUNT(DISTINCT p.name) AS total
       FROM property_categories pc
       INNER JOIN properties p ON p.category_id = pc.id
       INNER JOIN rooms r ON r.property_id = p.id
@@ -49,13 +50,13 @@ module.exports = {
           OR ? BETWEEN start_date AND end_date
           OR start_date BETWEEN ? AND ?
           )
-      ) GROUP BY p.name;`,
+      );`,
         {
           replacements: [city, start, end, start, end, start, end, start, end],
           type: sequelize.QueryTypes.SELECT,
         }
       );
-
+      console.log(totalData);
       let total_pages = Math.ceil(totalData[0].total / limit);
       console.log(total_pages);
       let getData = "";
@@ -670,8 +671,8 @@ module.exports = {
         await order.update(
           {
             status: "Waiting for Payment",
-            notes : "Payment proof incomplete",
-            payment_proof: null
+            notes: "Payment proof incomplete",
+            payment_proof: null,
           },
           {
             where: { id },
@@ -722,17 +723,17 @@ module.exports = {
       let { invoice, property, room, start, end, price, rules } = req.body;
       let getData = await users.findOne({ where: { id: users_id } });
 
-    await order.update(
-      {
-        status: "Accepted",
-        notes: "Order Accepted",
-      },
-      {
-        where: { id },
-      },
-      {
-        transaction: t,
-      }
+      await order.update(
+        {
+          status: "Accepted",
+          notes: "Order Accepted",
+        },
+        {
+          where: { id },
+        },
+        {
+          transaction: t,
+        }
       );
 
       let template = await fs.readFile("./src/template/invoice.html", "utf-8");
