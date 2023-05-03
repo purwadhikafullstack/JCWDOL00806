@@ -3,8 +3,8 @@ const { sequelize } = require("../../models");
 const { Op, where } = require("sequelize");
 const { QueryTypes } = require("sequelize");
 const fs = require("fs").promises;
-const handlebars = require('handlebars')
-const transporter = require('../helpers/transporter')
+const handlebars = require("handlebars");
+const transporter = require("../helpers/transporter");
 
 //Import models
 const db = require("../../models/index");
@@ -21,11 +21,16 @@ const deleteFiles = require("./../helpers/deleteFiles");
 module.exports = {
   list: async (req, res, next) => {
     try {
-      let { city, start, end } = req.query;
+      let { city, start, end, page } = req.query;
 
-      let data = await sequelize.query(
+      let limit = 10;
+      let offset = (page - 1) * limit;
+
+      let totalData = null;
+
+      totalData = await sequelize.query(
         `
-      SELECT p.name AS name, pc.type, pc.city, p.picture, r.name AS room_name, min(r.price) AS price, p.id
+      SELECT COUNT(*) AS total
       FROM property_categories pc
       INNER JOIN properties p ON p.category_id = pc.id
       INNER JOIN rooms r ON r.property_id = p.id
@@ -50,19 +55,56 @@ module.exports = {
           type: sequelize.QueryTypes.SELECT,
         }
       );
+
+      let total_pages = Math.ceil(totalData[0].total / limit);
+      console.log(total_pages);
+      let getData = "";
+
+      getData = await sequelize.query(
+        `
+      SELECT p.name AS name, pc.type, pc.city, p.picture, r.name AS room_name, min(r.price) AS price, p.id
+      FROM property_categories pc
+      INNER JOIN properties p ON p.category_id = pc.id
+      INNER JOIN rooms r ON r.property_id = p.id
+      WHERE pc.city = ?
+      AND r.id NOT IN (
+        SELECT room_id FROM room_statuses
+        WHERE (? BETWEEN start_date AND end_date
+          OR ? BETWEEN start_date AND end_date
+          OR start_date BETWEEN ? AND ?
+          )
+      )
+      AND r.id NOT IN (
+        SELECT room_id FROM orders
+        WHERE status = 'complete'
+          AND (? BETWEEN start_date AND end_date
+          OR ? BETWEEN start_date AND end_date
+          OR start_date BETWEEN ? AND ?
+          )
+      ) GROUP BY p.name
+      LIMIT ${limit}
+      OFFSET ${offset}
+      ;`,
+        {
+          replacements: [city, start, end, start, end, start, end, start, end],
+          type: sequelize.QueryTypes.SELECT,
+        }
+      );
+
       res.status(200).send({
         isError: false,
         message: "List acquired",
-        data: data,
+        data: getData,
+        total_pages,
       });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       next({
         isError: true,
         message: error.message,
         data: null,
-        status: 400
-      })
+        status: 400,
+      });
     }
   },
   roomListFromHomepage: async (req, res, next) => {
@@ -82,13 +124,13 @@ module.exports = {
         data: data,
       });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       next({
         isError: true,
         message: error.message,
         data: null,
-        status: 400
-      })
+        status: 400,
+      });
     }
   },
   getRoomList: async (req, res, next) => {
@@ -138,13 +180,13 @@ module.exports = {
         data: data,
       });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       next({
         isError: true,
         message: error.message,
         data: null,
-        status: 400
-      })
+        status: 400,
+      });
     }
   },
   getOrderList: async (req, res, next) => {
@@ -237,13 +279,13 @@ module.exports = {
         total_pages,
       });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       next({
         isError: true,
         message: error.message,
         data: null,
-        status: 400
-      })
+        status: 400,
+      });
     }
   },
   getUserOrderList: async (req, res, next) => {
@@ -284,6 +326,7 @@ module.exports = {
         WHERE status = "${status}" AND o.users_id = "${id}"
       `);
       }
+
       let total_pages = Math.ceil(totalData[0][0].total / limit);
       let getData = "";
 
@@ -335,13 +378,13 @@ module.exports = {
         total_pages,
       });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       next({
         isError: true,
         message: error.message,
         data: null,
-        status: 400
-      })
+        status: 400,
+      });
     }
   },
   checkout: async (req, res, next) => {
@@ -391,13 +434,13 @@ module.exports = {
         data: getRoom,
       });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       next({
         isError: true,
         message: error.message,
         data: null,
-        status: 400
-      })
+        status: 400,
+      });
     }
   },
   onBookRoom: async (req, res, next) => {
@@ -447,7 +490,7 @@ module.exports = {
         transaction: t,
       });
 
-      if (existingBooking.length > 0)  {
+      if (existingBooking.length > 0) {
         t.rollback();
         return res.status(400).send({
           isError: true,
@@ -455,7 +498,7 @@ module.exports = {
           data: null,
         });
       }
-        
+
       // check if the room is unavailable for the specified dates
       let unavailableRoom = await room_status.findAll({
         where: {
@@ -567,13 +610,13 @@ module.exports = {
       });
     } catch (error) {
       t.rollback();
-      console.log(error)
+      console.log(error);
       next({
         isError: true,
         message: error.message,
         data: null,
-        status: 400
-      })
+        status: 400,
+      });
     }
   },
   userUpdateOrderStatus: async (req, res, next) => {
@@ -597,13 +640,13 @@ module.exports = {
       });
     } catch (error) {
       t.rollback();
-      console.log(error)
+      console.log(error);
       next({
         isError: true,
         message: error.message,
         data: null,
-        status: 400
-      })
+        status: 400,
+      });
     }
   },
   tenantUpdateOrderStatus: async (req, res, next) => {
@@ -646,13 +689,13 @@ module.exports = {
       });
     } catch (error) {
       t.rollback();
-      console.log(error)
+      console.log(error);
       next({
         isError: true,
         message: error.message,
         data: null,
-        status: 400
-      })
+        status: 400,
+      });
     }
   },
   tenantAcceptOrder: async (req, res, next) => {
@@ -661,66 +704,66 @@ module.exports = {
       style: "currency",
       currency: "IDR",
       minimumFractionDigits: 0,
-  });
+    });
     try {
-      let {id} = req.params
-      let { users_id } = req.query
-      let {invoice, property, room, start, end, price, rules} = req.body
-    let getData = await users.findOne({ where: { id: users_id } });
+      let { id } = req.params;
+      let { users_id } = req.query;
+      let { invoice, property, room, start, end, price, rules } = req.body;
+      let getData = await users.findOne({ where: { id: users_id } });
 
-    await order.update(
-      {
-        status: "Completed",
-        notes: "Order Accepted",
-      },
-      {
-        where: { id },
-      },
-      {
-        transaction: t,
-      }
+      await order.update(
+        {
+          status: "Completed",
+          notes: "Order Accepted",
+        },
+        {
+          where: { id },
+        },
+        {
+          transaction: t,
+        }
       );
 
-      let template = await fs.readFile("./src/template/invoice.html", "utf-8")
-      let compiledTemplate = await handlebars.compile(template)
+      let template = await fs.readFile("./src/template/invoice.html", "utf-8");
+      let compiledTemplate = await handlebars.compile(template);
       let newTemplate = compiledTemplate({
-      invoice,
-      property,
-      room,
-      start,
-      end,
-      price : formatter.format(price),
-      rules
-      })
+        invoice,
+        property,
+        room,
+        start,
+        end,
+        price: formatter.format(price),
+        rules,
+      });
       await transporter.sendMail(
         {
           from: "Admin",
           to: `"${getData.dataValues.email}`,
           subject: "Your room order invoice",
-          html: newTemplate
+          html: newTemplate,
         },
         function (error, info) {
           if (error) {
-            console.log(error)
+            console.log(error);
           } else {
-            console.log("Email sent : " + info.response)
+            console.log("Email sent : " + info.response);
           }
         }
-      )
-      t.commit()
+      );
+      t.commit();
       return res.status(201).send({
         isError: false,
-        message: "Order accepted"
-      })
+        message: "Order accepted",
+      });
     } catch (error) {
-      t.rollback()
-      console.log(error)
+      t.rollback();
+      console.log(error);
       next({
         isError: true,
         message: error.message,
         data: null,
-        status: 400
-      })
+        status: 400,
+      });
     }
   },
   getTenantOrderFilter: async (req, res, next) => {
@@ -813,13 +856,13 @@ module.exports = {
         total_pages,
       });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       next({
         isError: true,
         message: error.message,
         data: null,
-        status: 400
-      })
+        status: 400,
+      });
     }
   },
   getUserOrderFilter: async (req, res, next) => {
@@ -912,13 +955,13 @@ module.exports = {
         total_pages,
       });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       next({
         isError: true,
         message: error.message,
         data: null,
-        status: 400
-      })
+        status: 400,
+      });
     }
   },
   onUploadPaymentProof: async (req, res, next) => {
@@ -988,13 +1031,13 @@ module.exports = {
       // if something eror, delete image file
       deleteFiles(req.files.payment_proof);
 
-      console.log(error)
+      console.log(error);
       next({
         isError: true,
         message: error.message,
         data: null,
-        status: 400
-      })
+        status: 400,
+      });
     }
   },
   onCreateReview: async (req, res, next) => {
@@ -1033,13 +1076,13 @@ module.exports = {
         data: null,
       });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       next({
         isError: true,
         message: error.message,
         data: null,
-        status: 400
-      })
+        status: 400,
+      });
     }
   },
 };
