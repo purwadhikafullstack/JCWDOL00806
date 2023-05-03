@@ -206,7 +206,7 @@ module.exports = {
         INNER JOIN rooms r ON r.id = o.room_id
         JOIN properties p ON p.id = r.property_id
         JOIN property_categories c ON c.id = p.category_id and c.tenant_id = "${id}"
-        WHERE status = "Waiting for Confirmation"
+        WHERE status = "Waiting for Confirmation" or status = "Accepted"
         `);
       } else if (status === "all") {
         totalData = await sequelize.query(`
@@ -215,7 +215,6 @@ module.exports = {
       INNER JOIN rooms r ON r.id = o.room_id
       JOIN properties p ON p.id = r.property_id
       JOIN property_categories c ON c.id = p.category_id and c.tenant_id = "${id}"
-      WHERE status NOT IN ("Waiting for Payment")
       `);
       } else {
         totalData = await sequelize.query(`
@@ -239,7 +238,7 @@ module.exports = {
         JOIN properties p ON p.id = r.property_id
         JOIN property_categories c ON c.id = p.category_id and c.tenant_id = "${id}"
         JOIN order_details od ON od.order_id = o.id
-        WHERE status = "Waiting for Confirmation"
+        WHERE status = "Waiting for Confirmation" or status = "Accepted"
         ORDER BY o.start_date ASC
         LIMIT ${limit}
         OFFSET ${offset}
@@ -252,7 +251,6 @@ module.exports = {
         JOIN properties p ON p.id = r.property_id
         JOIN property_categories c ON c.id = p.category_id and c.tenant_id = "${id}"
         JOIN order_details od ON od.order_id = o.id
-        WHERE status NOT IN ("Waiting for Payment")
         ORDER BY o.start_date ASC
         LIMIT ${limit}
         OFFSET ${offset}
@@ -305,7 +303,7 @@ module.exports = {
         JOIN order_details od ON o.id = od.order_id
         INNER JOIN rooms r ON r.id = o.room_id
         JOIN properties p ON p.id = r.property_id
-        WHERE (status = "Waiting for Confirmation" OR status = "Waiting For Payment") AND o.users_id = "${id}"
+        WHERE (status = "Waiting for Confirmation" OR status = "Waiting For Payment" or status = "Accepted") AND o.users_id = "${id}"
         `);
       } else if (status === "all") {
         totalData = await sequelize.query(`
@@ -338,7 +336,7 @@ module.exports = {
         INNER JOIN rooms r ON r.id = o.room_id
         JOIN properties p ON p.id = r.property_id
         LEFT JOIN reviews rv ON rv.order_id = o.id
-        WHERE (status = "Waiting for Confirmation" OR status = "Waiting For Payment") AND o.users_id = "${id}"
+        WHERE (status = "Waiting for Confirmation" OR status = "Waiting For Payment" or status = "Accepted") AND o.users_id = "${id}"
         ORDER BY o.start_date ASC
         LIMIT ${limit}
         OFFSET ${offset}
@@ -671,12 +669,25 @@ module.exports = {
       } else if (status === "reject") {
         await order.update(
           {
-            status: "Rejected",
-            notes,
+            status: "Waiting for Payment",
+            notes : "Payment proof incomplete",
+            payment_proof: null
           },
           {
             where: { id },
           },
+          {
+            transaction: t,
+          }
+        );
+        await sequelize.query(
+          `
+          CREATE EVENT order_status_rejected_${id}
+          ON SCHEDULE AT DATE_ADD(NOW(), INTERVAL 2 HOUR)
+          DO
+            UPDATE orders SET status = 'Cancelled'
+            WHERE id = ${id}
+        `,
           {
             transaction: t,
           }
@@ -711,17 +722,17 @@ module.exports = {
       let { invoice, property, room, start, end, price, rules } = req.body;
       let getData = await users.findOne({ where: { id: users_id } });
 
-      await order.update(
-        {
-          status: "Completed",
-          notes: "Order Accepted",
-        },
-        {
-          where: { id },
-        },
-        {
-          transaction: t,
-        }
+    await order.update(
+      {
+        status: "Accepted",
+        notes: "Order Accepted",
+      },
+      {
+        where: { id },
+      },
+      {
+        transaction: t,
+      }
       );
 
       let template = await fs.readFile("./src/template/invoice.html", "utf-8");

@@ -20,8 +20,6 @@ const OrderCard = ({ id, invoice, start, end, status, name, tenantToken, image, 
 });
 
   const handleCancel = async (orderID, notes) => {
-    console.log(`cancel ${orderID}`)
-    console.log(`notes : ${notes}`)
 
     await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/transaction/tenant-order-status/${id}?status=cancel`, {
       notes
@@ -32,11 +30,8 @@ const OrderCard = ({ id, invoice, start, end, status, name, tenantToken, image, 
   }
 
   const handleReject = async (orderID, notes) => {
-    console.log(`reject ${orderID}`)
-    console.log(`notes : ${notes}`)
-    await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/transaction/tenant-order-status/${id}?status=reject`, {
-      notes
-    }, { headers: { authorization: tenantToken } })
+    
+    await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/transaction/tenant-order-status/${id}?status=reject`, null , { headers: { authorization: tenantToken } })
     toast.success("Order Rejected")
     refresh()
   }
@@ -63,10 +58,10 @@ const OrderCard = ({ id, invoice, start, end, status, name, tenantToken, image, 
         <>
         <Flex className='py-2 px-1 mx-auto w-full mb-1 mt-1 border rounded-md' flexDir='column'>
             <Flex flexDir='row' className=''>
-                  <Text className='w-full font-bold italic' fontSize='sm'> {invoice} </Text>
+                  <Text className='w-full font-bold italic' ml={2} fontSize='xs'> {invoice} </Text>
             </Flex>
             <Divider className='my-2' />
-            <Flex className='flex-col sm:flex-row' alignItems='left' justifyContent="space-between">
+            <Flex className='flex-col sm:flex-row' ml={2} alignItems='left' justifyContent="space-between">
               <Flex flexDir='column' className='w-full'>
                 <Flex flexDir='column' className='mb-3'>
                   <Flex className='mt-1' flexDir="row">
@@ -95,7 +90,7 @@ const OrderCard = ({ id, invoice, start, end, status, name, tenantToken, image, 
                   <Text className='font-bold' fontSize='sm'>: {formatter.format(price)}</Text>
                 </Flex>
               </Flex>
-              <Flex className='w-full mt-3 sm:ml-20' flexDir='row' alignItems='center'>
+              <Flex className='w-full mt-3 sm:ml-16' flexDir='row' alignItems='center'>
                 <Image
                   boxSize='48px'
                   objectFit='cover'
@@ -129,7 +124,16 @@ const OrderCard = ({ id, invoice, start, end, status, name, tenantToken, image, 
                     <ConfirmAlert action='Accept' id={id} handleButton={handleAccept}/>
                   </Flex>
               </Flex>
+        </>
+            ) : status === 'Waiting for Payment' ? (
+                <>
+            <Flex flexDir='row' justifyContent='space-between' >
+              <Flex justifyContent='flex-start'>
+                <ConfirmAlert action='Cancel' id={id} handleButton={handleCancel}/>
+              </Flex>
+            </Flex>
           </>
+              
         ) : (
             <>
               <Flex flexDir='row' className='mt-2' justifyContent='flex-end' >
@@ -173,11 +177,11 @@ const OrderCard = ({ id, invoice, start, end, status, name, tenantToken, image, 
           <>
             <Flex className='py-2 px-3 mx-auto w-full mb-1 mt-1 border rounded-md' flexDir='column'>
             <Flex flexDir='row' className=''>
-                  <Text className='w-2/5 font-bold italic' fontSize='sm'> {invoice} </Text>
+                  <Text className='w-2/5 font-bold italic' ml={2} fontSize='xs'> {invoice} </Text>
               </Flex>
               <Divider className='my-2' />
             <Flex flexDir='row' alignItems='center'>
-          <Flex flexDir='column' className='w-2/6'>
+          <Flex flexDir='column' className='w-[37%]'>
             <Flex className=' mt-[2px]'  flexDir='row'>
               <Text as="b"  className='mr-3' fontSize='sm'>Property name</Text>
               <Text fontSize='sm'>: {property}</Text>
@@ -230,7 +234,7 @@ const OrderCard = ({ id, invoice, start, end, status, name, tenantToken, image, 
         <Divider className='mt-2' />
         {status === 'Waiting for Confirmation' ? (
           <>
-          <Flex flexDir='row' justifyContent='space-between' >
+            <Flex flexDir='row' justifyContent='space-between' >
                   <Flex justifyContent='flex-start'>
                     <ConfirmAlert action='Cancel' id={id} handleButton={handleCancel}/>
                   </Flex>
@@ -240,7 +244,16 @@ const OrderCard = ({ id, invoice, start, end, status, name, tenantToken, image, 
                   </Flex>
               </Flex>
           </>
-        ) : (
+        ) : status === 'Waiting for Payment' ? (
+          <>
+      <Flex flexDir='row' justifyContent='space-between' >
+        <Flex justifyContent='flex-start'>
+          <ConfirmAlert action='Cancel' id={id} handleButton={handleCancel}/>
+        </Flex>
+      </Flex>
+    </>
+        
+  ) : (
             <>
               <Flex flexDir='row' className='mt-2' justifyContent='flex-end' >
                 <Button onClick={() => setDetailModal(true)} colorScheme='gray' className='mx-4' size='xs'>See Detail</Button>
