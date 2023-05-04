@@ -44,8 +44,7 @@ export default function PropertySearch() {
       let current_page = selected_page.selected + 1;
 
       let response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/transaction/list??city=${city}&start=${start}&end=${end}
-        &page=${current_page}`,
+        `${process.env.REACT_APP_API_BASE_URL}/transaction/list?city=${city}&start=${start}&end=${end}&page=${current_page}`,
         { headers: { authorization: userToken } }
       );
 
@@ -132,7 +131,7 @@ export default function PropertySearch() {
           activeClassName="bg-blue-500 text-white"
           marginPagesDisplayed={1}
           breakClassName="border px-4 py-2"
-          onPageChange={() => handlePageChange()}
+          onPageChange={handlePageChange}
           disabledClassName="text-slate-400"
           forcePage={page - 1}
         />
