@@ -90,9 +90,18 @@ const TenantOrders = () => {
 
     const OrderList = () => {
         return orderList.map((order, idx) => {
-            let image = `${process.env.REACT_APP_SERVER_URL}/image/${order.payment_proof?.replace(/"/g, "")
-                .replace(/\\/g, "/")}`
+            let image
+            if (order.payment_proof) {
+                image = `${process.env.REACT_APP_SERVER_URL}/image/${order.payment_proof?.replace(/"/g, "")
+                    .replace(/\\/g, "/")}`
+            } else {
+                image = undefined
+            }
             
+            const paymentDeadline = new Date(order.payment_deadline).toLocaleString('en-US', { timeZone: 'Asia/Jakarta', hour12: false });
+            const paymentDeadlineDate = new Date(order.payment_deadline).toLocaleDateString('id-ID', { timeZone: 'Asia/Jakarta', year: 'numeric', month: 'short', day: 'numeric' });
+            const paymentDeadlineTime = paymentDeadline.slice(paymentDeadline.indexOf(' ') + 1);
+                
             return (
                 <OrderCard
                     key={idx}
@@ -110,6 +119,8 @@ const TenantOrders = () => {
                     price={order.total_price}
                     users_id={order.users_id}
                     rules={order.rules}
+                    dateDeadline={paymentDeadlineDate}
+                    timeDeadline={paymentDeadlineTime}
                     refresh={getOrderList}
                     screen={smallScreen}
                 />

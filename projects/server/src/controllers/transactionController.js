@@ -232,7 +232,7 @@ module.exports = {
 
       if (status === "in progress") {
         getData = await sequelize.query(`
-        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes, o.users_id, r.rules
+        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes, o.users_id, r.rules, DATE_ADD(o.updatedAt, INTERVAL 2 HOUR) as payment_deadline
         FROM orders o
         INNER JOIN rooms r ON r.id = o.room_id
         JOIN properties p ON p.id = r.property_id
@@ -243,9 +243,22 @@ module.exports = {
         LIMIT ${limit}
         OFFSET ${offset}
         `);
+      }else if(status === "cancelled") {
+        getData = await sequelize.query(`
+        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes, o.users_id, r.rules, DATE_ADD(o.updatedAt, INTERVAL 2 HOUR) as payment_deadline
+        FROM orders o
+        INNER JOIN rooms r ON r.id = o.room_id
+        JOIN properties p ON p.id = r.property_id
+        JOIN property_categories c ON c.id = p.category_id and c.tenant_id = "${id}"
+        JOIN order_details od ON od.order_id = o.id
+        WHERE status = "Cancelled" or status = "Expired"
+        ORDER BY o.start_date ASC
+        LIMIT ${limit}
+        OFFSET ${offset}
+        `);
       } else if (status === "all") {
         getData = await sequelize.query(`
-        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes, o.users_id, r.rules
+        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes, o.users_id, r.rules, DATE_ADD(o.updatedAt, INTERVAL 2 HOUR) as payment_deadline
         FROM orders o
         INNER JOIN rooms r ON r.id = o.room_id
         JOIN properties p ON p.id = r.property_id
@@ -257,7 +270,7 @@ module.exports = {
         `);
       } else {
         getData = await sequelize.query(`
-        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes, o.users_id, r.rules
+        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes, o.users_id, r.rules, DATE_ADD(o.updatedAt, INTERVAL 2 HOUR) as payment_deadline
         FROM orders o
         INNER JOIN rooms r ON r.id = o.room_id
         JOIN properties p ON p.id = r.property_id
@@ -590,7 +603,9 @@ module.exports = {
         CREATE EVENT change_status_order_${insertId}
         ON SCHEDULE AT DATE_ADD(NOW(), INTERVAL 2 HOUR)
         DO
-          UPDATE orders SET status = 'Cancelled'
+          UPDATE orders SET 
+            status = 'Expired'
+            notes = "Order Expired"
           WHERE id = ?
       `,
         {
@@ -653,6 +668,8 @@ module.exports = {
       let { notes } = req.body;
       let { id } = req.params;
       let { status } = req.query;
+      let d = new Date()
+      let time = d.getTime()
       if (status === "cancel") {
         await order.update(
           {
@@ -682,10 +699,12 @@ module.exports = {
         );
         await sequelize.query(
           `
-          CREATE EVENT order_status_rejected_${id}
+          CREATE EVENT order_status_rejected_${time}
           ON SCHEDULE AT DATE_ADD(NOW(), INTERVAL 2 HOUR)
           DO
-            UPDATE orders SET status = 'Cancelled'
+            UPDATE orders SET
+             status = 'Expired',
+             notes = "Order Expired"
             WHERE id = ${id}
         `,
           {
@@ -794,7 +813,7 @@ module.exports = {
         INNER JOIN rooms r ON r.id = o.room_id
         JOIN properties p ON p.id = r.property_id
         JOIN property_categories c ON c.id = p.category_id and c.tenant_id = "${id}"
-        WHERE status = "Waiting for Confirmation" AND o.invoice_id LIKE "%${search}%"
+        WHERE (status = "Waiting for Confirmation" or status = "Accepted") AND o.invoice_id LIKE "%${search}%"
         `);
       } else if (status === "all") {
         totalData = await sequelize.query(`
@@ -803,7 +822,7 @@ module.exports = {
       INNER JOIN rooms r ON r.id = o.room_id
       JOIN properties p ON p.id = r.property_id
       JOIN property_categories c ON c.id = p.category_id and c.tenant_id = "${id}"
-      WHERE status NOT IN ("Waiting for Payment") AND o.invoice_id LIKE "%${search}%"
+      WHERE o.invoice_id LIKE "%${search}%"
       `);
       } else {
         totalData = await sequelize.query(`
@@ -821,33 +840,33 @@ module.exports = {
 
       if (status === "in progress") {
         getData = await sequelize.query(`
-        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes, o.users_id, r.rules
+        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes, o.users_id, r.rules, DATE_ADD(o.updatedAt, INTERVAL 2 HOUR) as payment_deadline
         FROM orders o
         INNER JOIN rooms r ON r.id = o.room_id
         JOIN properties p ON p.id = r.property_id
         JOIN property_categories c ON c.id = p.category_id and c.tenant_id = "${id}"
         JOIN order_details od ON od.order_id = o.id
-        WHERE status = "Waiting for Confirmation" AND o.invoice_id LIKE "%${search}%"
+        WHERE (status = "Waiting for Confirmation" or status = "Accepted") AND o.invoice_id LIKE "%${search}%"
         ORDER BY o.start_date ASC
         LIMIT ${limit}
         OFFSET ${offset}
         `);
       } else if (status === "all") {
         getData = await sequelize.query(`
-        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes, o.users_id, r.rules
+        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes, o.users_id, r.rules, DATE_ADD(o.updatedAt, INTERVAL 2 HOUR) as payment_deadline
         FROM orders o
         INNER JOIN rooms r ON r.id = o.room_id
         JOIN properties p ON p.id = r.property_id
         JOIN property_categories c ON c.id = p.category_id and c.tenant_id = "${id}"
         JOIN order_details od ON od.order_id = o.id
-        WHERE status NOT IN ("Waiting for Payment") AND o.invoice_id LIKE "%${search}%"
+        WHERE o.invoice_id LIKE "%${search}%"
         ORDER BY o.start_date ASC
         LIMIT ${limit}
         OFFSET ${offset}
         `);
       } else {
         getData = await sequelize.query(`
-        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes, o.users_id, r.rules
+        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes, o.users_id, r.rules, DATE_ADD(o.updatedAt, INTERVAL 2 HOUR) as payment_deadline
         FROM orders o
         INNER JOIN rooms r ON r.id = o.room_id
         JOIN properties p ON p.id = r.property_id
