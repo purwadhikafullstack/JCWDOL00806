@@ -4,7 +4,7 @@ import ConfirmAlert from './ConfirmAlert'
 import axios from 'axios'
 import toast, {Toaster} from 'react-hot-toast'
 
-const OrderCard = ({ id, invoice, start, end, status, name, tenantToken, image, onClose, notes,property, price, users_id, rules, refresh, screen }) => {
+const OrderCard = ({ id, invoice, start, end, status, name, tenantToken, image, onClose, notes,property, price, users_id, rules, dateDeadline, timeDeadline, refresh, screen }) => {
   
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [detailModal, setDetailModal] = useState(false)
@@ -91,14 +91,29 @@ const OrderCard = ({ id, invoice, start, end, status, name, tenantToken, image, 
                 </Flex>
               </Flex>
               <Flex className='w-full mt-3 sm:ml-16' flexDir='row' alignItems='center'>
-                <Image
-                  boxSize='48px'
-                  objectFit='cover'
-                  src={image}
-                  alt='payment-proof'
-                  className='border rounded-md mb-2'
-                />
-                <Button onClick={handleOpenModal} colorScheme='blue' className='mx-4' size='xs'>view image</Button>
+              {status === "Waiting for Payment" ? (
+                    <>
+                      <Flex flexDir='column' alignItems='center'>
+                    <Text as='b'>Payment Deadline :</Text>
+                    <Text>{dateDeadline}</Text>
+                    <Text>{timeDeadline}</Text>
+
+                      </Flex>
+                  </>
+                  ) : status === "Cancelled" && !image ? null :
+                      status === "Expired" ? null :
+                        (
+                        <>
+                        <Image
+                        boxSize='32px'
+                        objectFit='cover'
+                        src={image}
+                        alt='payment-proof'
+                        className='border rounded-md'
+                      />
+                      <Button onClick={handleOpenModal} colorScheme='blue' className='mx-4' size='xs'>view image</Button>
+                    </>
+                )}
                 <Modal isOpen={isModalOpen} onClose={onClose}>
                   <ModalOverlay>
                     <ModalContent>
@@ -200,7 +215,20 @@ const OrderCard = ({ id, invoice, start, end, status, name, tenantToken, image, 
             </Flex>
                 </Flex>
                 <Flex className='mx-12 w-1/4' flexDir='row' alignItems='center'>
-                      <Image
+                {status === "Waiting for Payment" ? (
+                    <>
+                      <Flex flexDir='column' alignItems='center'>
+                    <Text as='b'>Payment Deadline :</Text>
+                    <Text>{dateDeadline}</Text>
+                    <Text>{timeDeadline}</Text>
+
+                      </Flex>
+                  </>
+                  ) : status === "Cancelled" && !image ? null :
+                      status === "Expired" ? null :
+                        (
+                        <>
+                        <Image
                         boxSize='32px'
                         objectFit='cover'
                         src={image}
@@ -208,6 +236,8 @@ const OrderCard = ({ id, invoice, start, end, status, name, tenantToken, image, 
                         className='border rounded-md'
                       />
                       <Button onClick={handleOpenModal} colorScheme='blue' className='mx-4' size='xs'>view image</Button>
+                    </>
+                )}
                       <Modal isOpen={isModalOpen} onClose={onClose}>
                         <ModalOverlay>
                           <ModalContent>
