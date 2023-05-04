@@ -7,6 +7,8 @@ import { Line } from "react-chartjs-2";
 
 import TotalOrderChart from "../components/TotalOrderChart";
 import TotalProfitChart from "../components/TotalProfitChart";
+import TotalUserChart from "../components/TotalUserChart";
+import TotalPropertyChart from "../components/TotalPropertyChart";
 
 const SalesReport = () => {
   let today = new Date();
@@ -231,36 +233,12 @@ const SalesReport = () => {
               <TotalOrderChart />
             </div>
           </div>
-
-          <div className="bg-[#19204D] p-5 text-white rounded-lg h-[100%] border shadow-lg mt-5">
-            <h3 className="font-semibold text-2xl">User Quantity</h3>
-            <div className="mt-5 min-h-[400px]">
-              <Line data={chartDataUser} options={options} />
+          <div className="mt-5 flex xl:flex-row flex-col gap-5">
+            <div className="xl:w-3/5 w-full">
+              <TotalPropertyChart />
             </div>
-          </div>
-          <div className="flex flex-col sm:flex-row align-middle justify-center mt-5 text-center items-center">
-            <h3>Select Your Desired Property</h3>
-            <select
-              className="w-2/5 text-center border border-gray-400 mx-4 sm:my-2"
-              onChange={(event) => setPropertyId(event.target.value)}
-            >
-              {propertyList?.map((val, i) => {
-                return (
-                  <option
-                    key={i}
-                    className="font-semibold text-red-600"
-                    value={val.id}
-                  >
-                    {val.name}
-                  </option>
-                );
-              })}
-            </select>
-          </div>
-          <div className="bg-[#19204D] p-5 text-white rounded-lg h-[100%] border mt-5 shadow-lg">
-            <h3 className="font-semibold text-2xl">Property Profit</h3>
-            <div className="mt-5 min-h-[400px]">
-              <Line data={chartDataProperty} options={optionsForMoney} />
+            <div className="xl:w-2/5 w-full">
+              <TotalUserChart />
             </div>
           </div>
         </Flex>
