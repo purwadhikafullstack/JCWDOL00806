@@ -38,6 +38,7 @@ const UserOrderCard = ({
   room_review,
   onOrderUpdate,
   screen,
+  deadline,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [detailModal, setDetailModal] = useState(false);
