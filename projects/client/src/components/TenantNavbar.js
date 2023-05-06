@@ -51,7 +51,7 @@ const TenantNavbar = () => {
             setTenantData(username)
 
         } catch (error) {
-            if (error.response.data.message === 'jwt expired') {
+            if (error.response.data.message === 'jwt expired'|| error.response.data.message === "jwt malformed") {
                 toast.error("Please login first")
                 setTimeout(() => {
                     navigate('/tenant/login')

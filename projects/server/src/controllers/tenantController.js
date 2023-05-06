@@ -163,7 +163,6 @@ module.exports = {
       })
     }
   },
-
   login: async (req, res, next) => {
     try {
       let { usernameOrEmail, password } = req.query;
@@ -292,7 +291,6 @@ module.exports = {
       })
     }
   },
-
   createCategory: async (req, res, next) => {
     const t = await sequelize.transaction();
     try {
@@ -382,7 +380,6 @@ module.exports = {
       })
     }
   },
-
   deleteCategory: async (req, res, next) => {
     try {
       let { id } = req.query;
@@ -413,7 +410,7 @@ module.exports = {
       SELECT r.name AS room_name, 'booked' AS status, o.start_date, DATE_ADD(o.end_date, INTERVAL 1 DAY) as end_date
       FROM properties p
       INNER JOIN rooms r ON p.id = r.property_id
-      INNER JOIN orders o ON r.id = o.room_id AND o.status = 'complete'
+      INNER JOIN orders o ON r.id = o.room_id AND (o.status = 'Completed' or o.status = "Accepted")
       WHERE p.id = ${id}
       UNION
       SELECT r.name AS room_name, 'unavailable' AS status, rs.start_date, DATE_ADD(rs.end_date, INTERVAL 1 DAY) as end_date
