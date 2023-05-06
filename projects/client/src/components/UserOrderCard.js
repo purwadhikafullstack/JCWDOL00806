@@ -38,7 +38,8 @@ const UserOrderCard = ({
   room_review,
   onOrderUpdate,
   screen,
-  deadline,
+  dateDeadline,
+  timeDeadline,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [detailModal, setDetailModal] = useState(false);
@@ -363,6 +364,13 @@ const UserOrderCard = ({
                       handleButton={handleCancel}
                     />
                   </Flex>
+                  <Flex justifyContent="flex-end">
+                    <Flex flexDir="column" alignItems="center">
+                      <Text as="b">Payment Deadline :</Text>
+                      <Text>{dateDeadline}</Text>
+                      <Text>{timeDeadline}</Text>
+                    </Flex>
+                  </Flex>
                 </Flex>
               </>
             ) : (
@@ -667,6 +675,12 @@ const UserOrderCard = ({
                       id={id}
                       handleButton={handleCancel}
                     />
+                  </Flex>
+                  <Flex justifyContent="flex-end" className="mt-1">
+                    <Text as="b">Payment Deadline : </Text>
+                    <Text className="ml-1">
+                      {dateDeadline}, {timeDeadline}
+                    </Text>
                   </Flex>
                 </Flex>
               </>
