@@ -33,6 +33,7 @@ const RoomSpecial = () => {
         setRoomData(response.data.data)
         
         let room = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/room/unavailable-room/${roomID}`)
+        let checkSpecial = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/room/check-special/${roomID}`)
 
         const unavailableDates = []
 
@@ -60,7 +61,19 @@ const RoomSpecial = () => {
           })
       }
 
-        setUnavailable(unavailableDates)
+        if (checkSpecial.data.data.special.length !== 0) {
+          checkSpecial.data.data.special.forEach(async (val) => {
+            const startDate = new Date(val.start_date)
+            const endDate = new Date(val.end_date)
+
+            for (let date = startDate; date <= endDate; date.setDate(date.getDate() + 1)) {
+                let newDate = date.toISOString().substring(0, 10)
+                unavailableDates.push(newDate);
+            }
+        })
+      }
+        
+      setUnavailable(unavailableDates)
         
       } catch (error) {
         console.log(error)

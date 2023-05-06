@@ -406,5 +406,30 @@ module.exports ={
               status: 400
             })
         }
+    },
+    checkSpecial: async (req, res, next) => {
+        try {
+            let { room_id } = req.params
+            
+            let special = await sequelize.query(`
+            SELECT rsp.start_date, rsp.end_date
+            FROM rooms r
+            JOIN room_special_prices rsp ON r.id = rsp.room_id
+            WHERE r.id = ?;
+        `, {
+            replacements: [room_id],
+            type: sequelize.QueryTypes.SELECT
+        })
+
+            return res.status(200).send({
+                isError: false,
+                message: "Special prices checked",
+                data: {
+                    special
+                }
+        })
+        } catch (error) {
+            
+        }
     }
 }
