@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import axios from'axios'
 import * as Yup from 'yup'
 import toast, { Toaster } from 'react-hot-toast'
@@ -11,7 +11,7 @@ import {faFacebook, faGoogle} from '@fortawesome/free-brands-svg-icons'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 
-const Login = () => {
+const Login = ({ functions }) => {
     const navigate = useNavigate()
 
     const onLogin = async (value) => {
@@ -105,6 +105,10 @@ const Login = () => {
             </Formik>
         )
     }
+
+    useEffect(() => {
+        functions()
+    }, [])
 
     return (
         <div className='flex flex-col min-h-screen overflow-hidden'>

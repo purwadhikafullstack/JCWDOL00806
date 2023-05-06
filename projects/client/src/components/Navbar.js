@@ -55,6 +55,7 @@ const Navbar = () => {
     try {
       // get user token in local storage
       let token = localStorage.getItem("userToken");
+      if (!token) return
 
       // get user data
       let response = await axios.get(
@@ -65,13 +66,11 @@ const Navbar = () => {
       );
 
       // set user data
-      let username = response.data.data.username;
       let is_verified = response.data.data.is_verified;
-
-      setUserData(username);
       if (is_verified) setIsVerify(true);
+      setUserData(response.data.data);
     } catch (error) {
-      console.log(error.response.data.message);
+      console.log(error.message);
     }
   };
 
@@ -83,6 +82,16 @@ const Navbar = () => {
       document.body.style.overflow = "hidden";
       setToggle(true);
     }
+  };
+
+  const getImageSource = (link) => {
+    if (!link) return
+    
+    let image = `${process.env.REACT_APP_SERVER_URL}/image/${link
+      ?.replace(/"/g, "")
+      .replace(/\\/g, "/")}`;
+
+    return image;
   };
 
   const onLogout = () => {
@@ -126,8 +135,12 @@ const Navbar = () => {
               justify-between items-center gap-5"
             >
               <div className="flex gap-2 items-center">
-                <Avatar bg="gray" size={"sm"} />
-                <div>{userData}</div>
+                <Avatar 
+                  bg="gray" 
+                  size={"sm"} 
+                  src={`${getImageSource(userData?.profile_pic)}`} 
+                />
+                <div>{userData?.username}</div>
               </div>
               <Menu>
                 <MenuButton
@@ -219,8 +232,12 @@ const Navbar = () => {
             {userData ? (
               <div>
                 <div className="flex gap-2 font-bold">
-                  <Avatar bg="gray" size={"sm"} />
-                  <div>{userData}</div>
+                  <Avatar 
+                    bg="gray" 
+                    size={"sm"} 
+                    src={`${getImageSource(userData?.profile_pic)}`} 
+                  />
+                  <div>{userData?.username}</div>
                 </div>
 
                 <Divider orientation="horizontal" className="my-5" />
