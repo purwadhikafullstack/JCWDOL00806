@@ -25,10 +25,11 @@ module.exports = {
 
       let data = await sequelize.query(
         `
-      SELECT p.name AS name, pc.type, pc.city, p.picture, r.name AS room_name, min(r.price) AS price, p.id
+      SELECT p.name AS name, pc.type, pc.city, p.picture, r.name AS room_name, min(r.price) AS price, p.id, SUM(rv.rating) as total_rating, COUNT(rv.rating) as total_users
       FROM property_categories pc
       INNER JOIN properties p ON p.category_id = pc.id
       INNER JOIN rooms r ON r.property_id = p.id
+      LEFT JOIN reviews rv ON rv.room_id = r.id
       WHERE pc.city = ?
       AND r.id NOT IN (
         SELECT room_id FROM room_statuses
@@ -422,6 +423,9 @@ module.exports = {
       let existingBooking = await order.findAll({
         where: {
           room_id: room_id,
+          status: {
+            [Op.notIn]: ['Cancelled', 'Rejected']
+          },
           [Op.or]: [
             {
               [Op.and]: [
@@ -501,11 +505,27 @@ module.exports = {
         transaction: t,
       });
 
+      // get room special price
+      let specialPrice = await sequelize.query(`
+        SELECT *
+        FROM room_special_prices
+        WHERE room_id = ?
+        AND ? BETWEEN start_date AND end_date;
+      `, {
+        replacements: [room_id, start_date],
+        type: sequelize.QueryTypes.SELECT
+      })
+
       // calculate total price
-      let price = getRoom.dataValues.price;
+      let price
       let checkInDate = new Date(start_date);
       let checkOutDate = new Date(end_date);
 
+      if (specialPrice.length === 0)
+        price = getRoom.dataValues.price
+      else
+        price = specialPrice[0].price
+      
       let timeDiff = checkOutDate.getTime() - checkInDate.getTime();
       let numDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
 

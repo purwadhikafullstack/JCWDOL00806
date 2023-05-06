@@ -1,8 +1,7 @@
 import axios from "axios";
-import logo from "./logo.svg";
 import "./App.css";
-import { useEffect, useState } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import React from "react";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import RegisterPage from "./pages/RegisterPage";
 import HomePage from "./pages/HomePage";
 import TenantRegister from "./pages/tenantRegister";
@@ -12,7 +11,6 @@ import ResetPassword from "./pages/ResetPassword";
 import NewPassword from "./pages/NewPassword";
 import TenantDashboard from "./pages/tenantDashboard";
 import UserVerify from "./pages/UserVerify";
-import UserChangePassword from "./pages/UserChangePassword";
 import ChangeEmail from "./pages/ChangeEmail";
 import TenantProperty from "./pages/TenantProperty";
 import PassportLogin from "./pages/PassportLogin";
@@ -54,51 +52,39 @@ ChartJS.register(
 );
 
 function App() {
-  const [message, setMessage] = useState("");
-  const [isAuthUser, setIsAuthUser] = useState(false)
-  const [isAuthTenant, setIsAuthTenant] = useState(false)
-  useEffect(() => {
-    (async () => {
-      const { data } = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/greetings`
-      );
-      setMessage(data?.message || "");
-    })();
-  }, []);
-
-  useEffect(() => {
-    checkLoginUser()
-    checkLoginTenant()
-  }, [])
+  const navigate = useNavigate()
 
   const checkLoginUser = async () => {
     try {
-      let token = localStorage.getItem("userToken")
+      let userToken = localStorage.getItem("userToken")
+
+      if (!userToken) return
+      
       let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/users/keep-login`, null,
-        { headers: {Authorization : token}}
+        { headers: {Authorization : userToken}}
       )
-      if (response) {
-        setIsAuthUser(true)
-      } else {
-        setIsAuthUser(false)
-      }
+
+      if (response?.data?.data)
+        navigate('/')
     } catch (error) {
+      console.log(error.response.data.message)
     }
   }
 
   const checkLoginTenant = async () => {
     try {
       let tenantToken = localStorage.getItem('tenantToken')
-      let tenantResponse = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/tenant/keep-login`, null,
-      { headers: {Authorization : tenantToken}}
-      )
-      if (tenantResponse) {
-        setIsAuthTenant(true)
-      } else {
-        setIsAuthTenant(false)
-      }
-    } catch (error) {
       
+      if (!tenantToken) return
+
+      let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/tenant/keep-login`, null,
+        { headers: {Authorization : tenantToken}}
+      )
+
+      if (response?.data?.data)
+        navigate('/tenant/dashboard')
+    } catch (error) {
+      console.log(error.message)
     }
   }
 
@@ -106,16 +92,15 @@ function App() {
     <>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/users/register" element={ isAuthUser ? <Navigate to="/" /> : <RegisterPage />} />
+        <Route path="/users/register" element={ <RegisterPage functions={checkLoginUser} />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/new-password/:id" element={<NewPassword />} />
-        <Route path="/tenant/register" element={ isAuthTenant ? <Navigate to="/tenant/dashboard" /> : <TenantRegister />} />
-        <Route path="/tenant/login" element={ isAuthTenant ? <Navigate to="/tenant/dashboard" /> : <TenantLogin />} />
-        <Route path="/users/login" element={ isAuthUser ? <Navigate to="/" /> : <Login />} />
+        <Route path="/tenant/register" element={<TenantRegister functions={checkLoginTenant} />} />
+        <Route path="/tenant/login" element={<TenantLogin functions={checkLoginTenant} />} />
+        <Route path="/users/login" element={ <Login functions={checkLoginUser} />} />
         <Route path="/tenant/dashboard" element={<TenantDashboard />} />
         <Route path="/tenant/property" element={<TenantProperty />} />
         <Route path="/users/verify" element={<UserVerify />} />
-        <Route path="/users/change-password" element={<UserChangePassword />} />
         <Route path="/users/change-email" element={<ChangeEmail />} />
         <Route path="/passport-login" element={<PassportLogin />} />
         <Route path="/users/my-profile" element={<UserDetail />} />

@@ -13,5 +13,6 @@ Router.get("/room-data/:room_id", verifyToken, roomController.getRoomDetail)
 Router.post("/unavailable", roomController.addUnavailable)
 Router.post("/special-price", roomController.addSpecialPrice)
 Router.get("/unavailable-room/:room_id", roomController.getUnavailableRoom)
+Router.get("/get-room-special-price", roomController.getRoomSpecialPrice)
 
 module.exports = Router

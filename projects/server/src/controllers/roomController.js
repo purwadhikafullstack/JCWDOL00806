@@ -343,7 +343,8 @@ module.exports ={
                 SELECT o.start_date, o.end_date
                 FROM rooms r
                 JOIN orders o ON o.room_id = r.id
-                WHERE r.id = ? AND o.status != "Cancel";
+                WHERE r.id = ? 
+                AND o.status NOT IN ('Cancelled', 'Rejected');
             `, {
                 replacements: [room_id],
                 type: sequelize.QueryTypes.SELECT
@@ -356,6 +357,45 @@ module.exports ={
                     unavailable,
                     booked
                 }
+            })
+        } catch (error) {
+            console.log(error)
+            next({
+              isError: true,
+              message: error.message,
+              data: null,
+              status: 400
+            })
+        }
+    },
+    getRoomSpecialPrice: async (req, res, next) => {
+        try {
+            // get data from client
+            let { room_id, start_date } = req.query
+
+            // get room special price
+            let specialPrice = await sequelize.query(`
+                SELECT *
+                FROM room_special_prices
+                WHERE room_id = ?
+                AND ? BETWEEN start_date AND end_date;
+            `, {
+                replacements: [room_id, start_date],
+                type: sequelize.QueryTypes.SELECT
+            })
+            
+            // check if room special price empty or not
+            if (specialPrice.length === 0)
+            return res.status(200).send({
+                isError: false,
+                message: "No Special Price Found",
+                data: null
+            })
+
+            return res.status(200).send({
+                isError: false,
+                message: "Get Room Special Price Success",
+                data: specialPrice[0]
             })
         } catch (error) {
             console.log(error)

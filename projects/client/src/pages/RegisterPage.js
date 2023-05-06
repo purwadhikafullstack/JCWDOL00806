@@ -11,7 +11,7 @@ import {faFacebook, faGoogle} from '@fortawesome/free-brands-svg-icons'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 
-const RegisterPage = () => {
+const RegisterPage = ({ functions }) => {
   
   const [searchParam, setSearchParam] = useSearchParams()
   const [query, setQuery] = useState("")
@@ -22,6 +22,10 @@ const RegisterPage = () => {
       toast.error('Invalid or Email address is already registered')
     }
   }, [query])
+
+  useEffect(() => {
+    functions()
+  }, [])
 
   const navigate = useNavigate()
   const onSubmit = async (values) => {
