@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import {AlertDialog, AlertDialogBody, AlertDialogFooter, AlertDialogHeader, AlertDialogContent, AlertDialogCloseButton, AlertDialogOverlay, Button, useDisclosure, Textarea } from '@chakra-ui/react'
+import {AlertDialog, AlertDialogBody, AlertDialogFooter, AlertDialogHeader, AlertDialogContent, AlertDialogCloseButton, AlertDialogOverlay, Button, useDisclosure, Textarea, Text, Flex } from '@chakra-ui/react'
 
 const ConfirmAlert = ({handleButton, id, action}) => {
     const {isOpen, onOpen, onClose} = useDisclosure()
@@ -36,11 +36,11 @@ const ConfirmAlert = ({handleButton, id, action}) => {
                 className="mt-2"
             />
             ) : action === "Reject" ? (
-            <Textarea
-                placeholder='Please provide reason for rejection'
-                onChange={(e) => setNotes(e.target.value)}
-                className="mt-2"
-            />
+                <>
+                  <Flex>
+                    <Text className='text-red-500' mt={5} fontSize="xs" as='cite'>* Reject only if payment proof is incomplete</Text>
+                  </Flex>
+                </>
             ) : null }
           </AlertDialogBody>
           <AlertDialogFooter>

@@ -3,8 +3,8 @@ const { sequelize } = require("../../models");
 const { Op, where } = require("sequelize");
 const { QueryTypes } = require("sequelize");
 const fs = require("fs").promises;
-const handlebars = require('handlebars')
-const transporter = require('../helpers/transporter')
+const handlebars = require("handlebars");
+const transporter = require("../helpers/transporter");
 
 //Import models
 const db = require("../../models/index");
@@ -21,9 +21,47 @@ const deleteFiles = require("./../helpers/deleteFiles");
 module.exports = {
   list: async (req, res, next) => {
     try {
-      let { city, start, end } = req.query;
+      let { city, start, end, page } = req.query;
 
-      let data = await sequelize.query(
+      let limit = 10;
+      let offset = (page - 1) * limit;
+      console.log(page);
+
+      let totalData = null;
+
+      totalData = await sequelize.query(
+        `
+      SELECT COUNT(DISTINCT p.name) AS total
+      FROM property_categories pc
+      INNER JOIN properties p ON p.category_id = pc.id
+      INNER JOIN rooms r ON r.property_id = p.id
+      WHERE pc.city = ?
+      AND r.id NOT IN (
+        SELECT room_id FROM room_statuses
+        WHERE (? BETWEEN start_date AND end_date
+          OR ? BETWEEN start_date AND end_date
+          OR start_date BETWEEN ? AND ?
+          )
+      )
+      AND r.id NOT IN (
+        SELECT room_id FROM orders
+        WHERE status = 'complete'
+          AND (? BETWEEN start_date AND end_date
+          OR ? BETWEEN start_date AND end_date
+          OR start_date BETWEEN ? AND ?
+          )
+      );`,
+        {
+          replacements: [city, start, end, start, end, start, end, start, end],
+          type: sequelize.QueryTypes.SELECT,
+        }
+      );
+      console.log(totalData);
+      let total_pages = Math.ceil(totalData[0].total / limit);
+      console.log(total_pages);
+      let getData = "";
+
+      getData = await sequelize.query(
         `
       SELECT p.name AS name, pc.type, pc.city, p.picture, r.name AS room_name, min(r.price) AS price, p.id, SUM(rv.rating) as total_rating, COUNT(rv.rating) as total_users
       FROM property_categories pc
@@ -45,25 +83,30 @@ module.exports = {
           OR ? BETWEEN start_date AND end_date
           OR start_date BETWEEN ? AND ?
           )
-      ) GROUP BY p.name;`,
+      ) GROUP BY p.name
+      LIMIT ${limit}
+      OFFSET ${offset}
+      ;`,
         {
           replacements: [city, start, end, start, end, start, end, start, end],
           type: sequelize.QueryTypes.SELECT,
         }
       );
+
       res.status(200).send({
         isError: false,
         message: "List acquired",
-        data: data,
+        data: getData,
+        total_pages,
       });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       next({
         isError: true,
         message: error.message,
         data: null,
-        status: 400
-      })
+        status: 400,
+      });
     }
   },
   roomListFromHomepage: async (req, res, next) => {
@@ -83,13 +126,13 @@ module.exports = {
         data: data,
       });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       next({
         isError: true,
         message: error.message,
         data: null,
-        status: 400
-      })
+        status: 400,
+      });
     }
   },
   getRoomList: async (req, res, next) => {
@@ -139,13 +182,13 @@ module.exports = {
         data: data,
       });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       next({
         isError: true,
         message: error.message,
         data: null,
-        status: 400
-      })
+        status: 400,
+      });
     }
   },
   getOrderList: async (req, res, next) => {
@@ -165,7 +208,7 @@ module.exports = {
         INNER JOIN rooms r ON r.id = o.room_id
         JOIN properties p ON p.id = r.property_id
         JOIN property_categories c ON c.id = p.category_id and c.tenant_id = "${id}"
-        WHERE status = "Waiting for Confirmation"
+        WHERE status = "Waiting for Confirmation" or status = "Accepted"
         `);
       } else if (status === "all") {
         totalData = await sequelize.query(`
@@ -174,7 +217,6 @@ module.exports = {
       INNER JOIN rooms r ON r.id = o.room_id
       JOIN properties p ON p.id = r.property_id
       JOIN property_categories c ON c.id = p.category_id and c.tenant_id = "${id}"
-      WHERE status NOT IN ("Waiting for Payment")
       `);
       } else {
         totalData = await sequelize.query(`
@@ -192,33 +234,45 @@ module.exports = {
 
       if (status === "in progress") {
         getData = await sequelize.query(`
-        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes, o.users_id, r.rules
+        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes, o.users_id, r.rules, DATE_ADD(o.updatedAt, INTERVAL 2 HOUR) as payment_deadline
         FROM orders o
         INNER JOIN rooms r ON r.id = o.room_id
         JOIN properties p ON p.id = r.property_id
         JOIN property_categories c ON c.id = p.category_id and c.tenant_id = "${id}"
         JOIN order_details od ON od.order_id = o.id
-        WHERE status = "Waiting for Confirmation"
+        WHERE status = "Waiting for Confirmation" or status = "Accepted"
+        ORDER BY o.start_date ASC
+        LIMIT ${limit}
+        OFFSET ${offset}
+        `);
+      }else if(status === "cancelled") {
+        getData = await sequelize.query(`
+        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes, o.users_id, r.rules, DATE_ADD(o.updatedAt, INTERVAL 2 HOUR) as payment_deadline
+        FROM orders o
+        INNER JOIN rooms r ON r.id = o.room_id
+        JOIN properties p ON p.id = r.property_id
+        JOIN property_categories c ON c.id = p.category_id and c.tenant_id = "${id}"
+        JOIN order_details od ON od.order_id = o.id
+        WHERE status = "Cancelled" or status = "Expired"
         ORDER BY o.start_date ASC
         LIMIT ${limit}
         OFFSET ${offset}
         `);
       } else if (status === "all") {
         getData = await sequelize.query(`
-        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes, o.users_id, r.rules
+        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes, o.users_id, r.rules, DATE_ADD(o.updatedAt, INTERVAL 2 HOUR) as payment_deadline
         FROM orders o
         INNER JOIN rooms r ON r.id = o.room_id
         JOIN properties p ON p.id = r.property_id
         JOIN property_categories c ON c.id = p.category_id and c.tenant_id = "${id}"
         JOIN order_details od ON od.order_id = o.id
-        WHERE status NOT IN ("Waiting for Payment")
         ORDER BY o.start_date ASC
         LIMIT ${limit}
         OFFSET ${offset}
         `);
       } else {
         getData = await sequelize.query(`
-        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes, o.users_id, r.rules
+        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes, o.users_id, r.rules, DATE_ADD(o.updatedAt, INTERVAL 2 HOUR) as payment_deadline
         FROM orders o
         INNER JOIN rooms r ON r.id = o.room_id
         JOIN properties p ON p.id = r.property_id
@@ -238,13 +292,13 @@ module.exports = {
         total_pages,
       });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       next({
         isError: true,
         message: error.message,
         data: null,
-        status: 400
-      })
+        status: 400,
+      });
     }
   },
   getUserOrderList: async (req, res, next) => {
@@ -264,7 +318,7 @@ module.exports = {
         JOIN order_details od ON o.id = od.order_id
         INNER JOIN rooms r ON r.id = o.room_id
         JOIN properties p ON p.id = r.property_id
-        WHERE (status = "Waiting for Confirmation" OR status = "Waiting For Payment") AND o.users_id = "${id}"
+        WHERE (status = "Waiting for Confirmation" OR status = "Waiting For Payment" or status = "Accepted") AND o.users_id = "${id}"
         `);
       } else if (status === "all") {
         totalData = await sequelize.query(`
@@ -285,6 +339,7 @@ module.exports = {
         WHERE status = "${status}" AND o.users_id = "${id}"
       `);
       }
+
       let total_pages = Math.ceil(totalData[0][0].total / limit);
       let getData = "";
 
@@ -296,7 +351,7 @@ module.exports = {
         INNER JOIN rooms r ON r.id = o.room_id
         JOIN properties p ON p.id = r.property_id
         LEFT JOIN reviews rv ON rv.order_id = o.id
-        WHERE (status = "Waiting for Confirmation" OR status = "Waiting For Payment") AND o.users_id = "${id}"
+        WHERE (status = "Waiting for Confirmation" OR status = "Waiting For Payment" or status = "Accepted") AND o.users_id = "${id}"
         ORDER BY o.start_date ASC
         LIMIT ${limit}
         OFFSET ${offset}
@@ -336,13 +391,13 @@ module.exports = {
         total_pages,
       });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       next({
         isError: true,
         message: error.message,
         data: null,
-        status: 400
-      })
+        status: 400,
+      });
     }
   },
   checkout: async (req, res, next) => {
@@ -392,13 +447,13 @@ module.exports = {
         data: getRoom,
       });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       next({
         isError: true,
         message: error.message,
         data: null,
-        status: 400
-      })
+        status: 400,
+      });
     }
   },
   onBookRoom: async (req, res, next) => {
@@ -451,7 +506,7 @@ module.exports = {
         transaction: t,
       });
 
-      if (existingBooking.length > 0)  {
+      if (existingBooking.length > 0) {
         t.rollback();
         return res.status(400).send({
           isError: true,
@@ -459,7 +514,7 @@ module.exports = {
           data: null,
         });
       }
-        
+
       // check if the room is unavailable for the specified dates
       let unavailableRoom = await room_status.findAll({
         where: {
@@ -569,7 +624,9 @@ module.exports = {
         CREATE EVENT change_status_order_${insertId}
         ON SCHEDULE AT DATE_ADD(NOW(), INTERVAL 2 HOUR)
         DO
-          UPDATE orders SET status = 'Cancelled'
+          UPDATE orders SET 
+            status = 'Expired'
+            notes = "Order Expired"
           WHERE id = ?
       `,
         {
@@ -587,13 +644,13 @@ module.exports = {
       });
     } catch (error) {
       t.rollback();
-      console.log(error)
+      console.log(error);
       next({
         isError: true,
         message: error.message,
         data: null,
-        status: 400
-      })
+        status: 400,
+      });
     }
   },
   userUpdateOrderStatus: async (req, res, next) => {
@@ -617,13 +674,13 @@ module.exports = {
       });
     } catch (error) {
       t.rollback();
-      console.log(error)
+      console.log(error);
       next({
         isError: true,
         message: error.message,
         data: null,
-        status: 400
-      })
+        status: 400,
+      });
     }
   },
   tenantUpdateOrderStatus: async (req, res, next) => {
@@ -632,6 +689,8 @@ module.exports = {
       let { notes } = req.body;
       let { id } = req.params;
       let { status } = req.query;
+      let d = new Date()
+      let time = d.getTime()
       if (status === "cancel") {
         await order.update(
           {
@@ -648,12 +707,27 @@ module.exports = {
       } else if (status === "reject") {
         await order.update(
           {
-            status: "Rejected",
-            notes,
+            status: "Waiting for Payment",
+            notes: "Payment proof incomplete",
+            payment_proof: null,
           },
           {
             where: { id },
           },
+          {
+            transaction: t,
+          }
+        );
+        await sequelize.query(
+          `
+          CREATE EVENT order_status_rejected_${time}
+          ON SCHEDULE AT DATE_ADD(NOW(), INTERVAL 2 HOUR)
+          DO
+            UPDATE orders SET
+             status = 'Expired',
+             notes = "Order Expired"
+            WHERE id = ${id}
+        `,
           {
             transaction: t,
           }
@@ -666,13 +740,13 @@ module.exports = {
       });
     } catch (error) {
       t.rollback();
-      console.log(error)
+      console.log(error);
       next({
         isError: true,
         message: error.message,
         data: null,
-        status: 400
-      })
+        status: 400,
+      });
     }
   },
   tenantAcceptOrder: async (req, res, next) => {
@@ -681,66 +755,66 @@ module.exports = {
       style: "currency",
       currency: "IDR",
       minimumFractionDigits: 0,
-  });
+    });
     try {
-      let {id} = req.params
-      let { users_id } = req.query
-      let {invoice, property, room, start, end, price, rules} = req.body
-    let getData = await users.findOne({ where: { id: users_id } });
+      let { id } = req.params;
+      let { users_id } = req.query;
+      let { invoice, property, room, start, end, price, rules } = req.body;
+      let getData = await users.findOne({ where: { id: users_id } });
 
-    await order.update(
-      {
-        status: "Completed",
-        notes: "Order Accepted",
-      },
-      {
-        where: { id },
-      },
-      {
-        transaction: t,
-      }
+      await order.update(
+        {
+          status: "Accepted",
+          notes: "Order Accepted",
+        },
+        {
+          where: { id },
+        },
+        {
+          transaction: t,
+        }
       );
 
-      let template = await fs.readFile("./src/template/invoice.html", "utf-8")
-      let compiledTemplate = await handlebars.compile(template)
+      let template = await fs.readFile("./src/template/invoice.html", "utf-8");
+      let compiledTemplate = await handlebars.compile(template);
       let newTemplate = compiledTemplate({
-      invoice,
-      property,
-      room,
-      start,
-      end,
-      price : formatter.format(price),
-      rules
-      })
+        invoice,
+        property,
+        room,
+        start,
+        end,
+        price: formatter.format(price),
+        rules,
+      });
       await transporter.sendMail(
         {
           from: "Admin",
           to: `"${getData.dataValues.email}`,
           subject: "Your room order invoice",
-          html: newTemplate
+          html: newTemplate,
         },
         function (error, info) {
           if (error) {
-            console.log(error)
+            console.log(error);
           } else {
-            console.log("Email sent : " + info.response)
+            console.log("Email sent : " + info.response);
           }
         }
-      )
-      t.commit()
+      );
+      t.commit();
       return res.status(201).send({
         isError: false,
-        message: "Order accepted"
-      })
+        message: "Order accepted",
+      });
     } catch (error) {
-      t.rollback()
-      console.log(error)
+      t.rollback();
+      console.log(error);
       next({
         isError: true,
         message: error.message,
         data: null,
-        status: 400
-      })
+        status: 400,
+      });
     }
   },
   getTenantOrderFilter: async (req, res, next) => {
@@ -760,7 +834,7 @@ module.exports = {
         INNER JOIN rooms r ON r.id = o.room_id
         JOIN properties p ON p.id = r.property_id
         JOIN property_categories c ON c.id = p.category_id and c.tenant_id = "${id}"
-        WHERE status = "Waiting for Confirmation" AND o.invoice_id LIKE "%${search}%"
+        WHERE (status = "Waiting for Confirmation" or status = "Accepted") AND o.invoice_id LIKE "%${search}%"
         `);
       } else if (status === "all") {
         totalData = await sequelize.query(`
@@ -769,7 +843,7 @@ module.exports = {
       INNER JOIN rooms r ON r.id = o.room_id
       JOIN properties p ON p.id = r.property_id
       JOIN property_categories c ON c.id = p.category_id and c.tenant_id = "${id}"
-      WHERE status NOT IN ("Waiting for Payment") AND o.invoice_id LIKE "%${search}%"
+      WHERE o.invoice_id LIKE "%${search}%"
       `);
       } else {
         totalData = await sequelize.query(`
@@ -787,33 +861,33 @@ module.exports = {
 
       if (status === "in progress") {
         getData = await sequelize.query(`
-        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes, o.users_id, r.rules
+        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes, o.users_id, r.rules, DATE_ADD(o.updatedAt, INTERVAL 2 HOUR) as payment_deadline
         FROM orders o
         INNER JOIN rooms r ON r.id = o.room_id
         JOIN properties p ON p.id = r.property_id
         JOIN property_categories c ON c.id = p.category_id and c.tenant_id = "${id}"
         JOIN order_details od ON od.order_id = o.id
-        WHERE status = "Waiting for Confirmation" AND o.invoice_id LIKE "%${search}%"
+        WHERE (status = "Waiting for Confirmation" or status = "Accepted") AND o.invoice_id LIKE "%${search}%"
         ORDER BY o.start_date ASC
         LIMIT ${limit}
         OFFSET ${offset}
         `);
       } else if (status === "all") {
         getData = await sequelize.query(`
-        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes, o.users_id, r.rules
+        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes, o.users_id, r.rules, DATE_ADD(o.updatedAt, INTERVAL 2 HOUR) as payment_deadline
         FROM orders o
         INNER JOIN rooms r ON r.id = o.room_id
         JOIN properties p ON p.id = r.property_id
         JOIN property_categories c ON c.id = p.category_id and c.tenant_id = "${id}"
         JOIN order_details od ON od.order_id = o.id
-        WHERE status NOT IN ("Waiting for Payment") AND o.invoice_id LIKE "%${search}%"
+        WHERE o.invoice_id LIKE "%${search}%"
         ORDER BY o.start_date ASC
         LIMIT ${limit}
         OFFSET ${offset}
         `);
       } else {
         getData = await sequelize.query(`
-        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes, o.users_id, r.rules
+        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes, o.users_id, r.rules, DATE_ADD(o.updatedAt, INTERVAL 2 HOUR) as payment_deadline
         FROM orders o
         INNER JOIN rooms r ON r.id = o.room_id
         JOIN properties p ON p.id = r.property_id
@@ -833,13 +907,13 @@ module.exports = {
         total_pages,
       });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       next({
         isError: true,
         message: error.message,
         data: null,
-        status: 400
-      })
+        status: 400,
+      });
     }
   },
   getUserOrderFilter: async (req, res, next) => {
@@ -932,13 +1006,13 @@ module.exports = {
         total_pages,
       });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       next({
         isError: true,
         message: error.message,
         data: null,
-        status: 400
-      })
+        status: 400,
+      });
     }
   },
   onUploadPaymentProof: async (req, res, next) => {
@@ -1008,13 +1082,13 @@ module.exports = {
       // if something eror, delete image file
       deleteFiles(req.files.payment_proof);
 
-      console.log(error)
+      console.log(error);
       next({
         isError: true,
         message: error.message,
         data: null,
-        status: 400
-      })
+        status: 400,
+      });
     }
   },
   onCreateReview: async (req, res, next) => {
@@ -1053,13 +1127,13 @@ module.exports = {
         data: null,
       });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       next({
         isError: true,
         message: error.message,
         data: null,
-        status: 400
-      })
+        status: 400,
+      });
     }
   },
 };

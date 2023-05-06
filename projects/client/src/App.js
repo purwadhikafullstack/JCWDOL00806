@@ -67,14 +67,14 @@ function App() {
       if (response?.data?.data)
         navigate('/')
     } catch (error) {
-      console.log(error.response.data.message)
+      console.log(error.message)
     }
   }
 
   const checkLoginTenant = async () => {
     try {
       let tenantToken = localStorage.getItem('tenantToken')
-      
+   
       if (!tenantToken) return
 
       let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/tenant/keep-login`, null,
