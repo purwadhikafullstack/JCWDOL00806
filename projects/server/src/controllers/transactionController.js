@@ -605,7 +605,7 @@ module.exports = {
         ON SCHEDULE AT DATE_ADD(NOW(), INTERVAL 2 HOUR)
         DO
           UPDATE orders SET 
-            status = 'Expired'
+            status = 'Expired',
             notes = "Order Expired"
           WHERE id = ?
       `,
