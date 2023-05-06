@@ -62,11 +62,7 @@ const PropertyCard = ({ data, onClick }) => {
                 {calculateAverageRating()}
               </span>
             </div>
-          ) : (
-            <div>
-              <span className="font-semibold">New</span>
-            </div>
-          )}
+          ) : null}
         </div>
       </div>
 

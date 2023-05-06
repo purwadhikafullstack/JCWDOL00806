@@ -31,12 +31,12 @@ const PropertyContent = () => {
   }, []);
 
   return (
-    <div className="lg:px-16 md:px-10 px-5">
+    <div className="lg:px-16 md:px-10 px-5 flex justify-center items-center">
       <Toaster />
       <div
-        className="pt-6 pb-20 grid xl:grid-cols-5 
-                lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 
-                grid-cols-1 gap-x-5 gap-y-10"
+        className="pt-6 pb-20 grid lg:grid-cols-4 
+        md:grid-cols-3 sm:grid-cols-2 
+        grid-cols-1 gap-x-5 gap-y-10"
       >
         {property?.map((val) => (
           <div

@@ -213,14 +213,22 @@ module.exports = {
   },
   keepLogin: async (req, res, next) => {
     try {
-      let {id} = req.dataToken
+      let { id } = req.dataToken
 
-      if (id)
-        return res.status(201).send({
-          isError: false,
-          message: "User is logged in",
+      let checkTenant = await tenant.findOne({ where: { id } })
+
+      if (checkTenant === null) 
+        return res.status(400).send({
+          isError: true,
+          message: "Tenant Not Found",
           data: null
         })
+
+      return res.status(201).send({
+        isError: false,
+        message: "Tenant is logged in",
+        data: checkTenant
+      })
     } catch (error) {
       console.log(error)
       next({

@@ -148,14 +148,22 @@ module.exports = {
   },
   keepLogin: async (req, res, next) => {
     try {
-      let {id} = req.dataToken
+      let { id } = req.dataToken
 
-      if (id)
-        return res.status(201).send({
-          isError: false,
-          message: "User is logged in",
+      let checkUsers = await users.findOne({ where: { id } })
+
+      if (checkUsers === null) 
+        return res.status(400).send({
+          isError: true,
+          message: "Users Not Found",
           data: null
         })
+      
+      return res.status(201).send({
+        isError: false,
+        message: "User is logged in",
+        data: checkUsers
+      })  
     } catch (error) {
       console.log(error)
       next({
@@ -447,7 +455,15 @@ module.exports = {
       let { id } = req.dataToken;
 
       // get users data
-      let checkUsers = await users.findOne({ where: { id } });
+      let checkUsers = await sequelize.query(`
+        SELECT u.id, u.username, u.is_verified, ud.profile_pic
+        FROM users u
+        LEFT JOIN user_details ud ON ud.users_id = u.id
+        WHERE u.id = ?
+      `, {
+        replacements: [id],
+        type: sequelize.QueryTypes.SELECT,
+      })
 
       // check if users exist
       if (checkUsers === null)
@@ -460,7 +476,7 @@ module.exports = {
       return res.status(200).send({
         isError: false,
         message: "Get Users Data Successful",
-        data: checkUsers,
+        data: checkUsers[0],
       });
     } catch (error) {
       console.log(error)

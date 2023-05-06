@@ -16,6 +16,7 @@ const CheckoutContent = () => {
     const [roomData, setRoomData] = useState()
     const [userToken, setUserToken] = useState()
     const [stay, setStay] = useState(0)
+    const [stayPrice, setStayPrice] = useState(0)
     const [startDate, setStartDate] = useState(null)
     const [endDate, setEndDate] = useState(null)
     const [isOpen, setIsOpen] = useState(false)
@@ -178,6 +179,24 @@ const CheckoutContent = () => {
         setStay(numDays)
     }
 
+    const calculateStayPrice = async () => {
+        try {
+            // convert start date
+            let formattedStartDate = onConvertFormatDate(startDate)
+            
+            // get room special price
+            let roomSpecialPrice = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/room/get-room-special-price?room_id=${roomID}&start_date=${formattedStartDate}`)
+
+            // calculate stay price
+            if (roomSpecialPrice?.data?.data === null)
+                setStayPrice(roomData?.price * stay)
+            else
+                setStayPrice(roomSpecialPrice?.data?.data?.price * stay)
+        } catch (error) {
+            console.log(error.message)
+        }
+    }
+
     const onChange = (dates) => {
         const [start, end] = dates;
         
@@ -228,6 +247,13 @@ const CheckoutContent = () => {
     useEffect(() => {
         onGetRoomData()
     }, [])
+
+    useEffect(() => {
+        if (startDate && endDate)
+            calculateStayPrice();
+        else if (stay === 0)
+            setStayPrice(0)
+    }, [roomData, stay, startDate, endDate]);
 
     return (
         <div 
@@ -318,10 +344,10 @@ const CheckoutContent = () => {
                         className='md:w-2/3 w-full rounded-xl 
                         border p-4 self-start'
                     >
-                        <div className='flex gap-5'>
+                        <div className='flex flex-col gap-5'>
                             <div
                                 className="overflow-hidden rounded-lg 
-                                w-[150px] border shadow-lg"
+                                border shadow-lg"
                             >
                                 <Image
                                     boxSize="100%"
@@ -364,7 +390,7 @@ const CheckoutContent = () => {
                                     Room price for {stay} night
                                 </span>
                                 <span className='font-semibold'>
-                                    {formatter.format(roomData?.price * stay)}
+                                    {formatter.format(stayPrice)}
                                 </span>
                             </div>
                         </div>
@@ -377,7 +403,7 @@ const CheckoutContent = () => {
                         >
                             <span>Payable Amount</span>
                             <span className='font-semibold'>
-                                {formatter.format(roomData?.price * stay)}
+                                {formatter.format(stayPrice)}
                             </span>
                         </div>
                     </div>
