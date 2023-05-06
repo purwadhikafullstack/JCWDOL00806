@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import {
   FormControl,
@@ -16,7 +16,7 @@ import * as Yup from "yup";
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 
-export default function TenantRegister() {
+export default function TenantRegister({ functions }) {
   const [images, setImages] = useState(null);
   const navigate = useNavigate();
 
@@ -99,6 +99,10 @@ export default function TenantRegister() {
       registerHandler(values);
     },
   });
+
+  useEffect(() => {
+    functions()
+  }, [])
 
   return (
     <div className="flex flex-col min-h-screen overflow-hidden">

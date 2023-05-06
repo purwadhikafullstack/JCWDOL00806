@@ -40,7 +40,8 @@ const LoginModal = ({ handleSidebar }) => {
                                 width='100%'
                                 onClick={() => {
                                     onClose()
-                                    handleSidebar()
+                                    if (handleSidebar)
+                                        handleSidebar()
                                 }}
                             >
                                 Login as User
@@ -53,7 +54,8 @@ const LoginModal = ({ handleSidebar }) => {
                                 width='100%'
                                 onClick={() => {
                                     onClose()
-                                    handleSidebar()
+                                    if (handleSidebar)
+                                        handleSidebar()
                                 }}
                             >
                                 Login as Tenant

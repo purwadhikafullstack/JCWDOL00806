@@ -39,7 +39,8 @@ const RegisterModal = ({ handleSidebar }) => {
                                 width='100%'
                                 onClick={() => {
                                     onClose()
-                                    handleSidebar()
+                                    if (handleSidebar)
+                                        handleSidebar()
                                 }}
                             >
                                 Register as User
@@ -52,7 +53,8 @@ const RegisterModal = ({ handleSidebar }) => {
                                 width='100%'
                                 onClick={() => {
                                     onClose()
-                                    handleSidebar()
+                                    if (handleSidebar)
+                                        handleSidebar()
                                 }}
                             >
                                 Register as Tenant

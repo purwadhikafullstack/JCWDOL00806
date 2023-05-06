@@ -25,6 +25,7 @@ import toast, { Toaster } from "react-hot-toast";
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import EditProfileModal from "../components/EditProfileModal";
+import UserChangePasswordModal from "../components/UserChangePasswordModal";
 
 const UserDetail = () => {
   const navigate = useNavigate();
@@ -233,15 +234,7 @@ const UserDetail = () => {
                           </Heading>
                           <Input marginTop={2} disabled value="**********" />
                         </Box>
-                        <Button
-                          marginTop={2}
-                          w="100%"
-                          onClick={() => navigate("/users/change-password")}
-                          colorScheme="messenger"
-                          type="submit"
-                        >
-                          Change your password
-                        </Button>
+                        <UserChangePasswordModal />
                       </div>
                     </>
                   )}

@@ -7,8 +7,9 @@ import * as Yup from "yup";
 
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { useEffect } from "react";
 
-export default function TenantLogin() {
+export default function TenantLogin({ functions }) {
   const navigate = useNavigate();
 
   const loginSchema = Yup.object().shape({
@@ -87,6 +88,10 @@ export default function TenantLogin() {
       </Formik>
     );
   };
+
+  useEffect(() => {
+    functions()
+  }, [])
 
   return (
     <div className="flex flex-col min-h-screen overflow-hidden">
