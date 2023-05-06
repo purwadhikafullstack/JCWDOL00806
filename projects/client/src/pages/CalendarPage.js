@@ -21,7 +21,7 @@ const CalendarPage = () => {
     
   const getData = async () => {
     let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/tenant/room-calendar/${propertyID}`)
-
+    console.log(response)
     let mapped = await response.data.data.map((e) => {
       if (e.status === "unavailable") {
         return {

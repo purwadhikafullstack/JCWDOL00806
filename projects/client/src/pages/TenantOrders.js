@@ -52,14 +52,19 @@ const TenantOrders = () => {
     }
 
     const handleFilterClick = (event) => {
-        setStatusFilter(event.target.name)
-        setPage(1)
-        setFilterModal(false)
-        if (invoiceFilter) {
-            navigate(`/tenant/orders?status=${event.target.name}&search=${invoiceFilter}`)
-        } else {
-            navigate(`/tenant/orders?status=${event.target.name}`)
+        try {
+            setStatusFilter(event.target.name)
+            setPage(1)
+            setFilterModal(false)
+            if (invoiceFilter) {
+                navigate(`/tenant/orders?status=${event.target.name}&search=${invoiceFilter}`)
+            } else {
+                navigate(`/tenant/orders?status=${event.target.name}`)
+            }
+        } catch (error) {
+            console.log(error)
         }
+       
     }
 
     const getOrderList = async () => {
@@ -83,7 +88,12 @@ const TenantOrders = () => {
             setPageCount(response.data.total_pages)
             
         } catch (error) {
-            console.log(error)
+            if (error.response.data.message === "jwt expired" || error.response.data.message === "jwt malformed") {
+                toast.error("Session expired")
+                setTimeout(() => {
+                    navigate('/tenant/login')
+                }, 1500);
+            }
         }
 
     }
