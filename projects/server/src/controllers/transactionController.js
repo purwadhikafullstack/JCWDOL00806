@@ -244,7 +244,7 @@ module.exports = {
         LIMIT ${limit}
         OFFSET ${offset}
         `);
-      }else if(status === "cancelled") {
+      } else if (status === "cancelled") {
         getData = await sequelize.query(`
         SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, room_id, notes, o.users_id, r.rules, DATE_ADD(o.updatedAt, INTERVAL 2 HOUR) as payment_deadline
         FROM orders o
@@ -344,7 +344,7 @@ module.exports = {
 
       if (status === "in progress") {
         getData = await sequelize.query(`
-        SELECT o.id, r.name, o.payment_proof, status, start_date, end_date, o.room_id, o.invoice_id, od.total_price, p.name AS property_name , o.notes, rv.rating, rv.review
+        SELECT o.id, r.name, o.payment_proof, status, start_date, end_date, o.room_id, o.invoice_id, od.total_price, p.name AS property_name , o.notes, rv.rating, rv.review, DATE_ADD(o.updatedAt, INTERVAL 2 HOUR) as payment_deadline
         FROM orders o
         JOIN order_details od ON o.id = od.order_id
         INNER JOIN rooms r ON r.id = o.room_id
@@ -357,7 +357,7 @@ module.exports = {
         `);
       } else if (status === "all") {
         getData = await sequelize.query(`
-        SELECT o.id, r.name, o.payment_proof, status, start_date, end_date, o.room_id, o.invoice_id, od.total_price, p.name AS property_name , o.notes, rv.rating, rv.review
+        SELECT o.id, r.name, o.payment_proof, status, start_date, end_date, o.room_id, o.invoice_id, od.total_price, p.name AS property_name , o.notes, rv.rating, rv.review, DATE_ADD(o.updatedAt, INTERVAL 2 HOUR) as payment_deadline
         FROM orders o
         JOIN order_details od ON o.id = od.order_id
         INNER JOIN rooms r ON r.id = o.room_id
@@ -370,7 +370,7 @@ module.exports = {
         `);
       } else {
         getData = await sequelize.query(`
-        SELECT o.id, r.name, o.payment_proof, status, start_date, end_date, o.room_id, o.invoice_id, od.total_price, p.name AS property_name , o.notes, rv.rating, rv.review
+        SELECT o.id, r.name, o.payment_proof, status, start_date, end_date, o.room_id, o.invoice_id, od.total_price, p.name AS property_name , o.notes, rv.rating, rv.review, DATE_ADD(o.updatedAt, INTERVAL 2 HOUR) as payment_deadline
         FROM orders o
         JOIN order_details od ON o.id = od.order_id
         INNER JOIN rooms r ON r.id = o.room_id
@@ -669,8 +669,8 @@ module.exports = {
       let { notes } = req.body;
       let { id } = req.params;
       let { status } = req.query;
-      let d = new Date()
-      let time = d.getTime()
+      let d = new Date();
+      let time = d.getTime();
       if (status === "cancel") {
         await order.update(
           {
@@ -940,7 +940,7 @@ module.exports = {
 
       if (status === "in progress") {
         getData = await sequelize.query(`
-        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, o.room_id, notes, rv.rating, rv.review
+        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, o.room_id, notes, rv.rating, rv.review, DATE_ADD(o.updatedAt, INTERVAL 2 HOUR) as payment_deadline
         FROM orders o
         JOIN order_details od ON o.id = od.order_id
         INNER JOIN rooms r ON r.id = o.room_id
@@ -953,7 +953,7 @@ module.exports = {
         `);
       } else if (status === "all") {
         getData = await sequelize.query(`
-        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, o.room_id, notes, rv.rating, rv.review
+        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, o.room_id, notes, rv.rating, rv.review, DATE_ADD(o.updatedAt, INTERVAL 2 HOUR) as payment_deadline
         FROM orders o
         JOIN order_details od ON o.id = od.order_id
         INNER JOIN rooms r ON r.id = o.room_id
@@ -966,7 +966,7 @@ module.exports = {
         `);
       } else {
         getData = await sequelize.query(`
-        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, o.room_id, notes, rv.rating, rv.review
+        SELECT o.id, o.invoice_id, p.name as property_name, r.name, o.payment_proof, status, od.total_price, start_date, end_date, o.room_id, notes, rv.rating, rv.review, DATE_ADD(o.updatedAt, INTERVAL 2 HOUR) as payment_deadline
         FROM orders o
         JOIN order_details od ON o.id = od.order_id
         INNER JOIN rooms r ON r.id = o.room_id
