@@ -429,7 +429,13 @@ module.exports ={
                 }
         })
         } catch (error) {
-            
+            console.log(error)
+            next({
+              isError: true,
+              message: error.message,
+              data: null,
+              status: 400
+            })
         }
     }
 }
