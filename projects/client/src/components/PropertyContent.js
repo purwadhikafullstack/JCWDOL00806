@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import toast, { Toaster } from "react-hot-toast";
 import PropertyCard from "../components/PropertyCard";
 import { useNavigate } from "react-router-dom";
 
@@ -32,7 +31,6 @@ const PropertyContent = () => {
 
   return (
     <div className="lg:px-16 md:px-10 px-5 flex justify-center items-center">
-      <Toaster />
       <div
         className="pt-6 pb-20 grid lg:grid-cols-4 
         md:grid-cols-3 sm:grid-cols-2 
