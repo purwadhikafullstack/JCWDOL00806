@@ -366,9 +366,11 @@ const UserOrderCard = ({
                   </Flex>
                   <Flex justifyContent="flex-end">
                     <Flex flexDir="column" alignItems="center">
-                      <Text as="b">Payment Deadline :</Text>
-                      <Text>{dateDeadline}</Text>
-                      <Text>{timeDeadline}</Text>
+                      <Text as="b" color="red">
+                        Payment Deadline :
+                      </Text>
+                      <Text color="red">{dateDeadline}</Text>
+                      <Text color="red">{timeDeadline}</Text>
                     </Flex>
                   </Flex>
                 </Flex>
@@ -677,8 +679,10 @@ const UserOrderCard = ({
                     />
                   </Flex>
                   <Flex justifyContent="flex-end" className="mt-1">
-                    <Text as="b">Payment Deadline : </Text>
-                    <Text className="ml-1">
+                    <Text as="b" color="red">
+                      Payment Deadline :{" "}
+                    </Text>
+                    <Text className="ml-1" color="red">
                       {dateDeadline}, {timeDeadline}
                     </Text>
                   </Flex>
