@@ -8,6 +8,7 @@ const passportGoogle = require("./auth/passportGoogle");
 const passportFacebook = require("./auth/passportFacebook");
 const cron = require("node-cron");
 const { bookingReminder } = require("./middleware/bookingReminder");
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const PORT = process.env.PORT || 8000;
 const app = express();
@@ -24,6 +25,18 @@ app.use(
     origin: `http://localhost:3000`,
   })
 );
+
+// Set up proxy for the RajaOngkir API
+app.use('/api/rajaongkir', createProxyMiddleware({
+  target: 'https://api.rajaongkir.com',
+  changeOrigin: true,
+  pathRewrite: {
+    '^/api/rajaongkir': '/starter/city',
+  },
+  headers: {
+    key: process.env.RAJAONGKIR_KEY,
+  },
+}));
 
 app.use(express.json());
 

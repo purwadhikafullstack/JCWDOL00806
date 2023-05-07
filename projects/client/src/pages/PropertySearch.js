@@ -7,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import ReactPaginate from "react-paginate";
-import { Flex } from "@chakra-ui/react";
 
 export default function PropertySearch() {
   const [data, setData] = useState([]);
@@ -33,7 +32,6 @@ export default function PropertySearch() {
       setData(data.data.data);
 
       setPageCount(data.data.total_pages);
-      toast(data.data.message);
     } catch (error) {
       console.log(error);
     }
@@ -69,7 +67,7 @@ export default function PropertySearch() {
       console.log(error);
       if (
         error.response?.data.message === "jwt expired" ||
-        error.message == "Token is missing"
+        error.message === "Token is missing"
       ) {
         toast("Your session is expired, please login");
         setTimeout(() => {
@@ -97,7 +95,7 @@ export default function PropertySearch() {
     <>
       <Toaster />
       <Navbar />
-      <SearchForm />
+      <SearchForm city={city} start_date={start} end_date={end} />
       <div className="lg:px-16 md:px-10 px-5">
         <div
           className="pt-6 pb-20 grid xl:grid-cols-5 
@@ -107,7 +105,7 @@ export default function PropertySearch() {
           {data?.map((val) => {
             return (
               <div
-                key={val?.data_id}
+                key={val?.id}
                 className="cursor-pointer"
                 onClick={() => detailNavigate(val.id)}
               >
