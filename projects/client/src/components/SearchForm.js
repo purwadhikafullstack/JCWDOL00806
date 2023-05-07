@@ -15,8 +15,6 @@ const SearchForm = () => {
     navigate(
       `/search?city=${location.current.value}&start=${startDate}&end=${endDate}`
     );
-    console.log(location.current.value);
-    console.log(dateRange);
   };
 
   return (

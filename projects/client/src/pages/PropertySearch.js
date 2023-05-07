@@ -91,7 +91,7 @@ export default function PropertySearch() {
 
   useEffect(() => {
     onGetData();
-  }, []);
+  }, [city, start, end]);
 
   return (
     <>
