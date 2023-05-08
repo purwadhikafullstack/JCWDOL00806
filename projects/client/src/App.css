@@ -36,3 +36,20 @@
     transform: rotate(360deg);
   }
 }
+
+.form-divider::before, .form-divider::after{
+  border-top: 1px solid rgb(204, 204, 204);
+  content: "";
+  display: table-cell;
+  position: relative;
+  top: 0.8em;
+  width: 42%;
+}
+
+.form-divider {
+  display: table;
+    margin: 4vh auto 0;
+    color: rgb(127, 127, 127);
+    text-align: center;
+    width: 90%;
+}
