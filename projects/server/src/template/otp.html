@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>D'SEWA</title>
+
+    <style>
+        .otp-box {
+            max-width: 500px;
+            margin: auto;
+            padding: 30px 50px;
+            border: 1px solid #eee;
+            font-size: 16px;
+            line-height: 24px;
+            font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+        }
+        .company-logo {
+            font-size: 30px;
+        }
+        .otp-content {
+            margin-top: 50px;
+        }
+        .otp-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+        .otp-number {
+            margin: 20px 0px;
+            font-size: 20px;
+            font-weight: 600;
+        }
+        .otp-reminder {
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="otp-box">
+        <div class="company-logo">
+            D'SEWA
+        </div>
+        <div class="otp-content">
+            <div class="otp-title">Verify your account</div>
+
+            <div>
+                Below is your one time passcode (OTP):
+            </div>
+            
+            <div class="otp-number">
+                {{otp_number}}
+            </div>
+            
+            <div class="otp-reminder">
+                <div>
+                    This one time passcode will expired after 1 day.
+                </div>
+                <div>
+                    Remember, never share this one time passcode with anyone,
+                    not even if D'Sewa ask to you.
+                </div>
+            </div>
+            
+            <div class="team-regards">
+                <div>Regards,</div>
+                <div>Team D'Sewa</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
