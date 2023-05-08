@@ -1,8 +1,8 @@
-require("dotenv").config();
+const { join } = require("path");
+require('dotenv').config({path:join(__dirname,'../.env')});
 const express = require("express");
 const session = require("express-session");
 const cors = require("cors");
-const { join } = require("path");
 const passport = require("passport");
 const passportGoogle = require("./auth/passportGoogle");
 const passportFacebook = require("./auth/passportFacebook");
