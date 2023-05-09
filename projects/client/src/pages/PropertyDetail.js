@@ -102,39 +102,39 @@ export default function PropertyDetail() {
               alt={list[0]?.name}
             />
           </div>
-          <div className="flex flex-col lg:flex-row items-center justify-center lg:justify-end ">
-            <Heading className="lg:mr-2 mb-2 " size="xs">
-              Enter your date range
-            </Heading>
-            <div className="flex justify-center align-middle">
-              <DatePicker
-                className="border border-slate-400 rounded-md w-52 px-3"
-                selectsRange={true}
-                startDate={start}
-                endDate={end}
-                onChange={(update) => {
-                  setDateRange(update);
-                }}
-                isClearable={true}
-                dateFormat="yyyy-MM-dd"
-              >
-                <div style={{ color: "red" }}>
-                  Click the date twice if only one day !
-                </div>
-              </DatePicker>
-            </div>
-          </div>
-        </div>
-        <div className="flex sm:flex-col justify-center pt-6 pb-20 ">
-          <div className="flex flex-row flex-wrap justify-center">
-            {list?.map((val, i) => (
-              <div
-                key={i}
-                className="cursor-pointer border rounded-lg shadow-lg p-4 sm:w-full lg:w-auto mx-2"
-              >
-                <RoomCard data={val} dateRange={dateRange} />
+          <div className="flex flex-col">
+            <div className="flex flex-col lg:flex-row items-center justify-center mt-4 mb-2">
+              <Heading className="lg:mr-2 mb-2 " size="xs">
+                Enter your date range
+              </Heading>
+              <div className="flex justify-center align-middle">
+                <DatePicker
+                  className="border border-slate-400 rounded-md w-52 px-3"
+                  selectsRange={true}
+                  startDate={start}
+                  endDate={end}
+                  onChange={(update) => {
+                    setDateRange(update);
+                  }}
+                  isClearable={true}
+                  dateFormat="yyyy-MM-dd"
+                >
+                  <div style={{ color: "red" }}>
+                    Click the date twice if only one day !
+                  </div>
+                </DatePicker>
               </div>
-            ))}
+            </div>
+            <div className="flex flex-col flex-wrap justify-center">
+              {list?.map((val, i) => (
+                <div
+                  key={i}
+                  className="cursor-pointer border rounded-lg shadow-lg p-4 sm:w-full lg:w-auto my-2"
+                >
+                  <RoomCard data={val} dateRange={dateRange} />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
