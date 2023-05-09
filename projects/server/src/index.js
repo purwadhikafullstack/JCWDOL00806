@@ -64,7 +64,7 @@ cron.schedule("0 0 * * *", bookingReminder);
 // Sequelize DB Sync
 
 // const Sequelize = require("sequelize");
-// const Models = require("../models");
+// const Models = require("./models");
 // Models.sequelize
 //   .sync({
 //     force: false,
