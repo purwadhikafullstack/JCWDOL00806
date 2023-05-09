@@ -1,5 +1,5 @@
 //Import dependencies
-const { sequelize } = require("../../models");
+const { sequelize } = require("../models");
 const { Op, where } = require("sequelize");
 const { QueryTypes } = require("sequelize");
 const fs = require("fs").promises;
@@ -7,7 +7,7 @@ const handlebars = require("handlebars");
 const transporter = require("../helpers/transporter");
 
 //Import models
-const db = require("../../models/index");
+const db = require("../models/index");
 const order = db.order;
 const users = db.users;
 const room = db.room;

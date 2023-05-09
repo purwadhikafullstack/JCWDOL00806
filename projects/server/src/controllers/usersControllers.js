@@ -1,8 +1,8 @@
-const { sequelize } = require("../../models");
+const { sequelize } = require("../models");
 const { Op } = require("sequelize");
 const { hashPassword, hashMatch } = require("../lib/hash");
 const { createToken } = require("../lib/jwt");
-const db = require("../../models/index");
+const db = require("../models/index");
 const users = db.users;
 const user_details = db.user_details;
 const fs = require("fs").promises;

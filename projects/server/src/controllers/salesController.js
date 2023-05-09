@@ -1,9 +1,9 @@
 // import sequelize
-const { sequelize } = require("../../models");
+const { sequelize } = require("../models");
 const { Op } = require("sequelize");
 
 // import modals
-const db = require("../../models/index");
+const db = require("../models/index");
 const tenant = db.tenant;
 
 module.exports = {
