@@ -11,7 +11,6 @@ Router.get('/callback',
         }),
     function (req, res) {
         const token = createToken({ id: req.user.id })
-        req.flash('test', 'testagain')
         res.cookie('jwt', token)
         res.redirect('http://localhost:3000/passport-login')
     });

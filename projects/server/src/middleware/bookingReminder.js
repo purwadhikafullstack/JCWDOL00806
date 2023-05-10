@@ -1,4 +1,4 @@
-const { sequelize } = require("../../models")
+const { sequelize } = require("../models")
 const fs = require("fs").promises
 const handlebars = require('handlebars')
 const transporter = require('../helpers/transporter')

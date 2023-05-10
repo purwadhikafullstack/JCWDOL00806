@@ -3,11 +3,11 @@ const passport = require('passport')
 const GoogleStrategy = require('passport-google-oauth20').Strategy
 
 // import sequelize
-const { sequelize } = require('../../models')
+const { sequelize } = require('../models')
 const {Op} = require('sequelize')
 
 // import modals
-const db = require('../../models/index')
+const db = require('../models/index')
 const users = db.users
 
 passport.use(new GoogleStrategy(

@@ -1,11 +1,11 @@
 //Import dependencies
-const { sequelize } = require("./../../models");
+const { sequelize } = require("../models");
 const { Op } = require("sequelize");
 const { QueryTypes } = require("sequelize");
 const fs = require("fs").promises;
 
 //Import models
-const db = require("../../models/index");
+const db = require("../models/index");
 const tenant = db.tenant;
 const propertyCategory = db.property_category;
 

@@ -1,11 +1,11 @@
 const passport = require('passport')
 const FacebookStrategy = require('passport-facebook').Strategy
-const {sequelize} = require('../../models')
+const {sequelize} = require('../models')
 const {Op} = require('sequelize')
 
 require('dotenv').config()
 
-const db = require('../../models/index')
+const db = require('../models/index')
 const users = db.users
 
 passport.use(new FacebookStrategy({
