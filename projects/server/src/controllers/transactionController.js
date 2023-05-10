@@ -112,11 +112,14 @@ module.exports = {
   roomListFromHomepage: async (req, res, next) => {
     try {
       let { property_id } = req.query;
-      let data = await sequelize.query(
-        `SELECT p.name AS name, pc.type, pc.city, p.picture, r.name AS room_name, r.price AS price, r.id
-      FROM property_categories pc
-      INNER JOIN properties p ON p.category_id = pc.id AND p.id = ?
-      INNER JOIN rooms r ON r.property_id = p.id
+      let data = await sequelize.query(`
+        SELECT p.name AS name, pc.type, pc.city, p.picture, r.name AS room_name, r.price AS price, r.id, SUM(rv.rating) as total_rating, COUNT(rv.rating) as total_users
+        FROM rooms r
+        JOIN properties p ON r.property_id = p.id
+        JOIN property_categories pc ON p.category_id = pc.id
+        LEFT JOIN reviews rv ON rv.room_id = r.id
+        WHERE p.id = ?
+        GROUP BY r.id;
       `,
         { replacements: [property_id], type: sequelize.QueryTypes.SELECT }
       );

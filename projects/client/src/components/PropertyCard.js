@@ -70,7 +70,7 @@ const PropertyCard = ({ data, onClick }) => {
 
       <div className="text-base">
         <span className="font-semibold">{formatter.format(data?.price)}</span>
-        <span className="ml-2">per night</span>
+        <span className="ml-2">/ night</span>
       </div>
     </div>
   );

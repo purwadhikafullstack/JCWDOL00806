@@ -47,6 +47,13 @@ const RoomCard = ({ data, onClick, dateRange, onClose }) => {
     setSpecial(mapped);
   };
 
+  const calculateAverageRating = () => {
+    let averageRating = Number(data?.total_rating) / Number(data?.total_users)
+    let formattedRating = averageRating.toFixed(2);
+
+    return formattedRating
+  }
+
   useEffect(() => {
     getCalendar();
   }, []);
@@ -55,7 +62,7 @@ const RoomCard = ({ data, onClick, dateRange, onClose }) => {
     <div className="flex flex-col w-full" onClick={onClick}>
       <div
         className=" flex flex-row 
-        items-center justify-around"
+        items-center justify-between"
       >
         <div
           className="font-semibold text-xl 
@@ -69,26 +76,36 @@ const RoomCard = ({ data, onClick, dateRange, onClose }) => {
           className="flex justify-end 
           items-center w-12"
         >
-          <FontAwesomeIcon icon={faStar} />
-          <span className="ml-1">5,0</span>
+          {data?.total_rating !== null ? (
+            <div className="flex justify-end items-center gap-2">
+              <FontAwesomeIcon icon={faStar} />
+              <span>
+                {calculateAverageRating()}
+              </span>
+            </div>
+          ) : null}
         </div>
       </div>
 
-      <div className="text-base flex justify-around items-center">
-        <span className="font-semibold">{formatter.format(data?.price)}</span>
-        <span className="ml-2 mr-2">per night</span>
-        <Link
-          to={`/checkout/${data?.id}?start=${dateRange[0]}&end=${dateRange[1]}`}
-        >
-          <Button>Book Now</Button>
-        </Link>
-        <Button
-          colorScheme="linkedin"
-          className="ml-2"
-          onClick={handleOpenModal}
-        >
-          See Special Price
-        </Button>
+      <div className="text-base flex flex-wrap justify-between items-center mt-5 gap-2">
+        <div>
+          <span className="font-semibold">{formatter.format(data?.price)}</span>
+          <span className="ml-2 mr-2">/ night</span>
+        </div>
+        <div className="flex">
+          <Link
+            to={`/checkout/${data?.id}?start=${dateRange[0]}&end=${dateRange[1]}`}
+          >
+            <Button>Book Now</Button>
+          </Link>
+          <Button
+            colorScheme="linkedin"
+            className="ml-2"
+            onClick={handleOpenModal}
+          >
+            See Special Price
+          </Button>
+        </div>
       </div>
       <Modal isOpen={isModalOpen} onClose={onClose}>
         <ModalOverlay>

@@ -16,8 +16,8 @@ const Login = ({ functions }) => {
 
     const onLogin = async (value) => {
         try {
-            let encodedMail = encodeURIComponent(value.email)
-            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/users/login?email=${encodedMail}&password=${value.password}`)
+            let encodedMail = encodeURIComponent(value.emailOrPhoneNumber)
+            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/users/login?emailOrPhoneNumber=${encodedMail}&password=${value.password}`)
 
             toast("login success")
             localStorage.setItem('userToken', response.data.data.token)
@@ -30,9 +30,8 @@ const Login = ({ functions }) => {
     }
 
     const loginSchema = Yup.object().shape({
-        email: Yup.string()
-            .email("Invalid email address format")
-            .required("Email is required"),
+        emailOrPhoneNumber: Yup.string()
+            .required("Email or Phone Number is required"),
         password: Yup.string()
             .required("Password is required")
     })
@@ -48,7 +47,7 @@ const Login = ({ functions }) => {
     const loginForm = () => {
         return (
             <Formik
-                initialValues={{ email: "", password: "" }}
+                initialValues={{ emailOrPhoneNumber: "", password: "" }}
                 validationSchema={loginSchema}
                 onSubmit={(values) => onLogin(values)}
             >
@@ -58,16 +57,16 @@ const Login = ({ functions }) => {
                 >
                     <div className='flex flex-col gap-2 w-full'>
                         <Field 
-                            type="email"
-                            name="email"
-                            placeholder="Email Address"
+                            type="text"
+                            name="emailOrPhoneNumber"
+                            placeholder="Email Address or Phone Number"
                             className="py-2 bg-white 
                             border-b-2 border-slate-500
                             placeholder-slate-500 focus:outline-none"
                         />
                         <ErrorMessage 
                             component="div"
-                            name="email"
+                            name="emailOrPhoneNumber"
                             className="text-red-500"
                         />
                     </div>
