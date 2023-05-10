@@ -64,7 +64,7 @@ cron.schedule("0 0 * * *", bookingReminder);
 // Sequelize DB Sync
 
 // const Sequelize = require("sequelize");
-// const Models = require("../models");
+// const Models = require("./models");
 // Models.sequelize
 //   .sync({
 //     force: false,
@@ -138,7 +138,7 @@ app.use(express.static(join(__dirname, clientPath)));
 
 //Property image to FE
 const path = require("path");
-app.use("/image", express.static(path.join(__dirname, "../")));
+app.use("/image/src", express.static(path.join(__dirname, "./")));
 // Serve the HTML page
 app.get("*", (req, res) => {
   res.sendFile(join(__dirname, clientPath, "index.html"));

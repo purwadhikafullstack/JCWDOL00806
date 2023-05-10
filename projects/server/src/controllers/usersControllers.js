@@ -1,8 +1,8 @@
-const { sequelize } = require("../../models");
+const { sequelize } = require("../models");
 const { Op } = require("sequelize");
 const { hashPassword, hashMatch } = require("../lib/hash");
 const { createToken } = require("../lib/jwt");
-const db = require("../../models/index");
+const db = require("../models/index");
 const users = db.users;
 const user_details = db.user_details;
 const fs = require("fs").promises;
@@ -96,11 +96,12 @@ module.exports = {
   login: async (req, res, next) => {
     try {
       // get data from client
-      let { email, password } = req.query;
+      let { emailOrPhoneNumber, password } = req.query;
+
       // get users data
       let checkUsers = await users.findOne({
         where: {
-          email: email,
+          [Op.or]: [{ email: emailOrPhoneNumber }, { phone_number: emailOrPhoneNumber }],
           provider: "website",
         },
       });
@@ -109,7 +110,7 @@ module.exports = {
       if (checkUsers === null)
         return res.status(400).send({
           isError: true,
-          message: "Email Not Found",
+          message: "Email or Phone Number Not Found",
           data: null,
         });
 
