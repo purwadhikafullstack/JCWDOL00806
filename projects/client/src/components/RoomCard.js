@@ -100,12 +100,14 @@ const RoomCard = ({ data, onClick, dateRange, onClose }) => {
             <ModalCloseButton onClick={() => setIsModalOpen(false)} />
             <ModalBody>
               <Flex>
-                <FullCalendar
-                  plugins={[dayGridPlugin]}
-                  initialView="dayGridMonth"
-                  events={special}
-                  height={"80vh"}
-                />
+                <div className="w-full">
+                  <FullCalendar
+                    plugins={[dayGridPlugin]}
+                    initialView="dayGridMonth"
+                    events={special}
+                    height={"80vh"}
+                  />
+                </div>
               </Flex>
             </ModalBody>
           </ModalContent>
