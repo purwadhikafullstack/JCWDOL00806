@@ -9,29 +9,29 @@ var storage = multer.diskStorage({
   destination: async (req, file, cb) => {
     console.log(file);
     // Check Directory (Exist or Not)
-    let isDirectoryExist = fs.existsSync(`${defaultPath}/${file.fieldname}`);
+    let isDirectoryExist = fs.existsSync(`src/${defaultPath}/${file.fieldname}`);
 
     if (!isDirectoryExist) {
-      await fs.promises.mkdir(`${defaultPath}/${file.fieldname}`, {
+      await fs.promises.mkdir(`src/${defaultPath}/${file.fieldname}`, {
         recursive: true,
       });
     }
 
     // To Create 'Public/pdf' or 'Public/images'
     if (file.fieldname === "files") {
-      cb(null, `${defaultPath}/${file.fieldname}`); // Public/files
+      cb(null, `src/${defaultPath}/${file.fieldname}`); // Public/files
     }
     if (file.fieldname === "images") {
-      cb(null, `${defaultPath}/${file.fieldname}`); // Public/images
+      cb(null, `src/${defaultPath}/${file.fieldname}`); // Public/images
     }
     if (file.fieldname === "property") {
-      cb(null, `${defaultPath}/${file.fieldname}`); //Public/property
+      cb(null, `src/${defaultPath}/${file.fieldname}`); //Public/property
     }
     if (file.fieldname === "profile") {
-      cb(null, `${defaultPath}/${file.fieldname}`); //Public/profile
+      cb(null, `src/${defaultPath}/${file.fieldname}`); //Public/profile
     }
     if (file.fieldname === "payment_proof") {
-      cb(null, `${defaultPath}/${file.fieldname}`); //Public/payment_proof
+      cb(null, `src/${defaultPath}/${file.fieldname}`); //Public/payment_proof
     }
   },
   filename: (req, file, cb) => {
