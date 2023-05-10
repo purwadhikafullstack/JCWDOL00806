@@ -14,7 +14,6 @@ export default function PropertyDetail() {
   const [dateRange, setDateRange] = useState([null, null]);
   const [start, end] = dateRange;
   const { propertyID } = useParams();
-  console.log(propertyID);
 
   let onCheckQuery = async () => {
     try {
@@ -50,13 +49,11 @@ export default function PropertyDetail() {
           `${process.env.REACT_APP_API_BASE_URL}/transaction/roomListOnly?property_id=${propertyID}`
         );
         setList(data.data.data);
-        toast(data.data.message);
       } else {
         let data = await axios.get(
           `${process.env.REACT_APP_API_BASE_URL}/transaction/roomList?city=${city}&start=${start}&end=${end}&property_id=${propertyID}`
         );
         setList(data.data.data);
-        toast(data.data.message);
       }
     } catch (error) {
       console.log(error);
@@ -90,10 +87,10 @@ export default function PropertyDetail() {
       </div>
 
       <div className="flex-1">
-        <div className="flex flex-col justify-center lg:flex-row lg:justify-center">
+        <div className="flex flex-col justify-center lg:flex-row lg:justify-center pt-6 pb-20">
           <div
             className=" mb-6 lg:mr-6 overflow-hidden rounded-lg 
-        sm:h-[250px] border shadow-lg lg:w-1/4 mt-4"
+            sm:h-[250px] border shadow-lg lg:w-1/4 mt-4"
           >
             <Image
               src={`${srcImg(list[0]?.picture)}`}
